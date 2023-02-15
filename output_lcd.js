@@ -8,5 +8,5 @@ lcd.beginSync();
 // Clear any previously displayed content
 lcd.clearSync();
 // Display text multiline
-lcd.printLineSync(0, 'hello');
-lcd.printLineSync(1, 'world!');
+lcd.printLineSync(0, 'Hello, world!');
+lcd.printLineSync(1, 'I output LCD.');
