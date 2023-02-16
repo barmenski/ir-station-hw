@@ -1,0 +1,19 @@
+{
+  "name": "ir-station-hw",
+  "version": "1.0.0",
+  "description": "app for ir rework station",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/barmenski/ir-station-hw.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/barmenski/ir-station-hw/issues"
+  },
+  "homepage": "https://github.com/barmenski/ir-station-hw#readme"
+}
