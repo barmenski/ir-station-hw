@@ -1,4 +1,4 @@
-const Max6675 = require("..");
+const Max6675 = require("max6675-raspi");
 
 const CS = 4;
 const SCK = 24;
