@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/barmenski/ir-station-hw#readme",
   "dependencies": {
-    "max6675-raspi": "^0.0.13"
+    "raspberrypi-liquid-crystal": "1.19.0",
+    "max6675-raspi": "0.0.13",
+    "onoff": "6.0.3"
   }
 }
