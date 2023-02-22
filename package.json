@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/barmenski/ir-station-hw/issues"
   },
-  "homepage": "https://github.com/barmenski/ir-station-hw#readme"
+  "homepage": "https://github.com/barmenski/ir-station-hw#readme",
+  "dependencies": {
+    "max6675-raspi": "^0.0.13"
+  }
 }
