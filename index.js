@@ -15,6 +15,10 @@ const UNIT = 1;
 
 max6675.setPin(CS, SCK, SO, UNIT);
 
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 (async () => {
   while (true) {
     const { temp, unit } = max6675.readTemp();
@@ -30,6 +34,7 @@ async function stop() {
   await lcd.printLine(0, phrase);
   for (let i = 0; i < phrase.length; i++) {
     await lcd.scrollDisplayLeft();
+    await sleep(500);
   }
   await lcd.clear();
   await lcd.noDisplay();
