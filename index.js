@@ -15,8 +15,12 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-(async () => {
-  await lcd.begin();
+async function measure () {
+	try {
+		lcd.beginSync();
+	} catch(e) {
+		console.log(e);
+ 	}
   while (true) {
     const { temp, unit } = max6675.readTemp();
     if (temp.length) await lcd.clear();
@@ -24,21 +28,31 @@ function sleep(ms) {
     await lcd.printLine(1, `Temp 2:${temp[1]} ${unit}`);
     await max6675.sleep(1000);
   }
-})();
+};
 
 async function stop() {
   const phrase = `Buy-buy!`;
-  await lcd.printLine(0, phrase);
+  lcd.printLineSync(0, phrase);
   for (let i = 0; i < phrase.length; i++) {
-    await lcd.scrollDisplayLeft();
+    lcd.scrollDisplayLeft();
     await sleep(500);
   }
-  await lcd.clear();
-  await lcd.noDisplay();
+  lcd.clearSync();
+  lcd.noDisplay();
 }
 
-process.on('SIGINT', function () {
+try{
+	measure();
+} catch(e){
+	console.log(e);
+	console.log(`\nir-statio-hw closed`);
+	stoo();
+	process.exit();
+}
+
+/*process.on('SIGINT', function () {
   console.log('\nir-station-hw closed');
   stop();
   process.exit();
 });
+*/
