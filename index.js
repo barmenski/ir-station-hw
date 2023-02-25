@@ -4,10 +4,6 @@ const Max6675 = require('max6675-raspi');
 const lcd = new LCD(1, 0x27, 16, 2);
 const max6675 = new Max6675();
 
-(async () => {
-  await lcd.begin();
-})();
-
 const CS = '4';
 const SCK = '24';
 const SO = ['25', '12'];
@@ -20,6 +16,7 @@ function sleep(ms) {
 }
 
 (async () => {
+  await lcd.begin();
   while (true) {
     const { temp, unit } = max6675.readTemp();
     if (temp.length) await lcd.clear();
