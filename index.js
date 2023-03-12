@@ -18,19 +18,25 @@ function sleep(ms) {
 async function measure () {
 	try {
 		lcd.beginSync();
+		await lcd.clear();
+		lcd.printLine(0, 'Temp1: ');
+		lcd.printLine(1, 'Temp2: ');
 	} catch(e) {
 		console.log(e);
  	}
   while (true) {
     const { temp, unit } = max6675.readTemp();
-    if (temp.length) await lcd.clear();
-    await lcd.printLine(0, `Temp 1:${temp[0]} ${unit}`);
-    await lcd.printLine(1, `Temp 2:${temp[1]} ${unit}`);
+    //if (temp.length) await lcd.clear();
+    await lcd.setCursor(7, 0);
+    await lcd.print(`${temp[0]} ${unit}`);
+    await lcd.setCursor(7, 1);
+    await lcd.print(`${temp[1]} ${unit}`);
     await max6675.sleep(1000);
   }
 };
 
 async function stop() {
+  max6675.stop();
   const phrase = `Buy-buy!`;
   lcd.printLineSync(0, phrase);
   for (let i = 0; i < phrase.length; i++) {
@@ -46,7 +52,7 @@ try{
 } catch(e){
 	console.log(e);
 	console.log(`\nir-statio-hw closed`);
-	stoo();
+	stop();
 	process.exit();
 }
 
