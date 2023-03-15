@@ -1,8 +1,16 @@
 const LCD = require('raspberrypi-liquid-crystal');
 const Max6675 = require('max6675-raspi');
+const Rotary = require('raspberrypi-rotary-encoder');
+
 
 const lcd = new LCD(1, 0x27, 16, 2);
 const max6675 = new Max6675();
+
+const pinClk = 13;
+const pinDt = 14;
+const pinSwitch = 12;
+
+const rotary = new Rotary(pinClk, pinDt, pinSwitch);
 
 const CS = '4';
 const SCK = '24';
@@ -19,8 +27,9 @@ async function measure () {
 	try {
 		lcd.beginSync();
 		await lcd.clear();
-		lcd.printLine(0, 'Temp1: ');
-		lcd.printLine(1, 'Temp2: ');
+		await lcd.printLine(0, 'Temp1: ');
+		await lcd.printLine(1, 'Temp2: ');
+
 	} catch(e) {
 		console.log(e);
  	}
@@ -47,6 +56,21 @@ async function stop() {
   lcd.noDisplay();
 }
 
+measure();
+
+rotary.on("rotate", (delta) => {
+	console.log("Rotation :"+delta);
+	measure();
+});
+rotary.on("pressed", () => {
+	console.log("Rotary switch pressed");
+	stop();
+});
+rotary.on("released", () => {
+	console.log("Rotary switch release");
+});
+
+/*
 try{
 	measure();
 } catch(e){
@@ -55,10 +79,9 @@ try{
 	stop();
 	process.exit();
 }
-
-/*process.on('SIGINT', function () {
+*/
+process.on('SIGINT', function () {
   console.log('\nir-station-hw closed');
   stop();
   process.exit();
 });
-*/
