@@ -18,21 +18,22 @@ const pinSwitch = 12;
 
 const rotary = new Rotary(pinClk, pinDt, pinSwitch);
 
-let inc=0;
+var inc=0;
+var working=true;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function reset() {
-	await lcd.clear();
-	await lcd.printLine(0, 'Temp1: ');
-	await lcd.printLine(1, 'Temp2: ');
+	working = true;
+	measure();
 }
 
 async function measure () {
 	try {
-		await lcd.begin();
+		lcd.began ? "" : (await lcd.begin());
+		await lcd.display();
 		await lcd.clear();
 		await lcd.printLine(0, 'Temp1: ');
 		await lcd.printLine(1, 'Temp2: ');
@@ -40,7 +41,7 @@ async function measure () {
 	} catch(e) {
 		console.log(`Problem with LCD: ${e}`);
  	}
-	while (true) {
+	while (working) {
 		const { temp, unit } = max6675.readTemp();
 		await lcd.setCursor(7, 0);
 		await lcd.print(`${temp[0]} ${unit}`);
@@ -51,30 +52,34 @@ async function measure () {
 };
 
 async function stop() {
+	working = false;
 	await lcd.clear();
-	const phrase = `Buy-buy!`;
+	const phrase = "Buy-buy!";
+	await sleep(700);
 	await lcd.printLine(0, phrase);
 	for (let i = 0; i < phrase.length; i++) {
-		lcd.scrollDisplayLeft();
-		await sleep(300);
+		await lcd.scrollDisplayLeft();
+		await sleep(500);
 	}
 	await sleep(300);
-	lcd.clearSync();
-	lcd.noDisplay();
+	await lcd.noDisplay();
 }
 
 measure();
 
-rotary.on("rotate", (delta) => {
+rotary.on("rotate", async (delta) => {
 	console.log("Rotation :"+delta);
-	if(delta){
-		lcd.setCursorSync(7, 1);
-		lcd.printSync(inc+delta);
-	} else reset();
+	working = false;
+	if(Number(delta)>0){
+		await lcd.setCursor(7, 1);
+		await lcd.print(inc+Number(delta));
+	} else {
+		await reset();
+	};
 });
-rotary.on("pressed", () => {
+rotary.on("pressed", async () => {
 	console.log("Rotary switch pressed");
-	stop();
+	await stop();
 });
 rotary.on("released", () => {
 	console.log("Rotary switch release");
@@ -90,8 +95,8 @@ try{
 	process.exit();
 }
 */
-process.on('SIGINT', function () {
+process.on('SIGINT', async function () {
   console.log('\nir-station-hw closed');
-  stop();
+  await stop();
   process.exit();
 });
