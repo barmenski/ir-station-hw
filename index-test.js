@@ -32,62 +32,40 @@ function reset() {
 }
 
 async function measure () {
-	try {
-		lcd.began ? "" : (await lcd.begin());
-		await lcd.display();
-		await lcd.clear();
-		await lcd.printLine(0, 'Temp1: ');
-		await lcd.printLine(1, 'Temp2: ');
-
-	} catch(e) {
-		console.log(`Problem with LCD: ${e}`);
- 	}
 	while (working) {
-		const { temp, unit } = max6675.readTemp();
-		await lcd.setCursor(7, 0);
-		await lcd.print(`${temp[0]} ${unit}`);
-		await lcd.setCursor(7, 1);
-		await lcd.print(`${temp[1]} ${unit}`);
+		console.log("log1");
+		await sleep(1000);
+		console.log("log2");
+		await sleep(1000);
+		console.log("log3");
 		await sleep(1000);
 	}
 };
 
-async function stop() {
+function stop() {
 	working = false;
-	await lcd.clear();
-	const phrase = "Buy-buy!";
-	await sleep(700);
-	await lcd.printLine(0, phrase);
-	for (let i = 0; i < phrase.length; i++) {
-		await lcd.scrollDisplayLeft();
-		await sleep(500);
-	}
-	await sleep(300);
-	await lcd.clear();
-	await lcd.noDisplay();
+	console.log("stop!");
 }
 
-rotary.on("rotate", async (delta) => {
-	console.log("Rotation :"+delta);
+rotary.on("rotate", (delta) => {
 	working = false;
 	if(Number(delta)>0){
-		await lcd.setCursor(7, 1);
 		inc = inc + Number(delta);
-		await lcd.print(inc);
+		console.log(inc);
 	} else {
 		reset();
 	};
 });
-rotary.on("pressed", async () => {
+rotary.on("pressed", () => {
 	console.log("Rotary switch pressed");
-	await stop();
+	stop();
 });
 rotary.on("released", () => {
 	console.log("Rotary switch release");
 });
 
-process.on('SIGINT', async function () {
+process.on('SIGINT', function () {
   console.log('\nir-station-hw closed');
-  await stop();
+  stop();
   process.exit();
 });
