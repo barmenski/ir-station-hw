@@ -19,41 +19,51 @@ const pinSwitch = 12;
 
 const rotary = new Rotary(pinClk, pinDt, pinSwitch);
 
-var inc=0;
-var working=true;
+let inc=0;
+let active = false;
+let cycle = false;
+let cycling = false;
 
 function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function reset() {
-	working = true;
-	measure();
+async function display() {
+	console.log(`log1`);
+	await sleep(1000);
+	console.log("log2");
+	await sleep(1000);
+	console.log("log3");
+	await sleep(1000);
 }
 
-async function measure () {
-	while (working) {
-		console.log("log1");
-		await sleep(1000);
-		console.log("log2");
-		await sleep(1000);
-		console.log("log3");
-		await sleep(1000);
+async function measure(start) {
+	if(start===true && active===false){ 	//starting cycle while
+		active=true;			//enable active=true - protect from repeating start cycle
+		while (cycle) {
+			await display();
+		}
+	} else if(start===false && active===true){ //disable active flag
+		active=false;
 	}
+	if(active===false && cycle===false) {
+		return "display stopped";
+	} else return "display already started";
+}
+
+async function stop() {
+	cycle=false;
+	await measure(false);
 };
 
-function stop() {
-	working = false;
-	console.log("stop!");
-}
-
-rotary.on("rotate", (delta) => {
-	working = false;
+rotary.on("rotate", async (delta) => {
 	if(Number(delta)>0){
 		inc = inc + Number(delta);
 		console.log(inc);
 	} else {
-		reset();
+		cycle=true;
+		let res = await measure(true);
+		console.log(res+" start");
 	};
 });
 rotary.on("pressed", () => {
@@ -67,5 +77,5 @@ rotary.on("released", () => {
 process.on('SIGINT', function () {
   console.log('\nir-station-hw closed');
   stop();
-  process.exit();
+  process.exit(1);
 });
