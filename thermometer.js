@@ -44,12 +44,14 @@ async stop() {
 async measure() {
 	if(!this.active){
 		this.active = true;
-		this.cycle = true;
+		this.cycle = true;	
+		//this.max6675.setPin(this.CS, this.SCK, this.SO, this.UNIT);
 		await this.lcd.clear();
 		await this.lcd.printLine(0, "Temp1: ");
 		await this.lcd.printLine(1, "Temp2: ");
 		let res = await this.display();
 		await this.lcd.clear();
+		//this.max6675.stop();
 		console.log(res);
 		this.active = false;
 		return "measure is stopped";
