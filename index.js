@@ -1,93 +1,55 @@
-const LCD = require('raspberrypi-liquid-crystal');
-const Max6675 = require('max6675-raspi');
+const Thermometer = require('./components/thermometer');
+const PID = require('./components/pid');
 const Rotary = require('raspberrypi-rotary-encoder');
 const process = require('process');
 
-const lcd = new LCD(1, 0x27, 16, 2);
-
-const CS = '4';
-const SCK = '24';
-const SO = ['25', '12'];
-const UNIT = 1;
-
-const max6675 = new Max6675();
-max6675.setPin(CS, SCK, SO, UNIT);
+const therm = new Thermometer();
+const pid = new PID({
+	k_p: 1,
+	k_i: 1,
+	k_d: 1,
+	dt: 1,
+  })
 
 const pinClk = 13;
 const pinDt = 14;
 const pinSwitch = 12;
+let inc = 0;
 
 const rotary = new Rotary(pinClk, pinDt, pinSwitch);
 
-var inc=0;
-var working=true;
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-function reset() {
-	working = true;
-	measure();
-}
-
-async function measure () {
-	try {
-		lcd.began ? "" : (await lcd.begin());
-		await lcd.display();
-		await lcd.clear();
-		await lcd.printLine(0, 'Temp1: ');
-		await lcd.printLine(1, 'Temp2: ');
-
-	} catch(e) {
-		console.log(`Problem with LCD: ${e}`);
- 	}
-	while (working) {
-		const { temp, unit } = max6675.readTemp();
-		await lcd.setCursor(7, 0);
-		await lcd.print(`${temp[0]} ${unit}`);
-		await lcd.setCursor(7, 1);
-		await lcd.print(`${temp[1]} ${unit}`);
-		await sleep(1000);
-	}
-};
-
-async function stop() {
-	working = false;
-	await lcd.clear();
-	const phrase = "Buy-buy!";
-	await sleep(700);
-	await lcd.printLine(0, phrase);
-	for (let i = 0; i < phrase.length; i++) {
-		await lcd.scrollDisplayLeft();
-		await sleep(500);
-	}
-	await sleep(300);
-	await lcd.clear();
-	await lcd.noDisplay();
+const pidWork = async ()=> {
+	/*getTemperature();
+    delta = Number((tempChip - prevTemp).toFixed(2));
+          pid.setTarget(
+            targetTemp,
+            1,
+            1,
+            1
+          );
+    targetTemp = targetTemp + rise;*/
+ await therm.sleep(1000);
 }
 
 rotary.on("rotate", async (delta) => {
-	console.log("Rotation :"+delta);
-	working = false;
 	if(Number(delta)>0){
-		await lcd.setCursor(7, 1);
 		inc = inc + Number(delta);
-		await lcd.print(inc);
+		console.log(inc);
 	} else {
-		reset();
+		let res = await therm.measure();
+		console.log(res);
 	};
 });
-rotary.on("pressed", async () => {
+rotary.on("pressed",  async() => {
 	console.log("Rotary switch pressed");
-	await stop();
+	therm.stop();
+	
 });
 rotary.on("released", () => {
 	console.log("Rotary switch release");
 });
 
-process.on('SIGINT', async function () {
+process.on('SIGINT', function () {
   console.log('\nir-station-hw closed');
-  await stop();
   process.exit();
 });

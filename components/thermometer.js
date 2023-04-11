@@ -18,8 +18,6 @@ class  Thermometer {
 	this.cycle = false;
 	}
 
-
-
 async sleep(ms) {
   	return new Promise((resolve) => setTimeout(resolve, ms));
 }
