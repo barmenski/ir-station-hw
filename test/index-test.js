@@ -31,5 +31,6 @@ rotary.on("released", () => {
 
 process.on('SIGINT', function () {
   console.log('\nir-station-hw closed');
+	therm.max6675.stop();
   process.exit();
 });
