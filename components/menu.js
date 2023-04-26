@@ -14,10 +14,10 @@ class Menu {
         this.max6675 = new Max6675();
         this.max6675.setPin(CS, SCK, SO, UNIT);
 
-        const pinClk = 13;
-        const pinDt = 14;
-        const pinSwitch = 12;
-        this.rotary = new Rotary(pinClk, pinDt, pinSwitch);
+        // const pinClk = 13;
+        // const pinDt = 14;
+        // const pinSwitch = 12;
+        // this.rotary = new Rotary(pinClk, pinDt, pinSwitch);
 
         this.currMenu = null;
         this.arrow = 0;
@@ -47,6 +47,10 @@ let resumeConstMenu = ["Resume", "Stop", "Back"];
 let pauseDimmerMenu = ["Pause", "Stop", "Back"];
 let resumeDimmerMenu = ["Resume", "Stop", "Back"];
 
+const pinClk = 13;
+const pinDt = 14;
+const pinSwitch = 12;
+this.rotary = new Rotary(pinClk, pinDt, pinSwitch);
 
 this.rotary.on("rotate", (delta) => {
     switch (this.currMenu) {
