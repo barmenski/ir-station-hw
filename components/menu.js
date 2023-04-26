@@ -172,8 +172,11 @@ this.rotary.on("rotate", (delta) => {
             break;
         default:
             this.arrow = this.arrow + delta;
-            if(this.arrow>this.currMenu.length-1) {
+            if(this.arrow>(this.currMenu.length-1)) {
                 this.arrow = 0;
+            }
+            if(this.arrow<0) {
+                this.arrow = this.currMenu.length-1;
             }
             switch (this.arrow){
                 case 0:
@@ -271,7 +274,7 @@ this.rotary.on("pressed", () => {
     
             this.lcd.setCursorSync(14, 0);
             this.lcd.printSync(this.currMenu[4]);
-
+            break;
         case "mainMenu":
             switch (this.arrow){
                 case 0://>Pb- pressed
