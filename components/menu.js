@@ -19,7 +19,7 @@ class Menu {
         // const pinSwitch = 12;
         // this.rotary = new Rotary(pinClk, pinDt, pinSwitch);
 
-        this.currMenu = null;
+        this.currMenu = [];
         this.currMenuName = null;
         this.arrow = 0;
     }
@@ -242,7 +242,7 @@ this.rotary.on("rotate", (delta) => {
             }
 
     }
-	console.log("this.arrow :" + this.arrow);
+	console.log("this.arrow :" + this.arrow + " this.currMenuName: " + this.currMenuName);
 });
 
 this.rotary.on("pressed", () => {
@@ -1045,7 +1045,7 @@ this.rotary.on("pressed", () => {
                 }
             break;
     }
-	console.log("Rotary switch pressed");
+	console.log("Rotary switch pressed. this.currMenuName: "+this.currMenuName);
 });
 
 
