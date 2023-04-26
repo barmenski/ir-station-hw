@@ -20,7 +20,7 @@ class Menu {
         // this.rotary = new Rotary(pinClk, pinDt, pinSwitch);
 
         this.currMenu = [];
-        this.currMenuName = null;
+        this.currMenuName = "";
         this.arrow = 0;
     }
 }
@@ -55,7 +55,7 @@ this.rotary = new Rotary(pinClk, pinDt, pinSwitch);
 
 this.rotary.on("rotate", (delta) => {
     switch (this.currMenuName) {
-        case null:
+        case "":
             this.currMenu = startMenu;
             this.currMenuName = "startMenu";
             this.arrow = 0;
@@ -247,7 +247,7 @@ this.rotary.on("rotate", (delta) => {
 
 this.rotary.on("pressed", () => {
     switch (this.currMenuName) {
-        case null:
+        case "":
             this.currMenu = startMenu;
             this.currMenuName = "startMenu";
             this.arrow = 0;
