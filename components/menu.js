@@ -20,6 +20,7 @@ class Menu {
         // this.rotary = new Rotary(pinClk, pinDt, pinSwitch);
 
         this.currMenu = null;
+        this.currMenuName = null;
         this.arrow = 0;
     }
 }
@@ -53,13 +54,21 @@ const pinSwitch = 12;
 this.rotary = new Rotary(pinClk, pinDt, pinSwitch);
 
 this.rotary.on("rotate", (delta) => {
-    switch (this.currMenu) {
+    switch (this.currMenuName) {
         case null:
+            this.currMenu = startMenu;
+            this.currMenuName = "startMenu";
+            this.arrow = 0;
+            this.lcd.clearSync();
+    
+            this.lcd.setCursorSync(5, 0);
+            this.lcd.printSync(this.currMenu[0]);
             break;
-        case startMenu:
+        case "startMenu":
             break;
-        case workPbMinusMenu://display pause menu
+        case "workPbMinusMenu"://display pause menu
             this.currMenu = pausePbMinusMenu;
+            this.currMenuName = "pausePbMinusMenu";
             this.lcd.clearSync();
     
             this.lcd.setCursorSync(1, 0);
@@ -70,8 +79,9 @@ this.rotary.on("rotate", (delta) => {
             this.lcd.setCursorSync(8, 0);
             this.lcd.printSync(this.currMenu[2]);
             break;
-        case workPbPlusMenu://display pause menu
+        case "workPbPlusMenu"://display pause menu
             this.currMenu = pausePbPlusMenu;
+            this.currMenuName = "pausePbPlusMenu";
             this.lcd.clearSync();
     
             this.lcd.setCursorSync(1, 0);
@@ -82,8 +92,9 @@ this.rotary.on("rotate", (delta) => {
             this.lcd.setCursorSync(8, 0);
             this.lcd.printSync(this.currMenu[2]);
             break;
-        case workConstMenu://display pause menu
+        case "workConstMenu"://display pause menu
             this.currMenu = pauseConstMenu;
+            this.currMenuName = "pauseConstMenu";
             this.lcd.clearSync();
     
             this.lcd.setCursorSync(1, 0);
@@ -94,8 +105,9 @@ this.rotary.on("rotate", (delta) => {
             this.lcd.setCursorSync(8, 0);
             this.lcd.printSync(this.currMenu[2]);
             break;
-        case workDimmerMenu://display pause menu
+        case "workDimmerMenu"://display pause menu
             this.currMenu = pauseDimmerMenu;
+            this.currMenuName = "pauseDimmerMenu";
             this.lcd.clearSync();
     
             this.lcd.setCursorSync(1, 0);
@@ -106,8 +118,9 @@ this.rotary.on("rotate", (delta) => {
             this.lcd.setCursorSync(8, 0);
             this.lcd.printSync(this.currMenu[2]);
             break;
-        case stayPbMinusMenu://display resume menu
+        case "stayPbMinusMenu"://display resume menu
             this.currMenu = resumePbMinusMenu;
+            this.currMenuName = "resumePbMinusMenu";
             this.lcd.clearSync();
     
             this.lcd.setCursorSync(1, 0);
@@ -118,8 +131,9 @@ this.rotary.on("rotate", (delta) => {
             this.lcd.setCursorSync(8, 0);
             this.lcd.printSync(this.currMenu[2]);
             break;
-        case stayPbPlusMenu://display resume menu
+        case "stayPbPlusMenu"://display resume menu
             this.currMenu = resumePbPlusMenu;
+            this.currMenuName = "resumePbPlusMenu";
             this.lcd.clearSync();
     
             this.lcd.setCursorSync(1, 0);
@@ -130,8 +144,9 @@ this.rotary.on("rotate", (delta) => {
             this.lcd.setCursorSync(8, 0);
             this.lcd.printSync(this.currMenu[2]);
             break;
-        case stayConstMenu:
+        case "stayConstMenu":
             this.currMenu = resumeConstMenu;
+            this.currMenuName = "resumeConstMenu";
             this.lcd.clearSync();
     
             this.lcd.setCursorSync(1, 0);
@@ -142,8 +157,9 @@ this.rotary.on("rotate", (delta) => {
             this.lcd.setCursorSync(8, 0);
             this.lcd.printSync(this.currMenu[2]);
             break;
-        case stayDimmerMenu:
+        case "stayDimmerMenu":
             this.currMenu = resumeDimmerMenu;
+            this.currMenuName = "resumeDimmerMenu";
             this.lcd.clearSync();
     
             this.lcd.setCursorSync(1, 0);
@@ -227,17 +243,19 @@ this.rotary.on("rotate", (delta) => {
 });
 
 this.rotary.on("pressed", () => {
-    switch (this.currMenu) {
+    switch (this.currMenuName) {
         case null:
             this.currMenu = startMenu;
+            this.currMenuName = "startMenu";
             this.arrow = 0;
             this.lcd.clearSync();
     
             this.lcd.setCursorSync(5, 0);
-            this.lcd.printSync(startMenu[0]);
+            this.lcd.printSync(this.currMenu[0]);
             break;
-        case startMenu:
+        case "startMenu":
             this.currMenu = mainMenu;
+            this.currMenuName = "mainMenu";
             this.arrow = 0;
             this.lcd.clearSync();
     
@@ -254,10 +272,11 @@ this.rotary.on("pressed", () => {
             this.lcd.setCursorSync(14, 0);
             this.lcd.printSync(this.currMenu[4]);
 
-        case mainMenu:
+        case "mainMenu":
             switch (this.arrow){
                 case 0://>Pb- pressed
                     this.currMenu = pbMinusMenu;
+                    this.currMenuName = "pbMinusMenu";
                     this.arrow = 0;
                     this.lcd.clearSync();
 
@@ -271,6 +290,7 @@ this.rotary.on("pressed", () => {
                     break;
                 case 1://>Pb+ pressed
                     this.currMenu = pbPlusMenu;
+                    this.currMenuName = "pbPlusMenu";
                     this.arrow = 0;
                     this.lcd.clearSync();
 
@@ -284,6 +304,7 @@ this.rotary.on("pressed", () => {
                     break;
                 case 2://>Const pressed
                     this.currMenu = constMenu;
+                    this.currMenuName = "constMenu";
                     this.arrow = 0;
                     this.lcd.clearSync();
 
@@ -299,6 +320,7 @@ this.rotary.on("pressed", () => {
                     break;
                 case 3://>Dimmer pressed
                     this.currMenu = dimmerMenu;
+                    this.currMenuName = "dimmerMenu";
                     this.arrow = 0;
                     this.lcd.clearSync();
 
@@ -316,10 +338,11 @@ this.rotary.on("pressed", () => {
                     //for termometer
                     break;
             }
-            case pbMinusMenu:
+            case "pbMinusMenu":
                 switch (this.arrow) {
                     case 0://>Start pressed
                         this.currMenu = workPbMinusMenu;
+                        this.currMenuName = "workPbMinusMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
 
@@ -343,6 +366,7 @@ this.rotary.on("pressed", () => {
                         break;
                     case 2://>Back pressed
                         this.currMenu = mainMenu;
+                        this.currMenuName = "mainMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
                 
@@ -360,10 +384,11 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[4]);
                         break;// ↑this duplicate from 160 line
                 }
-            case pbPlusMenu:
+            case "pbPlusMenu":
                 switch (this.arrow) {
                     case 0://>Start pressed
                         this.currMenu = workPbPlusMenu;
+                        this.currMenuName = "workPbPlusMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
 
@@ -387,6 +412,7 @@ this.rotary.on("pressed", () => {
                         break;
                     case 2://>Back pressed
                         this.currMenu = mainMenu;
+                        this.currMenuName = "mainMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
                 
@@ -404,10 +430,11 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[4]);
                         break;// ↑this duplicate from 160 line
                 }
-            case constMenu:
+            case "constMenu":
                 switch (this.arrow) {
                     case 0://>Start pressed
                         this.currMenu = workConstMenu;
+                        this.currMenuName = "workConstMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
 
@@ -434,6 +461,7 @@ this.rotary.on("pressed", () => {
                         break;
                     case 3://>Back pressed
                         this.currMenu = mainMenu;
+                        this.currMenuName = "mainMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
                 
@@ -451,10 +479,11 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[4]);
                         break;// ↑this duplicate from 160 line
                 }
-            case dimmerMenu:
+            case "dimmerMenu":
                 switch (this.arrow) {
                     case 0://>Start pressed
                         this.currMenu = workDimmerMenu;
+                        this.currMenuName = "workDimmerMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
 
@@ -481,6 +510,7 @@ this.rotary.on("pressed", () => {
                         break;
                     case 3://>Back pressed
                         this.currMenu = mainMenu;
+                        this.currMenuName = "mainMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
                 
@@ -498,10 +528,11 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[4]);
                         break;// ↑this duplicate from 160 line
                 }
-            case pausePbMinusMenu:
+            case "pausePbMinusMenu":
                 switch (this.arrow) {
                     case 0://>Pause pressed
                         this.currMenu = stayPbMinusMenu;
+                        this.currMenuName = "stayPbMinusMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
 
@@ -522,6 +553,7 @@ this.rotary.on("pressed", () => {
                         break;
                     case 1://>Stop pressed
                         this.currMenu = mainMenu;
+                        this.currMenuName = "mainMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
                 
@@ -540,6 +572,7 @@ this.rotary.on("pressed", () => {
                         break;// ↑this duplicate from 160 line
                     case 2://>Back pressed
                         this.currMenu = workPbMinusMenu;
+                        this.currMenuName = "workPbMinusMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
 
@@ -559,10 +592,11 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[5]);
                         break;
                 }
-            case pausePbPlusMenu:
+            case "pausePbPlusMenu":
                 switch (this.arrow) {
                     case 0://>Pause pressed
                         this.currMenu = stayPbPlusMenu;
+                        this.currMenuName = "stayPbPlusMenu;"
                         this.arrow = 0;
                         this.lcd.clearSync();
 
@@ -583,6 +617,7 @@ this.rotary.on("pressed", () => {
                         break;
                     case 1://>Stop pressed
                         this.currMenu = mainMenu;
+                        this.currMenuName = "mainMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
                 
@@ -601,6 +636,7 @@ this.rotary.on("pressed", () => {
                         break;// ↑this duplicate from 160 line
                     case 2://>Back pressed
                         this.currMenu = workPbPlusMenu;
+                        this.currMenuName = "workPbPlusMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
 
@@ -620,10 +656,11 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[5]);
                         break;
                 }
-            case pauseConstMenu:
+            case "pauseConstMenu":
                 switch (this.arrow) {
                     case 0://>Pause pressed
                         this.currMenu = stayConstMenu;
+                        this.currMenuName = "stayConstMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
 
@@ -644,6 +681,7 @@ this.rotary.on("pressed", () => {
                         break;
                     case 1://>Stop pressed
                         this.currMenu = mainMenu;
+                        this.currMenuName = "mainMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
                 
@@ -662,6 +700,7 @@ this.rotary.on("pressed", () => {
                         break;// ↑this duplicate from 160 line
                     case 2://>Back pressed
                         this.currMenu = workConstMenu;
+                        this.currMenuName = "workConstMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
 
@@ -681,10 +720,11 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[5]);
                         break;
                 }
-            case pauseDimmerMenu:
+            case "pauseDimmerMenu":
                 switch (this.arrow) {
                     case 0://>Pause pressed
                         this.currMenu = stayDimmerMenu;
+                        this.currMenuName = "stayDimmerMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
 
@@ -705,6 +745,7 @@ this.rotary.on("pressed", () => {
                         break;
                     case 1://>Stop pressed
                         this.currMenu = mainMenu;
+                        this.currMenuName = "mainMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
                 
@@ -723,6 +764,7 @@ this.rotary.on("pressed", () => {
                         break;// ↑this duplicate from 160 line
                     case 2://>Back pressed
                         this.currMenu = workDimmerMenu;
+                        this.currMenuName = "workDimmerMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
 
@@ -742,10 +784,11 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[5]);
                         break;
                 }
-            case resumePbMinusMenu:
+            case "resumePbMinusMenu":
                 switch (this.arrow) {
                     case 0://>Resume pressed
                         this.currMenu = workPbMinusMenu;
+                        this.currMenuName = "workPbMinusMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
 
@@ -766,6 +809,7 @@ this.rotary.on("pressed", () => {
                         break;
                     case 1://>Stop pressed
                         this.currMenu = mainMenu;
+                        this.currMenuName = "mainMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
                 
@@ -784,6 +828,7 @@ this.rotary.on("pressed", () => {
                         break;// ↑this duplicate from 160 line
                     case 2://>Back pressed
                         this.currMenu = stayPbMinusMenu;
+                        this.currMenuName = "stayPbMinusMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
 
@@ -803,10 +848,11 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[5]);
                         break;
                 }
-            case resumePbPlusMenu:
+            case "resumePbPlusMenu":
                 switch (this.arrow) {
                     case 0://>Resume pressed
                         this.currMenu = workPbPlusMenu;
+                        this.currMenuName = "workPbPlusMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
 
@@ -827,6 +873,7 @@ this.rotary.on("pressed", () => {
                         break;
                     case 1://>Stop pressed
                         this.currMenu = mainMenu;
+                        this.currMenuName = "mainMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
                 
@@ -845,6 +892,7 @@ this.rotary.on("pressed", () => {
                         break;// ↑this duplicate from 160 line
                     case 2://>Back pressed
                         this.currMenu = stayPbPlusMenu;
+                        this.currMenuName = "stayPbPlusMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
 
@@ -864,10 +912,11 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[5]);
                         break;
                 }
-            case resumeConstMenu:
+            case "resumeConstMenu":
                 switch (this.arrow) {
                     case 0://>Resume pressed
                         this.currMenu = workConstMenu;
+                        this.currMenuName = "workConstMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
 
@@ -888,6 +937,7 @@ this.rotary.on("pressed", () => {
                         break;
                     case 1://>Stop pressed
                         this.currMenu = mainMenu;
+                        this.currMenuName = "mainMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
                 
@@ -906,6 +956,7 @@ this.rotary.on("pressed", () => {
                         break;// ↑this duplicate from 160 line
                     case 2://>Back pressed
                         this.currMenu = stayConstMenu;
+                        this.currMenuName = "stayConstMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
 
@@ -925,10 +976,11 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[5]);
                         break;
                 }
-            case resumeDimmerMenu:
+            case "resumeDimmerMenu":
                 switch (this.arrow) {
                     case 0://>Resume pressed
                         this.currMenu = workDimmerMenu;
+                        this.currMenuName = "workDimmerMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
 
@@ -949,6 +1001,7 @@ this.rotary.on("pressed", () => {
                         break;
                     case 1://>Stop pressed
                         this.currMenu = mainMenu;
+                        this.currMenuName = "mainMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
                 
@@ -967,6 +1020,7 @@ this.rotary.on("pressed", () => {
                         break;// ↑this duplicate from 160 line
                     case 2://>Back pressed
                         this.currMenu = stayDimmerMenu;
+                        this.currMenuName = "stayDimmerMenu";
                         this.arrow = 0;
                         this.lcd.clearSync();
 
