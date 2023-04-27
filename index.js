@@ -1,6 +1,5 @@
 const Thermometer = require('./components/thermometer');
 const PID = require('./components/pid');
-const Rotary = require('raspberrypi-rotary-encoder');
 const process = require('process');
 const Menu = require('./components/menu');
 
