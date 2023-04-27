@@ -341,6 +341,7 @@ this.rotary.on("pressed", () => {
                     //for termometer
                     break;
             }
+            break;
             case "pbMinusMenu":
                 switch (this.arrow) {
                     case 0://>Start pressed
@@ -387,6 +388,7 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[4]);
                         break;// ↑this duplicate from 160 line
                 }
+                break;
             case "pbPlusMenu":
                 switch (this.arrow) {
                     case 0://>Start pressed
@@ -433,6 +435,7 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[4]);
                         break;// ↑this duplicate from 160 line
                 }
+                break;
             case "constMenu":
                 switch (this.arrow) {
                     case 0://>Start pressed
@@ -482,6 +485,7 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[4]);
                         break;// ↑this duplicate from 160 line
                 }
+                break;
             case "dimmerMenu":
                 switch (this.arrow) {
                     case 0://>Start pressed
@@ -531,6 +535,7 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[4]);
                         break;// ↑this duplicate from 160 line
                 }
+                break;
             case "pausePbMinusMenu":
                 switch (this.arrow) {
                     case 0://>Pause pressed
@@ -595,6 +600,7 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[5]);
                         break;
                 }
+                break;
             case "pausePbPlusMenu":
                 switch (this.arrow) {
                     case 0://>Pause pressed
@@ -659,6 +665,7 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[5]);
                         break;
                 }
+                break;
             case "pauseConstMenu":
                 switch (this.arrow) {
                     case 0://>Pause pressed
@@ -723,6 +730,7 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[5]);
                         break;
                 }
+                break;
             case "pauseDimmerMenu":
                 switch (this.arrow) {
                     case 0://>Pause pressed
@@ -787,6 +795,7 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[5]);
                         break;
                 }
+                break;
             case "resumePbMinusMenu":
                 switch (this.arrow) {
                     case 0://>Resume pressed
@@ -851,6 +860,7 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[5]);
                         break;
                 }
+                break;
             case "resumePbPlusMenu":
                 switch (this.arrow) {
                     case 0://>Resume pressed
@@ -915,6 +925,7 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[5]);
                         break;
                 }
+                break;
             case "resumeConstMenu":
                 switch (this.arrow) {
                     case 0://>Resume pressed
@@ -979,6 +990,7 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[5]);
                         break;
                 }
+                break;
             case "resumeDimmerMenu":
                 switch (this.arrow) {
                     case 0://>Resume pressed
@@ -1043,7 +1055,7 @@ this.rotary.on("pressed", () => {
                         this.lcd.printSync(this.currMenu[5]);
                         break;
                 }
-            break;
+                break;
     }
 	console.log("Rotary switch pressed. this.currMenuName: "+this.currMenuName);
 });
