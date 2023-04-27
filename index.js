@@ -4,6 +4,7 @@ const process = require('process');
 const Menu = require('./components/menu');
 
 const menu = new Menu();
+menu.init();
 // const therm = new Thermometer();
 // const pid = new PID({
 // 	k_p: 1,
