@@ -19,156 +19,156 @@ class Menu {
         const pinSwitch = 12;
         this.rotary = new Rotary(pinClk, pinDt, pinSwitch);
 
-        this.currMenu = [];
-        this.currMenuName = "";
+        this.currMenu = [""];
         this.arrow = 0;
     }
 
-    init = ()=>{
-        let startMenu = ["Hello!"];
-        let mainMenu = ["Pb-", "Pb+", "Const", "Dimmer", "T"];
-        let pbMinusMenu = ["Start", "Profile01", "Back"];
-        let pbPlusMenu = ["Start", "Profile01", "Back"];
-        let workPbMinusMenu = ["t=000", "t=000", "P=000%", "P=000%", "pt1", "run"];
-        let stayPbMinusMenu = ["t=000", "t=000", "P=000%", "P=000%", "pt1", "paus"];
-        let workPbPlusMenu = ["t=000", "t=000", "P=000%", "P=000%", "pt1", "run"];
-        let stayPbPlusMenu = ["t=000", "t=000", "P=000%", "P=000%", "pt1", "paus"];
-        let pausePbMinusMenu = ["Pause", "Stop", "Back"];
-        let resumePbMinusMenu = ["Resume", "Stop", "Back"];
-        let pausePbPlusMenu = ["Pause", "Stop", "Back"];
-        let resumePbPlusMenu = ["Resume", "Stop", "Back"];
-        let constMenu = ["Start", "t=200", "Back", "Dur=120"];
-        let dimmerMenu = ["Start", "P=000%", "Back", "Dur=120"]
-        let workConstMenu = ["t=000", "t=000", "P=000%", "P=000%", "120", "*C"];
-        let workDimmerMenu = ["t=000", "t=000", "P=000%", "P=000%", "120", "*D"];
-        let stayConstMenu = ["t=000", "t=000", "P=000%", "P=000%", "200", "paus"];
-        let stayDimmerMenu = ["t=000", "t=000", "P=000%", "P=000%", "200", "paus"];
-        let pauseConstMenu = ["Pause", "Stop", "Back"];
-        let resumeConstMenu = ["Resume", "Stop", "Back"];
-        let pauseDimmerMenu = ["Pause", "Stop", "Back"];
-        let resumeDimmerMenu = ["Resume", "Stop", "Back"];
+    display1items = (menu)=>{
+        this.currMenu = menu;
+        this.arrow = 0;
+        this.lcd.clearSync();
+        this.lcd.setCursorSync(0, 0);
+        this.lcd.printSync(">");
 
-        // const pinClk = 13;
-        // const pinDt = 14;
-        // const pinSwitch = 12;
-        // this.rotary = new Rotary(pinClk, pinDt, pinSwitch);
+        this.lcd.setCursorSync(5, 0);
+        this.lcd.printSync(this.currMenu[1]);
+    }
+
+    display3items = (menu)=>{
+        this.currMenu = menu;
+        this.arrow = 0;
+        this.lcd.clearSync();
+        this.lcd.setCursorSync(0, 0);
+        this.lcd.printSync(">")
+
+        this.lcd.setCursorSync(1, 0);
+        this.lcd.printSync(this.currMenu[1]);
+        this.lcd.setCursorSync(1, 1);
+        this.lcd.printSync(this.currMenu[2]);
+
+        this.lcd.setCursorSync(8, 0);
+        this.lcd.printSync(this.currMenu[3]);
+    }
+
+    display4items = (menu)=>{
+        this.currMenu = menu;
+        this.arrow = 0;
+        this.lcd.clearSync();
+        this.lcd.setCursorSync(0, 0);
+        this.lcd.printSync(">")
+
+        this.lcd.setCursorSync(1, 0);
+        this.lcd.printSync(this.currMenu[1]);
+        this.lcd.setCursorSync(1, 1);
+        this.lcd.printSync(this.currMenu[2]);
+
+        this.lcd.setCursorSync(8, 0);
+        this.lcd.printSync(this.currMenu[3]);
+        this.lcd.setCursorSync(8, 1);
+        this.lcd.printSync(this.currMenu[4]);
+    }
+
+    display5items = (menu)=>{
+        this.currMenu = menu;
+        this.arrow = 0;
+        this.lcd.clearSync();
+        this.lcd.setCursorSync(0, 0);
+        this.lcd.printSync(">")
+
+        this.lcd.setCursorSync(1, 0);
+        this.lcd.printSync(this.currMenu[1]);
+        this.lcd.setCursorSync(1, 1);
+        this.lcd.printSync(this.currMenu[2]);
+
+        this.lcd.setCursorSync(8, 0);
+        this.lcd.printSync(this.currMenu[3]);
+        this.lcd.setCursorSync(8, 1);
+        this.lcd.printSync(this.currMenu[4]);
+
+        this.lcd.setCursorSync(14, 0);
+        this.lcd.printSync(this.currMenu[5]);
+    }
+
+    display6items = (menu)=>{
+        this.currMenu = menu;
+        this.arrow = 0;
+        this.lcd.clearSync();
+        this.lcd.setCursorSync(0, 0);
+        this.lcd.printSync(">")
+
+        this.lcd.setCursorSync(0, 0);
+        this.lcd.printSync(this.currMenu[1]);
+        this.lcd.setCursorSync(0, 1);
+        this.lcd.printSync(this.currMenu[2]);
+
+        this.lcd.setCursorSync(6, 0);
+        this.lcd.printSync(this.currMenu[3]);
+        this.lcd.setCursorSync(6, 1);
+        this.lcd.printSync(this.currMenu[4]);
+
+        this.lcd.setCursorSync(13, 0);
+        this.lcd.printSync(this.currMenu[5]);
+        this.lcd.setCursorSync(13, 1);
+        this.lcd.printSync(this.currMenu[6]);
+    }
+
+    init = ()=>{
+        let startMenu = ["startMenu", "Hello!"];
+        let mainMenu = ["mainMenu", "Pb-", "Pb+", "Const", "Dimmer", "T"];
+        let pbMinusMenu = ["pbMinusMenu", "Start", "Pr01", "Back"];//name of profile: max 6 symbols
+        let pbPlusMenu = ["pbPlusMenu", "Start", "Pr01", "Back"];//name of profile: max 6 symbols
+        let workPbMinusMenu = ["workPbMinus", "t=000", "t=000", "P=000%", "P=000%", "pt1", "run"];
+        let stayPbMinusMenu = ["stayPbMinusMenu", "t=000", "t=000", "P=000%", "P=000%", "pt1", "Zzz"];
+        let workPbPlusMenu = ["workPbPlusMenu", "t=000", "t=000", "P=000%", "P=000%", "pt1", "run"];
+        let stayPbPlusMenu = ["stayPbPlusMenu", "t=000", "t=000", "P=000%", "P=000%", "pt1", "Zzz"];
+        let pausePbMinusMenu = ["pausePbMinusMenu", "Pause", "Stop", "Back"];
+        let resumePbMinusMenu = ["resumePbMinusMenu", "Resume", "Stop", "Back"];
+        let pausePbPlusMenu = ["pausePbPlusMenu", "Pause", "Stop", "Back"];
+        let resumePbPlusMenu = ["resumePbPlusMenu", "Resume", "Stop", "Back"];
+        let constMenu = ["constMenu", "Start", "t=200", "Back", "Dur=120"];
+        let dimmerMenu = ["dimmerMenu", "Start", "P=000%", "Back", "Dur=120"]
+        let workConstMenu = ["workConstMenu", "t=000", "t=000", "P=000%", "P=000%", "120", "*C"];
+        let workDimmerMenu = ["workDimmerMenu", "t=000", "t=000", "P=000%", "P=000%", "120", "*D"];
+        let stayConstMenu = ["stayConstMenu", "t=000", "t=000", "P=000%", "P=000%", "200", "Zzz"];
+        let stayDimmerMenu = ["stayDimmerMenu", "t=000", "t=000", "P=000%", "P=000%", "200", "Zzz"];
+        let pauseConstMenu = ["pauseConstMenu", "Pause", "Stop", "Back"];
+        let resumeConstMenu = ["resumeConstMenu", "Resume", "Stop", "Back"];
+        let pauseDimmerMenu = ["pauseDimmerMenu", "Pause", "Stop", "Back"];
+        let resumeDimmerMenu = ["resumeDimmerMenu", "Resume", "Stop", "Back"];
+        let termMenu = ["termMenu", "t=000", "t=000", "C", "C"];
 
         this.rotary.on("rotate", (delta) => {
-            switch (this.currMenuName) {
+            switch (this.currMenu[0]) {
                 case "":
-                    this.currMenu = startMenu;
-                    this.currMenuName = "startMenu";
-                    this.arrow = 0;
-                    this.lcd.clearSync();
-            
-                    this.lcd.setCursorSync(5, 0);
-                    this.lcd.printSync(this.currMenu[0]);
+                    this.display1items(startMenu);
                     break;
                 case "startMenu":
+                case "termMenu":
+                    this.display5items(mainMenu);
                     break;
                 case "workPbMinusMenu"://display pause menu
-                    this.currMenu = pausePbMinusMenu;
-                    this.currMenuName = "pausePbMinusMenu";
-                    this.lcd.clearSync();
-            
-                    this.lcd.setCursorSync(1, 0);
-                    this.lcd.printSync(this.currMenu[0]);
-                    this.lcd.setCursorSync(1, 1);
-                    this.lcd.printSync(this.currMenu[1]);
-            
-                    this.lcd.setCursorSync(8, 0);
-                    this.lcd.printSync(this.currMenu[2]);
+                    this.display3items(pausePbMinusMenu);
                     break;
                 case "workPbPlusMenu"://display pause menu
-                    this.currMenu = pausePbPlusMenu;
-                    this.currMenuName = "pausePbPlusMenu";
-                    this.lcd.clearSync();
-            
-                    this.lcd.setCursorSync(1, 0);
-                    this.lcd.printSync(this.currMenu[0]);
-                    this.lcd.setCursorSync(1, 1);
-                    this.lcd.printSync(this.currMenu[1]);
-            
-                    this.lcd.setCursorSync(8, 0);
-                    this.lcd.printSync(this.currMenu[2]);
+                    this.display3items(pausePbPlusMenu);
                     break;
                 case "workConstMenu"://display pause menu
-                    this.currMenu = pauseConstMenu;
-                    this.currMenuName = "pauseConstMenu";
-                    this.lcd.clearSync();
-            
-                    this.lcd.setCursorSync(1, 0);
-                    this.lcd.printSync(this.currMenu[0]);
-                    this.lcd.setCursorSync(1, 1);
-                    this.lcd.printSync(this.currMenu[1]);
-            
-                    this.lcd.setCursorSync(8, 0);
-                    this.lcd.printSync(this.currMenu[2]);
+                    this.display3items(pauseConstMenu);
                     break;
                 case "workDimmerMenu"://display pause menu
-                    this.currMenu = pauseDimmerMenu;
-                    this.currMenuName = "pauseDimmerMenu";
-                    this.lcd.clearSync();
-            
-                    this.lcd.setCursorSync(1, 0);
-                    this.lcd.printSync(this.currMenu[0]);
-                    this.lcd.setCursorSync(1, 1);
-                    this.lcd.printSync(this.currMenu[1]);
-            
-                    this.lcd.setCursorSync(8, 0);
-                    this.lcd.printSync(this.currMenu[2]);
+                    this.display3items(pauseDimmerMenu);
                     break;
                 case "stayPbMinusMenu"://display resume menu
-                    this.currMenu = resumePbMinusMenu;
-                    this.currMenuName = "resumePbMinusMenu";
-                    this.lcd.clearSync();
-            
-                    this.lcd.setCursorSync(1, 0);
-                    this.lcd.printSync(this.currMenu[0]);
-                    this.lcd.setCursorSync(1, 1);
-                    this.lcd.printSync(this.currMenu[1]);
-            
-                    this.lcd.setCursorSync(8, 0);
-                    this.lcd.printSync(this.currMenu[2]);
+                    this.display3items(resumePbMinusMenu);
                     break;
                 case "stayPbPlusMenu"://display resume menu
-                    this.currMenu = resumePbPlusMenu;
-                    this.currMenuName = "resumePbPlusMenu";
-                    this.lcd.clearSync();
-            
-                    this.lcd.setCursorSync(1, 0);
-                    this.lcd.printSync(this.currMenu[0]);
-                    this.lcd.setCursorSync(1, 1);
-                    this.lcd.printSync(this.currMenu[1]);
-            
-                    this.lcd.setCursorSync(8, 0);
-                    this.lcd.printSync(this.currMenu[2]);
+                    this.display3items(resumePbPlusMenu);
                     break;
                 case "stayConstMenu":
-                    this.currMenu = resumeConstMenu;
-                    this.currMenuName = "resumeConstMenu";
-                    this.lcd.clearSync();
-            
-                    this.lcd.setCursorSync(1, 0);
-                    this.lcd.printSync(this.currMenu[0]);
-                    this.lcd.setCursorSync(1, 1);
-                    this.lcd.printSync(this.currMenu[1]);
-            
-                    this.lcd.setCursorSync(8, 0);
-                    this.lcd.printSync(this.currMenu[2]);
+                    this.display3items(resumeConstMenu);
                     break;
                 case "stayDimmerMenu":
-                    this.currMenu = resumeDimmerMenu;
-                    this.currMenuName = "resumeDimmerMenu";
-                    this.lcd.clearSync();
-            
-                    this.lcd.setCursorSync(1, 0);
-                    this.lcd.printSync(this.currMenu[0]);
-                    this.lcd.setCursorSync(1, 1);
-                    this.lcd.printSync(this.currMenu[1]);
-            
-                    this.lcd.setCursorSync(8, 0);
-                    this.lcd.printSync(this.currMenu[2]);
+                    this.display3items(resumeDimmerMenu);
                     break;
                 default:
                     this.arrow = this.arrow + delta;
@@ -246,218 +246,62 @@ class Menu {
         });
 
         this.rotary.on("pressed", () => {
-            switch (this.currMenuName) {
+            switch (this.currMenuName[0]) {
                 case "":
-                    this.currMenu = startMenu;
-                    this.currMenuName = "startMenu";
-                    this.arrow = 0;
-                    this.lcd.clearSync();
-            
-                    this.lcd.setCursorSync(5, 0);
-                    this.lcd.printSync(this.currMenu[0]);
+                    this.display1items(startMenu);
                     break;
                 case "startMenu":
-                    this.currMenu = mainMenu;
-                    this.currMenuName = "mainMenu";
-                    this.arrow = 0;
-                    this.lcd.clearSync();
-            
-                    this.lcd.setCursorSync(1, 0);
-                    this.lcd.printSync(this.currMenu[0]);
-                    this.lcd.setCursorSync(1, 1);
-                    this.lcd.printSync(this.currMenu[1]);
-            
-                    this.lcd.setCursorSync(8, 0);
-                    this.lcd.printSync(this.currMenu[2]);
-                    this.lcd.setCursorSync(8, 1);
-                    this.lcd.printSync(this.currMenu[3]);
-            
-                    this.lcd.setCursorSync(14, 0);
-                    this.lcd.printSync(this.currMenu[4]);
+                    this.display5items(mainMenu);
                     break;
                 case "mainMenu":
                     switch (this.arrow){
                         case 0://>Pb- pressed
-                            this.currMenu = pbMinusMenu;
-                            this.currMenuName = "pbMinusMenu";
-                            this.arrow = 0;
-                            this.lcd.clearSync();
-
-                            this.lcd.setCursorSync(1, 0);
-                            this.lcd.printSync(this.currMenu[0]);
-                            this.lcd.setCursorSync(1, 1);
-                            this.lcd.printSync(this.currMenu[1]);
-                    
-                            this.lcd.setCursorSync(8, 0);
-                            this.lcd.printSync(this.currMenu[2]);
+                            this.display3items(pbMinusMenu);
                             break;
                         case 1://>Pb+ pressed
-                            this.currMenu = pbPlusMenu;
-                            this.currMenuName = "pbPlusMenu";
-                            this.arrow = 0;
-                            this.lcd.clearSync();
-
-                            this.lcd.setCursorSync(1, 0);
-                            this.lcd.printSync(this.currMenu[0]);
-                            this.lcd.setCursorSync(1, 1);
-                            this.lcd.printSync(this.currMenu[1]);
-                    
-                            this.lcd.setCursorSync(8, 0);
-                            this.lcd.printSync(this.currMenu[2]);
+                            this.display3items(pbPlusMenu);
                             break;
                         case 2://>Const pressed
-                            this.currMenu = constMenu;
-                            this.currMenuName = "constMenu";
-                            this.arrow = 0;
-                            this.lcd.clearSync();
-
-                            this.lcd.setCursorSync(1, 0);
-                            this.lcd.printSync(this.currMenu[0]);
-                            this.lcd.setCursorSync(1, 1);
-                            this.lcd.printSync(this.currMenu[1]);
-                    
-                            this.lcd.setCursorSync(8, 0);
-                            this.lcd.printSync(this.currMenu[2]);
-                            this.lcd.setCursorSync(8, 1);
-                            this.lcd.printSync(this.currMenu[3]);
+                            this.display4items(constMenu);
                             break;
                         case 3://>Dimmer pressed
-                            this.currMenu = dimmerMenu;
-                            this.currMenuName = "dimmerMenu";
-                            this.arrow = 0;
-                            this.lcd.clearSync();
-
-                            this.lcd.setCursorSync(1, 0);
-                            this.lcd.printSync(this.currMenu[0]);
-                            this.lcd.setCursorSync(1, 1);
-                            this.lcd.printSync(this.currMenu[1]);
-                    
-                            this.lcd.setCursorSync(8, 0);
-                            this.lcd.printSync(this.currMenu[2]);
-                            this.lcd.setCursorSync(8, 1);
-                            this.lcd.printSync(this.currMenu[3]);
+                            this.display4items(dimmerMenu);
                             break;
                         case 4://>T pressed
-                            //for termometer
+                            this.display4items(termMenu);
                             break;
                     }
                     break;
                     case "pbMinusMenu":
                         switch (this.arrow) {
                             case 0://>Start pressed
-                                this.currMenu = workPbMinusMenu;
-                                this.currMenuName = "workPbMinusMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-
-                                this.lcd.setCursorSync(0, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(0, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(6, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(6, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-
-                                this.lcd.setCursorSync(13, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                this.lcd.setCursorSync(13, 1);
-                                this.lcd.printSync(this.currMenu[5]);
+                                this.display6items(workPbMinusMenu);
                                 break;
                             case 1://>Profile01 pressed
                                 //temporary block
                                 break;
                             case 2://>Back pressed
-                                this.currMenu = mainMenu;
-                                this.currMenuName = "mainMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-                        
-                                this.lcd.setCursorSync(1, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(1, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(8, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(8, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-                        
-                                this.lcd.setCursorSync(14, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                break;// ↑this duplicate from 160 line
+                            this.display5items(mainMenu);
+                                break;
                         }
                         break;
                     case "pbPlusMenu":
                         switch (this.arrow) {
                             case 0://>Start pressed
-                                this.currMenu = workPbPlusMenu;
-                                this.currMenuName = "workPbPlusMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-
-                                this.lcd.setCursorSync(0, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(0, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(6, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(6, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-
-                                this.lcd.setCursorSync(13, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                this.lcd.setCursorSync(13, 1);
-                                this.lcd.printSync(this.currMenu[5]);
+                                this.display6items(workPbPlusMenu);
                                 break;
                             case 1://>Profile01 pressed
                                 //temporary block
                                 break;
                             case 2://>Back pressed
-                                this.currMenu = mainMenu;
-                                this.currMenuName = "mainMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-                        
-                                this.lcd.setCursorSync(1, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(1, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(8, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(8, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-                        
-                                this.lcd.setCursorSync(14, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                break;// ↑this duplicate from 160 line
+                                this.display5items(mainMenu);
+                                break;
                         }
                         break;
                     case "constMenu":
                         switch (this.arrow) {
                             case 0://>Start pressed
-                                this.currMenu = workConstMenu;
-                                this.currMenuName = "workConstMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-
-                                this.lcd.setCursorSync(0, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(0, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(6, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(6, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-
-                                this.lcd.setCursorSync(13, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                this.lcd.setCursorSync(13, 1);
-                                this.lcd.printSync(this.currMenu[5]);
+                                this.display6items(workConstMenu);
                                 break;
                             case 1://>t=200 pressed
                                 //temporary block
@@ -466,48 +310,14 @@ class Menu {
                                 //temporary block
                                 break;
                             case 3://>Back pressed
-                                this.currMenu = mainMenu;
-                                this.currMenuName = "mainMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-                        
-                                this.lcd.setCursorSync(1, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(1, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(8, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(8, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-                        
-                                this.lcd.setCursorSync(14, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                break;// ↑this duplicate from 160 line
+                                this.display5items(mainMenu);
+                                break;
                         }
                         break;
                     case "dimmerMenu":
                         switch (this.arrow) {
                             case 0://>Start pressed
-                                this.currMenu = workDimmerMenu;
-                                this.currMenuName = "workDimmerMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-
-                                this.lcd.setCursorSync(0, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(0, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(6, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(6, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-
-                                this.lcd.setCursorSync(13, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                this.lcd.setCursorSync(13, 1);
-                                this.lcd.printSync(this.currMenu[5]);
+                                this.display6items(workDimmerMenu);
                                 break;
                             case 1://>P=000% pressed
                                 //temporary block
@@ -516,218 +326,46 @@ class Menu {
                                 //temporary block
                                 break;
                             case 3://>Back pressed
-                                this.currMenu = mainMenu;
-                                this.currMenuName = "mainMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-                        
-                                this.lcd.setCursorSync(1, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(1, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(8, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(8, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-                        
-                                this.lcd.setCursorSync(14, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                break;// ↑this duplicate from 160 line
+                                this.display5items(mainMenu);
+                                break;
                         }
                         break;
                     case "pausePbMinusMenu":
                         switch (this.arrow) {
                             case 0://>Pause pressed
-                                this.currMenu = stayPbMinusMenu;
-                                this.currMenuName = "stayPbMinusMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-
-                                this.lcd.setCursorSync(0, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(0, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(6, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(6, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-
-                                this.lcd.setCursorSync(13, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                this.lcd.setCursorSync(12, 1);//12!
-                                this.lcd.printSync(this.currMenu[5]);
+                                this.display6items(stayPbMinusMenu);
                                 break;
                             case 1://>Stop pressed
-                                this.currMenu = mainMenu;
-                                this.currMenuName = "mainMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-                        
-                                this.lcd.setCursorSync(1, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(1, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(8, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(8, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-                        
-                                this.lcd.setCursorSync(14, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                break;// ↑this duplicate from 160 line
+                                this.display5items(mainMenu);
+                                break;
                             case 2://>Back pressed
-                                this.currMenu = workPbMinusMenu;
-                                this.currMenuName = "workPbMinusMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-
-                                this.lcd.setCursorSync(0, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(0, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(6, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(6, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-
-                                this.lcd.setCursorSync(13, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                this.lcd.setCursorSync(13, 1);
-                                this.lcd.printSync(this.currMenu[5]);
+                                this.display6items(workPbMinusMenu);
                                 break;
                         }
                         break;
                     case "pausePbPlusMenu":
                         switch (this.arrow) {
                             case 0://>Pause pressed
-                                this.currMenu = stayPbPlusMenu;
-                                this.currMenuName = "stayPbPlusMenu;"
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-
-                                this.lcd.setCursorSync(0, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(0, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(6, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(6, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-
-                                this.lcd.setCursorSync(13, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                this.lcd.setCursorSync(12, 1);//12!
-                                this.lcd.printSync(this.currMenu[5]);
+                                this.display6items(stayPbPlusMenu);
                                 break;
                             case 1://>Stop pressed
-                                this.currMenu = mainMenu;
-                                this.currMenuName = "mainMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-                        
-                                this.lcd.setCursorSync(1, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(1, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(8, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(8, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-                        
-                                this.lcd.setCursorSync(14, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                break;// ↑this duplicate from 160 line
+                                this.display5items(mainMenu);
+                                break;
                             case 2://>Back pressed
-                                this.currMenu = workPbPlusMenu;
-                                this.currMenuName = "workPbPlusMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-
-                                this.lcd.setCursorSync(0, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(0, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(6, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(6, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-
-                                this.lcd.setCursorSync(13, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                this.lcd.setCursorSync(13, 1);
-                                this.lcd.printSync(this.currMenu[5]);
+                                this.display6items(workPbPlusMenu);
                                 break;
                         }
                         break;
                     case "pauseConstMenu":
                         switch (this.arrow) {
                             case 0://>Pause pressed
-                                this.currMenu = stayConstMenu;
-                                this.currMenuName = "stayConstMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-
-                                this.lcd.setCursorSync(0, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(0, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(6, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(6, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-
-                                this.lcd.setCursorSync(13, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                this.lcd.setCursorSync(12, 1);//12!
-                                this.lcd.printSync(this.currMenu[5]);
+                                this.display6items(stayConstMenu);
                                 break;
                             case 1://>Stop pressed
-                                this.currMenu = mainMenu;
-                                this.currMenuName = "mainMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-                        
-                                this.lcd.setCursorSync(1, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(1, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(8, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(8, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-                        
-                                this.lcd.setCursorSync(14, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                break;// ↑this duplicate from 160 line
+                                this.display5items(mainMenu);
+                                break;
                             case 2://>Back pressed
-                                this.currMenu = workConstMenu;
-                                this.currMenuName = "workConstMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-
-                                this.lcd.setCursorSync(0, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(0, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(6, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(6, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-
-                                this.lcd.setCursorSync(13, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                this.lcd.setCursorSync(13, 1);
-                                this.lcd.printSync(this.currMenu[5]);
+                                this.display6items(workConstMenu);
                                 break;
                         }
                         break;
@@ -735,324 +373,65 @@ class Menu {
                         switch (this.arrow) {
                             case 0://>Pause pressed
                                 this.currMenu = stayDimmerMenu;
-                                this.currMenuName = "stayDimmerMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-
-                                this.lcd.setCursorSync(0, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(0, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(6, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(6, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-
-                                this.lcd.setCursorSync(13, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                this.lcd.setCursorSync(12, 1);//12!
-                                this.lcd.printSync(this.currMenu[5]);
+                                this.display6items(stayDimmerMenu);
                                 break;
                             case 1://>Stop pressed
-                                this.currMenu = mainMenu;
-                                this.currMenuName = "mainMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-                        
-                                this.lcd.setCursorSync(1, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(1, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(8, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(8, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-                        
-                                this.lcd.setCursorSync(14, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                break;// ↑this duplicate from 160 line
+                                this.display5items(mainMenu);
+                                break;
                             case 2://>Back pressed
-                                this.currMenu = workDimmerMenu;
-                                this.currMenuName = "workDimmerMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-
-                                this.lcd.setCursorSync(0, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(0, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(6, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(6, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-
-                                this.lcd.setCursorSync(13, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                this.lcd.setCursorSync(13, 1);
-                                this.lcd.printSync(this.currMenu[5]);
+                                this.display6items(workDimmerMenu);
                                 break;
                         }
                         break;
                     case "resumePbMinusMenu":
                         switch (this.arrow) {
                             case 0://>Resume pressed
-                                this.currMenu = workPbMinusMenu;
-                                this.currMenuName = "workPbMinusMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-
-                                this.lcd.setCursorSync(0, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(0, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(6, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(6, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-
-                                this.lcd.setCursorSync(13, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                this.lcd.setCursorSync(13, 1);
-                                this.lcd.printSync(this.currMenu[5]);
+                                this.display6items(workPbMinusMenu);
                                 break;
                             case 1://>Stop pressed
-                                this.currMenu = mainMenu;
-                                this.currMenuName = "mainMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-                        
-                                this.lcd.setCursorSync(1, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(1, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(8, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(8, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-                        
-                                this.lcd.setCursorSync(14, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                break;// ↑this duplicate from 160 line
+                                this.display5items(mainMenu);
+                                break;
                             case 2://>Back pressed
-                                this.currMenu = stayPbMinusMenu;
-                                this.currMenuName = "stayPbMinusMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-
-                                this.lcd.setCursorSync(0, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(0, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(6, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(6, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-
-                                this.lcd.setCursorSync(13, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                this.lcd.setCursorSync(12, 1);//12!
-                                this.lcd.printSync(this.currMenu[5]);
+                                this.display6items(stayPbMinusMenu);
                                 break;
                         }
                         break;
                     case "resumePbPlusMenu":
                         switch (this.arrow) {
                             case 0://>Resume pressed
-                                this.currMenu = workPbPlusMenu;
-                                this.currMenuName = "workPbPlusMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-
-                                this.lcd.setCursorSync(0, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(0, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(6, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(6, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-
-                                this.lcd.setCursorSync(13, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                this.lcd.setCursorSync(13, 1);
-                                this.lcd.printSync(this.currMenu[5]);
+                                this.display6items(workPbPlusMenu);
                                 break;
                             case 1://>Stop pressed
-                                this.currMenu = mainMenu;
-                                this.currMenuName = "mainMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-                        
-                                this.lcd.setCursorSync(1, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(1, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(8, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(8, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-                        
-                                this.lcd.setCursorSync(14, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                break;// ↑this duplicate from 160 line
+                                this.display5items(mainMenu);
+                                break;
                             case 2://>Back pressed
-                                this.currMenu = stayPbPlusMenu;
-                                this.currMenuName = "stayPbPlusMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-
-                                this.lcd.setCursorSync(0, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(0, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(6, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(6, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-
-                                this.lcd.setCursorSync(13, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                this.lcd.setCursorSync(12, 1);//12!
-                                this.lcd.printSync(this.currMenu[5]);
+                                this.display6items(stayPbPlusMenu);
                                 break;
                         }
                         break;
                     case "resumeConstMenu":
                         switch (this.arrow) {
                             case 0://>Resume pressed
-                                this.currMenu = workConstMenu;
-                                this.currMenuName = "workConstMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-
-                                this.lcd.setCursorSync(0, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(0, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(6, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(6, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-
-                                this.lcd.setCursorSync(13, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                this.lcd.setCursorSync(13, 1);
-                                this.lcd.printSync(this.currMenu[5]);
+                                this.display6items(workConstMenu);
                                 break;
                             case 1://>Stop pressed
-                                this.currMenu = mainMenu;
-                                this.currMenuName = "mainMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-                        
-                                this.lcd.setCursorSync(1, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(1, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(8, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(8, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-                        
-                                this.lcd.setCursorSync(14, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                break;// ↑this duplicate from 160 line
+                                this.display5items(mainMenu);
+                                break;
                             case 2://>Back pressed
-                                this.currMenu = stayConstMenu;
-                                this.currMenuName = "stayConstMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-
-                                this.lcd.setCursorSync(0, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(0, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(6, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(6, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-
-                                this.lcd.setCursorSync(13, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                this.lcd.setCursorSync(12, 1);//12!
-                                this.lcd.printSync(this.currMenu[5]);
+                                this.display6items(stayConstMenu);
                                 break;
                         }
                         break;
                     case "resumeDimmerMenu":
                         switch (this.arrow) {
                             case 0://>Resume pressed
-                                this.currMenu = workDimmerMenu;
-                                this.currMenuName = "workDimmerMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-
-                                this.lcd.setCursorSync(0, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(0, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(6, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(6, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-
-                                this.lcd.setCursorSync(13, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                this.lcd.setCursorSync(13, 1);
-                                this.lcd.printSync(this.currMenu[5]);
+                                this.display6items(workDimmerMenu);
                                 break;
                             case 1://>Stop pressed
-                                this.currMenu = mainMenu;
-                                this.currMenuName = "mainMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-                        
-                                this.lcd.setCursorSync(1, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(1, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(8, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(8, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-                        
-                                this.lcd.setCursorSync(14, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                break;// ↑this duplicate from 160 line
+                                this.display5items(mainMenu);
+                                break;
                             case 2://>Back pressed
-                                this.currMenu = stayDimmerMenu;
-                                this.currMenuName = "stayDimmerMenu";
-                                this.arrow = 0;
-                                this.lcd.clearSync();
-
-                                this.lcd.setCursorSync(0, 0);
-                                this.lcd.printSync(this.currMenu[0]);
-                                this.lcd.setCursorSync(0, 1);
-                                this.lcd.printSync(this.currMenu[1]);
-                        
-                                this.lcd.setCursorSync(6, 0);
-                                this.lcd.printSync(this.currMenu[2]);
-                                this.lcd.setCursorSync(6, 1);
-                                this.lcd.printSync(this.currMenu[3]);
-
-                                this.lcd.setCursorSync(13, 0);
-                                this.lcd.printSync(this.currMenu[4]);
-                                this.lcd.setCursorSync(12, 1);//12!
-                                this.lcd.printSync(this.currMenu[5]);
+                                this.display6items(stayDimmerMenu);
                                 break;
                         }
                         break;
