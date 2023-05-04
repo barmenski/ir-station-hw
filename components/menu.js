@@ -242,11 +242,11 @@ class Menu {
                     }
 
             }
-            console.log("this.arrow :" + this.arrow + " this.currMenuName: " + this.currMenuName);
+            console.log("this.arrow :" + this.arrow + " this.currMenu[0]: " + this.currMenu[0]);
         });
 
         this.rotary.on("pressed", () => {
-            switch (this.currMenuName[0]) {
+            switch (this.currMenu[0]) {
                 case "":
                     this.display1items(startMenu);
                     break;
@@ -436,7 +436,7 @@ class Menu {
                         }
                         break;
             }
-	console.log("Rotary switch pressed. this.currMenuName: " + this.currMenuName+" .this: " + this.toString());
+	console.log("Rotary switch pressed. this.currMenu[0]: " + this.currMenu[0]+" .this: " + this.toString());
 });
 
 }
