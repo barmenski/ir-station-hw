@@ -31,7 +31,6 @@ class  Thermometer {
 	async display() {
 		while(this.cycle){
 		const { temp, unit } = this.max6675.readTemp();
-        this.lcd.clearSync();
 
         this.lcd.setCursorSync(8, 0);
         this.lcd.printSync(temp[0]);
