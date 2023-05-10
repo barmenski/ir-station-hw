@@ -17,7 +17,11 @@ class  Thermometer {
 	init = ()=> {
 		this.lcd = new LCD(1, 0x27, 16, 2);
 		this.lcd.began ? "" : this.lcd.beginSync();
-		this.max6675.setPin(CS="4", SCK="24", SO= ['25', '12'], UNIT=1);
+		const CS="4";
+		const SCK="24";
+		const SO= ['25', '12'];
+		const UNIT=1;
+		this.max6675.setPin(CS, SCK, SO, UNIT);
 	}
 
 	async sleep(ms) {
