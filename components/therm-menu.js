@@ -32,10 +32,10 @@ class  Thermometer {
 		while(this.cycle){
 		const { temp, unit } = this.max6675.readTemp();
 
-        this.lcd.setCursorSync(8, 0);
-        this.lcd.printSync(temp[0]);
-        this.lcd.setCursorSync(8, 1);
-        this.lcd.printSync(temp[1]);
+        this.lcd.setCursorSync(2, 0);
+        this.lcd.printSync(Math.round(Number(temp[0])));
+        this.lcd.setCursorSync(2, 1);
+        this.lcd.printSync(Math.round(Number(temp[1])));
 		await this.sleep(1000);
 		}
 		return "display stopped";
