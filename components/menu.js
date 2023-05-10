@@ -1,24 +1,16 @@
+const Thermometer = require('./therm-menu');
+
 const LCD = require('raspberrypi-liquid-crystal');
-const Max6675 = require('max6675-raspi');
+//const Max6675 = require('max6675-raspi');
 const Rotary = require('raspberrypi-rotary-encoder');
 
 class Menu {
+        lcd = new LCD(1, 0x27, 16, 2);
+        //max6675 = new Max6675();
+        rotary = new Rotary(pinClk=13, pinDt=14, pinSwitch=12);
+        therm = new Thermometer();
+        
     constructor () {
-        this.lcd = new LCD(1, 0x27, 16, 2);
-        this.lcd.beginSync();
-
-        const CS = '4';
-        const SCK = '24';
-        const SO = ['25', '12'];
-        const UNIT = 1;
-        this.max6675 = new Max6675();
-        this.max6675.setPin(CS, SCK, SO, UNIT);
-
-        const pinClk = 13;
-        const pinDt = 14;
-        const pinSwitch = 12;
-        this.rotary = new Rotary(pinClk, pinDt, pinSwitch);
-
         this.currMenu = [""];
         this.arrow = 0;
     }
@@ -109,6 +101,10 @@ class Menu {
     }
 
     init = ()=>{
+        this.lcd.beginSync();
+        this.lcd.clearSync();
+        //this.max6675.setPin(CS="4", SCK="24", SO= ['25', '12'], UNIT=1);
+
         let startMenu = ["startMenu", "Hello!"];
         let mainMenu = ["mainMenu", "Pb-", "Pb+", "Const", "Dimmer", "T"];
         let pbMinusMenu = ["pbMinusMenu", "Start", "Pr01", "Back"];//name of profile: max 6 symbols
@@ -131,15 +127,15 @@ class Menu {
         let resumeConstMenu = ["resumeConstMenu", "Resume", "Stop", "Back"];
         let pauseDimmerMenu = ["pauseDimmerMenu", "Pause", "Stop", "Back"];
         let resumeDimmerMenu = ["resumeDimmerMenu", "Resume", "Stop", "Back"];
-        let termMenu = ["termMenu", "t=000", "t=000", "C", "C"];
+        let thermMenu = ["thermMenu", "t=000", "t=000", "C", "C"];
 
-        this.rotary.on("rotate", (delta) => {
+        this.rotary.on("rotate", async (delta) => {
             switch (this.currMenu[0]) {
                 case "":
                     this.display1items(startMenu);
                     break;
                 case "startMenu":
-                case "termMenu":
+                case "thermMenu":
                     this.display5items(mainMenu);
                     break;
                 case "workPbMinusMenu"://display pause menu
@@ -165,6 +161,9 @@ class Menu {
                     break;
                 case "stayDimmerMenu":
                     this.display3items(resumeDimmerMenu);
+                    break;
+                case "thermMenu":
+                    await therm.stop();
                     break;
                 default:
                     this.arrow = this.arrow + delta;
@@ -241,7 +240,7 @@ class Menu {
             console.log("this.arrow :" + this.arrow + " this.currMenu[0]: " + this.currMenu[0]);
         });
 
-        this.rotary.on("pressed", () => {
+        this.rotary.on("pressed", async () => {
             switch (this.currMenu[0]) {
                 case "":
                     this.display1items(startMenu);
@@ -264,7 +263,8 @@ class Menu {
                             this.display4items(dimmerMenu);
                             break;
                         case 4://>T pressed
-                            this.display4items(termMenu);
+                            this.currMenu=thermMenu;
+                            await this.therm.measure();
                             break;
                     }
                     break;
@@ -302,11 +302,11 @@ class Menu {
                             case 1://>t=200 pressed
                                 //temporary block
                                 break;
-                            case 2://>Dur=120 pressed
-                                //temporary block
-                                break;
-                            case 3://>Back pressed
+                            case 2://>Back pressed
                                 this.display5items(mainMenu);
+                                break;
+                            case 3://>Dur=120 pressed
+                                //temporary block
                                 break;
                         }
                         break;
@@ -318,11 +318,11 @@ class Menu {
                             case 1://>P=000% pressed
                                 //temporary block
                                 break;
-                            case 2://>Dur=120 pressed
-                                //temporary block
-                                break;
-                            case 3://>Back pressed
+                            case 2://>Back pressed
                                 this.display5items(mainMenu);
+                                break;
+                            case 3://>Dur=120 pressed
+                                //temporary block
                                 break;
                         }
                         break;
