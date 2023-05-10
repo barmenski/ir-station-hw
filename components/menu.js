@@ -7,7 +7,10 @@ const Rotary = require('raspberrypi-rotary-encoder');
 class Menu {
         lcd = new LCD(1, 0x27, 16, 2);
         //max6675 = new Max6675();
-        rotary = new Rotary(pinClk=13, pinDt=14, pinSwitch=12);
+        pinClk=13; 
+        pinDt=14; 
+        pinSwitch=12;
+        rotary = new Rotary(pinClk, pinDt, pinSwitch);
         therm = new Thermometer();
         
     constructor () {
@@ -264,6 +267,7 @@ class Menu {
                             break;
                         case 4://>T pressed
                             this.currMenu=thermMenu;
+                            this.therm.init();
                             await this.therm.measure();
                             break;
                     }
