@@ -138,7 +138,6 @@ class Menu {
                     this.display1items(startMenu);
                     break;
                 case "startMenu":
-                case "thermMenu":
                     this.display5items(mainMenu);
                     break;
                 case "workPbMinusMenu"://display pause menu
@@ -167,6 +166,7 @@ class Menu {
                     break;
                 case "thermMenu":
                     await therm.stop();
+                    this.display5items(mainMenu);
                     break;
                 default:
                     this.arrow = this.arrow + delta;
