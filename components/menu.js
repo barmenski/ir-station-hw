@@ -10,7 +10,7 @@ class Menu {
         pinClk=13; 
         pinDt=14; 
         pinSwitch=12;
-        rotary = new Rotary(pinClk, pinDt, pinSwitch);
+        rotary = new Rotary(this.pinClk, this.pinDt, this.pinSwitch);
         therm = new Thermometer();
         
     constructor () {
