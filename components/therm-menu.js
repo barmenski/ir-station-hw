@@ -62,7 +62,7 @@ class  Thermometer {
 			this.lcd.printSync(this.thermMenu[4]);
 
 			await this.display();
-			await this.lcd.clear();
+			//await this.lcd.clear();
 			this.active = false;
 
 			return "measure is stopped";

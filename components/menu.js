@@ -1,12 +1,10 @@
 const Thermometer = require('./therm-menu');
 
 const LCD = require('raspberrypi-liquid-crystal');
-//const Max6675 = require('max6675-raspi');
 const Rotary = require('raspberrypi-rotary-encoder');
 
 class Menu {
         lcd = new LCD(1, 0x27, 16, 2);
-        //max6675 = new Max6675();
         pinClk=13; 
         pinDt=14; 
         pinSwitch=12;
