@@ -31,17 +31,36 @@ class  Thermometer {
 	async display() {
 		while(this.cycle){
 		const { temp, unit } = this.max6675.readTemp();
+		let temp1 = Math.round(Number(temp[0]));
+		let temp2 = Math.round(Number(temp[1]));
 
-        this.lcd.setCursorSync(2, 0);
-        this.lcd.printSync(Math.round(Number(temp[0])));
-        this.lcd.setCursorSync(2, 1);
-        this.lcd.printSync(Math.round(Number(temp[1])));
+		if (temp1<1000 && temp1>99) {
+			this.lcd.setCursorSync(2, 0);
+			this.lcd.printSync(temp1);
+		} else if (temp1<10){
+			this.lcd.setCursorSync(4, 0);
+			this.lcd.printSync(temp1);
+		} else {
+			this.lcd.setCursorSync(3, 0);
+			this.lcd.printSync(temp1);
+		}
+
+		if (temp1<1000 && temp1>99) {
+			this.lcd.setCursorSync(2, 1);
+			this.lcd.printSync(temp2);
+		} else if (temp1<10){
+			this.lcd.setCursorSync(4, 1);
+			this.lcd.printSync(temp2);
+		} else {
+			this.lcd.setCursorSync(3, 1);
+			this.lcd.printSync(temp2);
+		}
 		await this.sleep(1000);
 		}
 		return "display stopped";
 	}
 
-	async stop() {
+	stop() {
 		this.cycle = false;
 	}
 

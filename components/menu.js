@@ -163,7 +163,7 @@ class Menu {
                     this.display3items(resumeDimmerMenu);
                     break;
                 case "thermMenu":
-                    await this.therm.stop();
+                    this.therm.stop();
                     this.display5items(mainMenu);
                     break;
                 default:
