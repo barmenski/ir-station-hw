@@ -7,15 +7,6 @@ class  Thermometer {
 	thermMenu = ["thermMenu", "t=000", "t=000", "C", "C"];
 
 	constructor(){
-		this.lcd = new LCD(1, 0x27, 16, 2);
-		this.lcd.beginSync();
-
-		this.active = false;
-		this.cycle = false;
-	}
-
-	init = ()=> {
-		//this.lcd = new LCD(1, 0x27, 16, 2);
 		console.log("this.lcd.began: "+this.lcd.began);
 		this.lcd.began ? "" : this.lcd.beginSync();
 		const CS="4";
@@ -23,7 +14,21 @@ class  Thermometer {
 		const SO= ['25', '12'];
 		const UNIT=1;
 		this.max6675.setPin(CS, SCK, SO, UNIT);
+
+		this.active = false;
+		this.cycle = false;
 	}
+
+	// init = ()=> {
+	// 	//this.lcd = new LCD(1, 0x27, 16, 2);
+	// 	// console.log("this.lcd.began: "+this.lcd.began);
+	// 	// this.lcd.began ? "" : this.lcd.beginSync();
+	// 	const CS="4";
+	// 	const SCK="24";
+	// 	const SO= ['25', '12'];
+	// 	const UNIT=1;
+	// 	this.max6675.setPin(CS, SCK, SO, UNIT);
+	// }
 
 	async sleep(ms) {
 		return new Promise((resolve) => setTimeout(resolve, ms));

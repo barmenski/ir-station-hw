@@ -265,7 +265,7 @@ class Menu {
                             break;
                         case 4://>T pressed
                             this.currMenu=thermMenu;
-                            this.therm.init();
+                            //this.therm.init();
                             await this.therm.measure();
                             this.display5items(mainMenu);
                             break;
