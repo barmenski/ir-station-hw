@@ -15,7 +15,8 @@ class  Thermometer {
 	}
 
 	init = ()=> {
-		this.lcd = new LCD(1, 0x27, 16, 2);
+		//this.lcd = new LCD(1, 0x27, 16, 2);
+		console.log("this.lcd.began: "+this.lcd.began);
 		this.lcd.began ? "" : this.lcd.beginSync();
 		const CS="4";
 		const SCK="24";
