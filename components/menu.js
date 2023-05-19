@@ -164,7 +164,7 @@ class Menu {
                     break;
                 case "thermMenu":
                     this.therm.stop();
-                    this.display5items(mainMenu);
+                    
                     break;
                 default:
                     this.arrow = this.arrow + delta;
@@ -267,6 +267,7 @@ class Menu {
                             this.currMenu=thermMenu;
                             this.therm.init();
                             await this.therm.measure();
+                            this.display5items(mainMenu);
                             break;
                     }
                     break;
