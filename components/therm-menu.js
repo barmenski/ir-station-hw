@@ -61,8 +61,10 @@ class  Thermometer {
 			this.lcd.setCursorSync(3, 1);
 			this.lcd.printSync(temp2);
 		}
+		console.log("cycle");
 		await this.sleep(1000);
 		}
+		console.log("cycle stopped");
 		return "display stopped";
 	}
 
@@ -72,6 +74,7 @@ class  Thermometer {
 
 	async measure() {
 		if(!this.active){
+			console.log("measure");
 			this.active = true;
 			this.cycle = true;	
 
@@ -87,9 +90,8 @@ class  Thermometer {
 			this.lcd.printSync(this.thermMenu[4]);
 
 			await this.display();
-			//await this.lcd.clear();
 			this.active = false;
-
+			console.log("measure stopped");
 			return "measure is stopped";
 		} else return "measure is running";
 	}
