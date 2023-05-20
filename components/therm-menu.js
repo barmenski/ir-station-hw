@@ -40,7 +40,7 @@ class  Thermometer {
 		const { temp, unit } = this.max6675.readTemp();
 		let temp1 = Math.round(Number(temp[0]));
 		let temp2 = Math.round(Number(temp[1]));
-
+		console.log("temp1: "+temp1+" temp2: "+temp2);
 		if (temp1<1000 && temp1>99) {
 			this.lcd.setCursorSync(2, 0);
 			this.lcd.printSync(temp1);
