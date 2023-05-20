@@ -12,6 +12,7 @@ class Menu {
         therm = new Thermometer();
         
     constructor () {
+        this.lcd.beginSync();
         this.currMenu = [""];
         this.arrow = 0;
     }
@@ -102,7 +103,6 @@ class Menu {
     }
 
     init = ()=>{
-        this.lcd.beginSync();
         this.lcd.clearSync();
         //this.max6675.setPin(CS="4", SCK="24", SO= ['25', '12'], UNIT=1);
 
@@ -435,11 +435,10 @@ class Menu {
                         }
                         break;
             }
-	console.log("Rotary switch pressed. this.currMenu[0]: " + this.currMenu[0]+" .this: " + this.toString());
-});
-
-}
+	        console.log("Rotary switch pressed. this.currMenu[0]: " + this.currMenu[0]+" .this: " + this.toString());
+        });
     }
+}
 
 
 
