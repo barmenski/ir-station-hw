@@ -7,9 +7,7 @@ class  Thermometer {
 	thermMenu = ["thermMenu", "t=000", "t=000", "C", "C"];
 
 	constructor(){
-		console.log("therm this.lcd.began: "+this.lcd.began);
 		this.lcd.began ? "" : this.lcd.beginSync();
-		console.log("therm this.lcd.began: "+this.lcd.began);
 		const CS="4";
 		const SCK="24";
 		const SO= ['25', '12'];
@@ -20,17 +18,6 @@ class  Thermometer {
 		this.cycle = false;
 	}
 
-	// init = ()=> {
-	// 	//this.lcd = new LCD(1, 0x27, 16, 2);
-	// 	// console.log("this.lcd.began: "+this.lcd.began);
-	// 	// this.lcd.began ? "" : this.lcd.beginSync();
-	// 	const CS="4";
-	// 	const SCK="24";
-	// 	const SO= ['25', '12'];
-	// 	const UNIT=1;
-	// 	this.max6675.setPin(CS, SCK, SO, UNIT);
-	// }
-
 	async sleep(ms) {
 		return new Promise((resolve) => setTimeout(resolve, ms));
 	}
@@ -40,7 +27,7 @@ class  Thermometer {
 		const { temp, unit } = this.max6675.readTemp();
 		let temp1 = Math.round(Number(temp[0]));
 		let temp2 = Math.round(Number(temp[1]));
-		console.log("temp1: "+temp1+" temp2: "+temp2);
+
 		if (temp1<1000 && temp1>99) {
 			this.lcd.setCursorSync(2, 0);
 			this.lcd.printSync(temp1);
@@ -74,6 +61,10 @@ class  Thermometer {
 	}
 
 	async measure() {
+		console.log("therm this.lcd.began: "+this.lcd.began);
+		this.lcd.began ? "" : this.lcd.beginSync();
+		console.log("therm this.lcd.began: "+this.lcd.began);
+		
 		if(!this.active){
 			console.log("measure");
 			this.active = true;
