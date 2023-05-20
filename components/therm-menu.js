@@ -7,8 +7,9 @@ class  Thermometer {
 	thermMenu = ["thermMenu", "t=000", "t=000", "C", "C"];
 
 	constructor(){
-		console.log("this.lcd.began: "+this.lcd.began);
+		console.log("therm this.lcd.began: "+this.lcd.began);
 		this.lcd.began ? "" : this.lcd.beginSync();
+		console.log("therm this.lcd.began: "+this.lcd.began);
 		const CS="4";
 		const SCK="24";
 		const SO= ['25', '12'];

@@ -12,7 +12,9 @@ class Menu {
         therm = new Thermometer();
         
     constructor () {
+        console.log("menu this.lcd.began: "+this.lcd.began);
         this.lcd.beginSync();
+        console.log("menu this.lcd.began: "+this.lcd.began);
         this.currMenu = [""];
         this.arrow = 0;
     }
