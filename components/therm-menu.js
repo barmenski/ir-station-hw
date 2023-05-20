@@ -61,16 +61,13 @@ class  Thermometer {
 	}
 
 	async measure() {
-		console.log("therm this.lcd.began: "+this.lcd.began);
-		this.lcd.began ? "" : this.lcd.beginSync();
-		console.log("therm this.lcd.began: "+this.lcd.began);
 		
 		if(!this.active){
 			console.log("measure");
 			this.active = true;
 			this.cycle = true;	
 
-			await this.lcd.clear();
+			this.lcd.clearSync();
 			this.lcd.setCursorSync(0, 0);
 			this.lcd.printSync(this.thermMenu[1]);
 			this.lcd.setCursorSync(0, 1);
