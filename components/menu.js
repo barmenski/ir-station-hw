@@ -1,20 +1,17 @@
 const Thermometer = require('./therm-menu');
+const PbMinus = require('./pbMinus-menu');
 
 const LCD = require('raspberrypi-liquid-crystal');
 const Rotary = require('raspberrypi-rotary-encoder');
 
 class Menu {
         lcd = new LCD(1, 0x27, 16, 2);
-        pinClk=13; 
-        pinDt=14; 
-        pinSwitch=12;
-        rotary = new Rotary(this.pinClk, this.pinDt, this.pinSwitch);
+        rotary = new Rotary(13, 14, 12);//(pinClk, pinDt, pinSwitch);
         therm = new Thermometer();
+        pbMinus = new PbMinus();
         
     constructor () {
-        console.log("menu this.lcd.began: "+this.lcd.began);
         this.lcd.beginSync();
-        console.log("menu this.lcd.began: "+this.lcd.began);
         this.currMenu = [""];
         this.arrow = 0;
     }
@@ -79,7 +76,7 @@ class Menu {
         this.lcd.setCursorSync(8, 1);
         this.lcd.printSync(this.currMenu[4]);
 
-        this.lcd.setCursorSync(14, 0);
+        this.lcd.setCursorSync(15, 0);
         this.lcd.printSync(this.currMenu[5]);
     }
 
@@ -106,13 +103,12 @@ class Menu {
 
     init = ()=>{
         this.lcd.clearSync();
-        //this.max6675.setPin(CS="4", SCK="24", SO= ['25', '12'], UNIT=1);
 
         let startMenu = ["startMenu", "Hello!"];
         let mainMenu = ["mainMenu", "Pb-", "Pb+", "Const", "Dimmer", "T"];
         let pbMinusMenu = ["pbMinusMenu", "Start", "Pr01", "Back"];//name of profile: max 6 symbols
         let pbPlusMenu = ["pbPlusMenu", "Start", "Pr01", "Back"];//name of profile: max 6 symbols
-        let workPbMinusMenu = ["workPbMinus", "t=000", "t=000", "P=000%", "P=000%", "pt1", "run"];
+        let workPbMinusMenu = ["workPbMinusMenu", "t=000", "t=000", "P=000%", "P=000%", "pt1", "run"];
         let stayPbMinusMenu = ["stayPbMinusMenu", "t=000", "t=000", "P=000%", "P=000%", "pt1", "Zzz"];
         let workPbPlusMenu = ["workPbPlusMenu", "t=000", "t=000", "P=000%", "P=000%", "pt1", "run"];
         let stayPbPlusMenu = ["stayPbPlusMenu", "t=000", "t=000", "P=000%", "P=000%", "pt1", "Zzz"];
@@ -141,6 +137,8 @@ class Menu {
                     this.display5items(mainMenu);
                     break;
                 case "workPbMinusMenu"://display pause menu
+                    this.pbMinus.pause();
+                    //start constant temp mode
                     this.display3items(pausePbMinusMenu);
                     break;
                 case "workPbPlusMenu"://display pause menu
@@ -186,7 +184,7 @@ class Menu {
                             this.lcd.printSync(" ");
                             this.lcd.setCursorSync(7, 1);
                             this.lcd.printSync(" ");
-                            this.lcd.setCursorSync(13, 0);
+                            this.lcd.setCursorSync(14, 0);
                             this.lcd.printSync(" ");
                         break;
                         case 1:
@@ -198,7 +196,7 @@ class Menu {
                             this.lcd.printSync(" ");
                             this.lcd.setCursorSync(7, 1);
                             this.lcd.printSync(" ");
-                            this.lcd.setCursorSync(13, 0);
+                            this.lcd.setCursorSync(14, 0);
                             this.lcd.printSync(" ");
                         break;
                         case 2:
@@ -210,7 +208,7 @@ class Menu {
                             this.lcd.printSync(">");
                             this.lcd.setCursorSync(7, 1);
                             this.lcd.printSync(" ");
-                            this.lcd.setCursorSync(13, 0);
+                            this.lcd.setCursorSync(14, 0);
                             this.lcd.printSync(" ");
                         break;
                         case 3:
@@ -222,7 +220,7 @@ class Menu {
                             this.lcd.printSync(" ");
                             this.lcd.setCursorSync(7, 1);
                             this.lcd.printSync(">");
-                            this.lcd.setCursorSync(13, 0);
+                            this.lcd.setCursorSync(14, 0);
                             this.lcd.printSync(" ");
                         break;
                         case 4:
@@ -234,13 +232,12 @@ class Menu {
                             this.lcd.printSync(" ");
                             this.lcd.setCursorSync(7, 1);
                             this.lcd.printSync(" ");
-                            this.lcd.setCursorSync(13, 0);
+                            this.lcd.setCursorSync(14, 0);
                             this.lcd.printSync(">");
                         break;
                     }
 
             }
-            console.log("this.arrow :" + this.arrow + " this.currMenu[0]: " + this.currMenu[0]);
         });
 
         this.rotary.on("pressed", async () => {
@@ -267,16 +264,19 @@ class Menu {
                             break;
                         case 4://>T pressed
                             this.currMenu=thermMenu;
-                            //this.therm.init();
-                            await this.therm.measure();
-                            this.display5items(mainMenu);
+                            await this.therm.measure();//waiting for measuring process
+                            this.display5items(mainMenu);//display mainMenu after this.therm.stop();
                             break;
                     }
                     break;
                     case "pbMinusMenu":
                         switch (this.arrow) {
                             case 0://>Start pressed
-                                this.display6items(workPbMinusMenu);
+                                //this.display6items(workPbMinusMenu);
+                                this.currMenu=pbMinusMenu;
+                                this.pbMinus.displayTitles();
+                                await this.pbMinus.start();
+                                this.display5items(mainMenu);//display mainMenu after this.pbMinus.stop();
                                 break;
                             case 1://>Profile01 pressed
                                 //temporary block
@@ -337,7 +337,8 @@ class Menu {
                                 this.display6items(stayPbMinusMenu);
                                 break;
                             case 1://>Stop pressed
-                                this.display5items(mainMenu);
+                                //this.display5items(mainMenu);
+                                this.pbMinus.stop();
                                 break;
                             case 2://>Back pressed
                                 this.display6items(workPbMinusMenu);

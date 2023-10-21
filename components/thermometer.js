@@ -8,7 +8,7 @@ class  Thermometer {
 
 	this.CS = '4';
 	this.SCK = '24';
-	this.SO = ['25', '12'];
+	this.SO = ['25', '8'];
 	this.UNIT = 1;
 
 	this.max6675 = new Max6675();

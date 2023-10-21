@@ -68,8 +68,8 @@ class Controller {
       let result =
         this.k_p * error + this.k_i * this.sumError + this.k_d * dError;
       if (result > 0) {
-        if (result > 3420) {
-          result = 3420;
+        if (result > 100) {
+          result = 100;
         }
       } else {
         result = 0;

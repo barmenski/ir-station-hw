@@ -10,7 +10,7 @@ class  Thermometer {
 		this.lcd.began ? "" : this.lcd.beginSync();
 		const CS="4";
 		const SCK="24";
-		const SO= ['25', '12'];
+		const SO= ['25', '8'];
 		const UNIT=1;
 		this.max6675.setPin(CS, SCK, SO, UNIT);
 
@@ -25,34 +25,32 @@ class  Thermometer {
 	async display() {
 		while(this.cycle){
 		const { temp, unit } = this.max6675.readTemp();
-		let temp1 = Math.round(Number(temp[0]));
-		let temp2 = Math.round(Number(temp[1]));
+		let tempChip = Math.round(Number(temp[0]));
+		let tempBoard = Math.round(Number(temp[1]));
 
-		if (temp1<1000 && temp1>99) {
+		if (tempChip<1000 && tempChip>99) {
 			this.lcd.setCursorSync(2, 0);
-			this.lcd.printSync(temp1);
-		} else if (temp1<10){
+			this.lcd.printSync(tempChip);
+		} else if (tempChip<10){
 			this.lcd.setCursorSync(4, 0);
-			this.lcd.printSync(temp1);
+			this.lcd.printSync(tempChip);
 		} else {
 			this.lcd.setCursorSync(3, 0);
-			this.lcd.printSync(temp1);
+			this.lcd.printSync(tempChip);
 		}
 
-		if (temp1<1000 && temp1>99) {
+		if (tempChip<1000 && tempBoard>99) {
 			this.lcd.setCursorSync(2, 1);
-			this.lcd.printSync(temp2);
-		} else if (temp1<10){
+			this.lcd.printSync(tempBoard);
+		} else if (tempChip<10){
 			this.lcd.setCursorSync(4, 1);
-			this.lcd.printSync(temp2);
+			this.lcd.printSync(tempBoard);
 		} else {
 			this.lcd.setCursorSync(3, 1);
-			this.lcd.printSync(temp2);
+			this.lcd.printSync(tempBoard);
 		}
-		console.log("cycle");
 		await this.sleep(1000);
 		}
-		console.log("cycle stopped");
 		return "display stopped";
 	}
 
