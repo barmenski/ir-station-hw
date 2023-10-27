@@ -6,9 +6,9 @@ class  Thermometer {
 	this.lcd = new LCD(1, 0x27, 16, 2);
 	this.lcd.beginSync();
 
-	this.CS = '4';
-	this.SCK = '24';
-	this.SO = ['25', '8'];
+	this.CS = '4'; //GPIO4=pin7
+	this.SCK = '24';//GPIO24=pin18
+	this.SO = ['8', '25'];//GPIO8,25=pin24(top),22(bottom)
 	this.UNIT = 1;
 
 	this.max6675 = new Max6675();
@@ -45,8 +45,8 @@ async measure() {
 		this.cycle = true;	
 		//this.max6675.setPin(this.CS, this.SCK, this.SO, this.UNIT);
 		await this.lcd.clear();
-		await this.lcd.printLine(0, "Temp1: ");
-		await this.lcd.printLine(1, "Temp2: ");
+		await this.lcd.printLine(0, "Top  : ");
+		await this.lcd.printLine(1, "Bottm: ");
 		let res = await this.display();
 		await this.lcd.clear();
 		//this.max6675.stop();
