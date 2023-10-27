@@ -2,7 +2,7 @@ const Max6675 = require("max6675-raspi");
 
 const CS = "4";
 const SCK = "24";
-const SO = ["25", "12"];
+const SO = ["25", "8"];
 const UNIT = "1";
 const max6675 = new Max6675();
 max6675.setPin(CS, SCK, SO, UNIT);
