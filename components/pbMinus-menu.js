@@ -17,7 +17,7 @@ class  PbMinus {
 		this.lcd.began ? "" : this.lcd.beginSync();
 		const CS="4";
 		const SCK="24";
-		const SO= ['25', '8'];
+		const SO= ['8', '25'];
 		const UNIT=1;
 		this.max6675.setPin(CS, SCK, SO, UNIT);
 
