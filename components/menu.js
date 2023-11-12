@@ -1,109 +1,23 @@
 const Thermometer = require('./therm-menu');
 const PbMinus = require('./pbMinus-menu');
+const DisplayLCD = require('./displayLCD');
 
-const LCD = require('raspberrypi-liquid-crystal');
+
 const Rotary = require('raspberrypi-rotary-encoder');
 
 class Menu {
-        lcd = new LCD(1, 0x27, 16, 2);
         rotary = new Rotary(13, 14, 12);//(pinClk, pinDt, pinSwitch);
-        therm = new Thermometer();
+        thermometer = new Thermometer();
         pbMinus = new PbMinus();
+        displayLCD = new DisplayLCD();
         
     constructor () {
-        this.lcd.beginSync();
         this.currMenu = [""];
         this.arrow = 0;
     }
 
-    display1items = (menu)=>{
-        this.currMenu = menu;
-        this.arrow = 0;
-        this.lcd.clearSync();
-
-        this.lcd.setCursorSync(5, 0);
-        this.lcd.printSync(this.currMenu[1]);
-    }
-
-    display3items = (menu)=>{
-        this.currMenu = menu;
-        this.arrow = 0;
-        this.lcd.clearSync();
-        this.lcd.setCursorSync(0, 0);
-        this.lcd.printSync(">")
-
-        this.lcd.setCursorSync(1, 0);
-        this.lcd.printSync(this.currMenu[1]);
-        this.lcd.setCursorSync(1, 1);
-        this.lcd.printSync(this.currMenu[2]);
-
-        this.lcd.setCursorSync(8, 0);
-        this.lcd.printSync(this.currMenu[3]);
-    }
-
-    display4items = (menu)=>{
-        this.currMenu = menu;
-        this.arrow = 0;
-        this.lcd.clearSync();
-        this.lcd.setCursorSync(0, 0);
-        this.lcd.printSync(">")
-
-        this.lcd.setCursorSync(1, 0);
-        this.lcd.printSync(this.currMenu[1]);
-        this.lcd.setCursorSync(1, 1);
-        this.lcd.printSync(this.currMenu[2]);
-
-        this.lcd.setCursorSync(8, 0);
-        this.lcd.printSync(this.currMenu[3]);
-        this.lcd.setCursorSync(8, 1);
-        this.lcd.printSync(this.currMenu[4]);
-    }
-
-    display5items = (menu)=>{
-        this.currMenu = menu;
-        this.arrow = 0;
-        this.lcd.clearSync();
-        this.lcd.setCursorSync(0, 0);
-        this.lcd.printSync(">")
-
-        this.lcd.setCursorSync(1, 0);
-        this.lcd.printSync(this.currMenu[1]);
-        this.lcd.setCursorSync(1, 1);
-        this.lcd.printSync(this.currMenu[2]);
-
-        this.lcd.setCursorSync(8, 0);
-        this.lcd.printSync(this.currMenu[3]);
-        this.lcd.setCursorSync(8, 1);
-        this.lcd.printSync(this.currMenu[4]);
-
-        this.lcd.setCursorSync(15, 0);
-        this.lcd.printSync(this.currMenu[5]);
-    }
-
-    display6items = (menu)=>{
-        this.currMenu = menu;
-        this.arrow = 0;
-        this.lcd.clearSync();
-
-        this.lcd.setCursorSync(0, 0);
-        this.lcd.printSync(this.currMenu[1]);
-        this.lcd.setCursorSync(0, 1);
-        this.lcd.printSync(this.currMenu[2]);
-
-        this.lcd.setCursorSync(6, 0);
-        this.lcd.printSync(this.currMenu[3]);
-        this.lcd.setCursorSync(6, 1);
-        this.lcd.printSync(this.currMenu[4]);
-
-        this.lcd.setCursorSync(13, 0);
-        this.lcd.printSync(this.currMenu[5]);
-        this.lcd.setCursorSync(13, 1);
-        this.lcd.printSync(this.currMenu[6]);
-    }
-
+    
     init = ()=>{
-        this.lcd.clearSync();
-
         let startMenu = ["startMenu", "Hello!"];
         let mainMenu = ["mainMenu", "Pb-", "Pb+", "Const", "Dimmer", "T"];
         let pbMinusMenu = ["pbMinusMenu", "Start", "Pr01", "Back"];//name of profile: max 6 symbols
@@ -131,39 +45,39 @@ class Menu {
         this.rotary.on("rotate", async (delta) => {
             switch (this.currMenu[0]) {
                 case "":
-                    this.display1items(startMenu);
+                    this.displayLCD.display(startMenu);
                     break;
                 case "startMenu":
-                    this.display5items(mainMenu);
+                    this.displayLCD.display(mainMenu);
                     break;
                 case "workPbMinusMenu"://display pause menu
                     this.pbMinus.pause();
                     //start constant temp mode
-                    this.display3items(pausePbMinusMenu);
+                    this.displayLCD.display(pausePbMinusMenu);
                     break;
                 case "workPbPlusMenu"://display pause menu
-                    this.display3items(pausePbPlusMenu);
+                    this.displayLCD.display(pausePbPlusMenu);
                     break;
                 case "workConstMenu"://display pause menu
-                    this.display3items(pauseConstMenu);
+                    this.displayLCD.display(pauseConstMenu);
                     break;
                 case "workDimmerMenu"://display pause menu
-                    this.display3items(pauseDimmerMenu);
+                    this.displayLCD.display(pauseDimmerMenu);
                     break;
                 case "stayPbMinusMenu"://display resume menu
-                    this.display3items(resumePbMinusMenu);
+                    this.displayLCD.display(resumePbMinusMenu);
                     break;
                 case "stayPbPlusMenu"://display resume menu
-                    this.display3items(resumePbPlusMenu);
+                    this.displayLCD.display(resumePbPlusMenu);
                     break;
                 case "stayConstMenu":
-                    this.display3items(resumeConstMenu);
+                    this.displayLCD.display(resumeConstMenu);
                     break;
                 case "stayDimmerMenu":
-                    this.display3items(resumeDimmerMenu);
+                    this.displayLCD.display(resumeDimmerMenu);
                     break;
                 case "thermMenu":
-                    this.therm.stop();
+                    this.thermometer.stop();
                     
                     break;
                 default:
@@ -174,68 +88,9 @@ class Menu {
                     if(this.arrow<0) {
                         this.arrow = this.currMenu.length-2;
                     }
-                    switch (this.arrow){
-                        case 0:
-                            this.lcd.setCursorSync(0, 0);
-                            this.lcd.printSync(">");
-                            this.lcd.setCursorSync(0, 1);
-                            this.lcd.printSync(" ");
-                            this.lcd.setCursorSync(7, 0);
-                            this.lcd.printSync(" ");
-                            this.lcd.setCursorSync(7, 1);
-                            this.lcd.printSync(" ");
-                            this.lcd.setCursorSync(14, 0);
-                            this.lcd.printSync(" ");
-                        break;
-                        case 1:
-                            this.lcd.setCursorSync(0, 0);
-                            this.lcd.printSync(" ");
-                            this.lcd.setCursorSync(0, 1);
-                            this.lcd.printSync(">");
-                            this.lcd.setCursorSync(7, 0);
-                            this.lcd.printSync(" ");
-                            this.lcd.setCursorSync(7, 1);
-                            this.lcd.printSync(" ");
-                            this.lcd.setCursorSync(14, 0);
-                            this.lcd.printSync(" ");
-                        break;
-                        case 2:
-                            this.lcd.setCursorSync(0, 0);
-                            this.lcd.printSync(" ");
-                            this.lcd.setCursorSync(0, 1);
-                            this.lcd.printSync(" ");
-                            this.lcd.setCursorSync(7, 0);
-                            this.lcd.printSync(">");
-                            this.lcd.setCursorSync(7, 1);
-                            this.lcd.printSync(" ");
-                            this.lcd.setCursorSync(14, 0);
-                            this.lcd.printSync(" ");
-                        break;
-                        case 3:
-                            this.lcd.setCursorSync(0, 0);
-                            this.lcd.printSync(" ");
-                            this.lcd.setCursorSync(0, 1);
-                            this.lcd.printSync(" ");
-                            this.lcd.setCursorSync(7, 0);
-                            this.lcd.printSync(" ");
-                            this.lcd.setCursorSync(7, 1);
-                            this.lcd.printSync(">");
-                            this.lcd.setCursorSync(14, 0);
-                            this.lcd.printSync(" ");
-                        break;
-                        case 4:
-                            this.lcd.setCursorSync(0, 0);
-                            this.lcd.printSync(" ");
-                            this.lcd.setCursorSync(0, 1);
-                            this.lcd.printSync(" ");
-                            this.lcd.setCursorSync(7, 0);
-                            this.lcd.printSync(" ");
-                            this.lcd.setCursorSync(7, 1);
-                            this.lcd.printSync(" ");
-                            this.lcd.setCursorSync(14, 0);
-                            this.lcd.printSync(">");
-                        break;
-                    }
+
+                    this.displayLCD.moveArrow(this.arrow);
+                    
 
             }
         });
@@ -243,72 +98,72 @@ class Menu {
         this.rotary.on("pressed", async () => {
             switch (this.currMenu[0]) {
                 case "":
-                    this.display1items(startMenu);
+                    this.displayLCD.display(startMenu);
                     break;
                 case "startMenu":
-                    this.display5items(mainMenu);
+                    this.displayLCD.display(mainMenu);
                     break;
                 case "mainMenu":
                     switch (this.arrow){
                         case 0://>Pb- pressed
-                            this.display3items(pbMinusMenu);
+                            this.displayLCD.display(pbMinusMenu);
                             break;
                         case 1://>Pb+ pressed
-                            this.display3items(pbPlusMenu);
+                            this.displayLCD.display(pbPlusMenu);
                             break;
                         case 2://>Const pressed
-                            this.display4items(constMenu);
+                            this.displayLCD.display(constMenu);
                             break;
                         case 3://>Dimmer pressed
-                            this.display4items(dimmerMenu);
+                            this.displayLCD.display(dimmerMenu);
                             break;
                         case 4://>T pressed
                             this.currMenu=thermMenu;
-                            await this.therm.measure();//waiting for measuring process
-                            this.display5items(mainMenu);//display mainMenu after this.therm.stop();
+                            await this.thermometer.measure();//waiting for measuring process
+                            this.displayLCD.display(mainMenu);//display mainMenu after this.therm.stop();
                             break;
                     }
                     break;
                     case "pbMinusMenu":
                         switch (this.arrow) {
                             case 0://>Start pressed
-                                //this.display6items(workPbMinusMenu);
+                                //this.displayLCD.display(workPbMinusMenu);
                                 this.currMenu=pbMinusMenu;
                                 this.pbMinus.displayTitles();
                                 await this.pbMinus.start();
-                                this.display5items(mainMenu);//display mainMenu after this.pbMinus.stop();
+                                this.displayLCD.display(mainMenu);//display mainMenu after this.pbMinus.stop();
                                 break;
                             case 1://>Profile01 pressed
                                 //temporary block
                                 break;
                             case 2://>Back pressed
-                            this.display5items(mainMenu);
+                            this.displayLCD.display(mainMenu);
                                 break;
                         }
                         break;
                     case "pbPlusMenu":
                         switch (this.arrow) {
                             case 0://>Start pressed
-                                this.display6items(workPbPlusMenu);
+                                this.displayLCD.display(workPbPlusMenu);
                                 break;
                             case 1://>Profile01 pressed
                                 //temporary block
                                 break;
                             case 2://>Back pressed
-                                this.display5items(mainMenu);
+                                this.displayLCD.display(mainMenu);
                                 break;
                         }
                         break;
                     case "constMenu":
                         switch (this.arrow) {
                             case 0://>Start pressed
-                                this.display6items(workConstMenu);
+                                this.displayLCD.display(workConstMenu);
                                 break;
                             case 1://>t=200 pressed
                                 //temporary block
                                 break;
                             case 2://>Back pressed
-                                this.display5items(mainMenu);
+                                this.displayLCD.display(mainMenu);
                                 break;
                             case 3://>Dur=120 pressed
                                 //temporary block
@@ -318,13 +173,13 @@ class Menu {
                     case "dimmerMenu":
                         switch (this.arrow) {
                             case 0://>Start pressed
-                                this.display6items(workDimmerMenu);
+                                this.displayLCD.display(workDimmerMenu);
                                 break;
                             case 1://>P=000% pressed
                                 //temporary block
                                 break;
                             case 2://>Back pressed
-                                this.display5items(mainMenu);
+                                this.displayLCD.display(mainMenu);
                                 break;
                             case 3://>Dur=120 pressed
                                 //temporary block
@@ -334,40 +189,40 @@ class Menu {
                     case "pausePbMinusMenu":
                         switch (this.arrow) {
                             case 0://>Pause pressed
-                                this.display6items(stayPbMinusMenu);
+                                this.displayLCD.display(stayPbMinusMenu);
                                 break;
                             case 1://>Stop pressed
-                                //this.display5items(mainMenu);
+                                //this.displayLCD.display(mainMenu);
                                 this.pbMinus.stop();
                                 break;
                             case 2://>Back pressed
-                                this.display6items(workPbMinusMenu);
+                                this.displayLCD.display(workPbMinusMenu);
                                 break;
                         }
                         break;
                     case "pausePbPlusMenu":
                         switch (this.arrow) {
                             case 0://>Pause pressed
-                                this.display6items(stayPbPlusMenu);
+                                this.displayLCD.display(stayPbPlusMenu);
                                 break;
                             case 1://>Stop pressed
-                                this.display5items(mainMenu);
+                                this.displayLCD.display(mainMenu);
                                 break;
                             case 2://>Back pressed
-                                this.display6items(workPbPlusMenu);
+                                this.displayLCD.display(workPbPlusMenu);
                                 break;
                         }
                         break;
                     case "pauseConstMenu":
                         switch (this.arrow) {
                             case 0://>Pause pressed
-                                this.display6items(stayConstMenu);
+                                this.displayLCD.display(stayConstMenu);
                                 break;
                             case 1://>Stop pressed
-                                this.display5items(mainMenu);
+                                this.displayLCD.display(mainMenu);
                                 break;
                             case 2://>Back pressed
-                                this.display6items(workConstMenu);
+                                this.displayLCD.display(workConstMenu);
                                 break;
                         }
                         break;
@@ -375,67 +230,69 @@ class Menu {
                         switch (this.arrow) {
                             case 0://>Pause pressed
                                 this.currMenu = stayDimmerMenu;
-                                this.display6items(stayDimmerMenu);
+                                this.displayLCD.display(stayDimmerMenu);
                                 break;
                             case 1://>Stop pressed
-                                this.display5items(mainMenu);
+                                this.displayLCD.display(mainMenu);
                                 break;
                             case 2://>Back pressed
-                                this.display6items(workDimmerMenu);
+                                this.displayLCD.display(workDimmerMenu);
                                 break;
                         }
                         break;
                     case "resumePbMinusMenu":
                         switch (this.arrow) {
                             case 0://>Resume pressed
-                                this.display6items(workPbMinusMenu);
+                                this.displayLCD.display(workPbMinusMenu);
                                 break;
                             case 1://>Stop pressed
-                                this.display5items(mainMenu);
+                                this.displayLCD.display(mainMenu);
                                 break;
                             case 2://>Back pressed
-                                this.display6items(stayPbMinusMenu);
+                                this.displayLCD.display(stayPbMinusMenu);
                                 break;
                         }
                         break;
                     case "resumePbPlusMenu":
                         switch (this.arrow) {
                             case 0://>Resume pressed
-                                this.display6items(workPbPlusMenu);
+                                this.displayLCD.display(workPbPlusMenu);
                                 break;
                             case 1://>Stop pressed
-                                this.display5items(mainMenu);
+                                this.displayLCD.display(mainMenu);
                                 break;
                             case 2://>Back pressed
-                                this.display6items(stayPbPlusMenu);
+                                this.displayLCD.display(stayPbPlusMenu);
                                 break;
                         }
                         break;
                     case "resumeConstMenu":
                         switch (this.arrow) {
                             case 0://>Resume pressed
-                                this.display6items(workConstMenu);
+                                this.displayLCD.display(workConstMenu);
                                 break;
                             case 1://>Stop pressed
-                                this.display5items(mainMenu);
+                                this.displayLCD.display(mainMenu);
                                 break;
                             case 2://>Back pressed
-                                this.display6items(stayConstMenu);
+                                this.displayLCD.display(stayConstMenu);
                                 break;
                         }
                         break;
                     case "resumeDimmerMenu":
                         switch (this.arrow) {
                             case 0://>Resume pressed
-                                this.display6items(workDimmerMenu);
+                                this.displayLCD.display(workDimmerMenu);
                                 break;
                             case 1://>Stop pressed
-                                this.display5items(mainMenu);
+                                this.displayLCD.display(mainMenu);
                                 break;
                             case 2://>Back pressed
-                                this.display6items(stayDimmerMenu);
+                                this.displayLCD.display(stayDimmerMenu);
                                 break;
                         }
+                        break;
+                    default:
                         break;
             }
 	        console.log("Rotary switch pressed. this.currMenu[0]: " + this.currMenu[0]+" .this: " + this.toString());
