@@ -46,39 +46,48 @@ class Menu {
             switch (this.currMenu[0]) {
                 case "":
                     this.displayLCD.display(startMenu);
+                    this.currMenu = startMenu;
                     break;
                 case "startMenu":
                     this.displayLCD.display(mainMenu);
+                    this.currMenu = mainMenu;
                     break;
                 case "workPbMinusMenu"://display pause menu
                     this.pbMinus.pause();
                     //start constant temp mode
                     this.displayLCD.display(pausePbMinusMenu);
+                    this.currMenu = pausePbMinusMenu;
                     break;
                 case "workPbPlusMenu"://display pause menu
                     this.displayLCD.display(pausePbPlusMenu);
+                    this.currMenu = pausePbPlusMenu;
                     break;
                 case "workConstMenu"://display pause menu
                     this.displayLCD.display(pauseConstMenu);
+                    this.currMenu = pauseConstMenu;
                     break;
                 case "workDimmerMenu"://display pause menu
                     this.displayLCD.display(pauseDimmerMenu);
+                    this.currMenu = pauseDimmerMenu;
                     break;
                 case "stayPbMinusMenu"://display resume menu
                     this.displayLCD.display(resumePbMinusMenu);
+                    this.currMenu = resumePbMinusMenu;
                     break;
                 case "stayPbPlusMenu"://display resume menu
                     this.displayLCD.display(resumePbPlusMenu);
+                    this.currMenu = resumePbPlusMenu;
                     break;
                 case "stayConstMenu":
                     this.displayLCD.display(resumeConstMenu);
+                    this.currMenu = resumeConstMenu;
                     break;
                 case "stayDimmerMenu":
                     this.displayLCD.display(resumeDimmerMenu);
+                    this.currMenu = resumeDimmerMenu;
                     break;
                 case "thermMenu":
                     this.thermometer.stop();
-                    
                     break;
                 default:
                     this.arrow = this.arrow + delta;
@@ -99,28 +108,35 @@ class Menu {
             switch (this.currMenu[0]) {
                 case "":
                     this.displayLCD.display(startMenu);
+                    this.currMenu = startMenu;
                     break;
                 case "startMenu":
                     this.displayLCD.display(mainMenu);
+                    this.currMenu = mainMenu;
                     break;
                 case "mainMenu":
                     switch (this.arrow){
                         case 0://>Pb- pressed
                             this.displayLCD.display(pbMinusMenu);
+                            this.currMenu = pbMinusMenu;
                             break;
                         case 1://>Pb+ pressed
                             this.displayLCD.display(pbPlusMenu);
+                            this.currMenu = pbPlusMenu;
                             break;
                         case 2://>Const pressed
                             this.displayLCD.display(constMenu);
+                            this.currMenu = constMenu;
                             break;
                         case 3://>Dimmer pressed
                             this.displayLCD.display(dimmerMenu);
+                            this.currMenu = dimmerMenu;
                             break;
                         case 4://>T pressed
                             this.currMenu=thermMenu;
                             await this.thermometer.measure();//waiting for measuring process
                             this.displayLCD.display(mainMenu);//display mainMenu after this.therm.stop();
+                            this.currMenu = mainMenu;
                             break;
                     }
                     break;
@@ -132,12 +148,14 @@ class Menu {
                                 this.pbMinus.displayTitles();
                                 await this.pbMinus.start();
                                 this.displayLCD.display(mainMenu);//display mainMenu after this.pbMinus.stop();
+                                this.currMenu = mainMenu;
                                 break;
                             case 1://>Profile01 pressed
                                 //temporary block
                                 break;
                             case 2://>Back pressed
                             this.displayLCD.display(mainMenu);
+                            this.currMenu = mainMenu;
                                 break;
                         }
                         break;
@@ -145,12 +163,14 @@ class Menu {
                         switch (this.arrow) {
                             case 0://>Start pressed
                                 this.displayLCD.display(workPbPlusMenu);
+                                this.currMenu = workPbPlusMenu;
                                 break;
                             case 1://>Profile01 pressed
                                 //temporary block
                                 break;
                             case 2://>Back pressed
                                 this.displayLCD.display(mainMenu);
+                                this.currMenu = mainMenu;
                                 break;
                         }
                         break;
@@ -158,12 +178,14 @@ class Menu {
                         switch (this.arrow) {
                             case 0://>Start pressed
                                 this.displayLCD.display(workConstMenu);
+                                this.currMenu = workConstMenu;
                                 break;
                             case 1://>t=200 pressed
                                 //temporary block
                                 break;
                             case 2://>Back pressed
                                 this.displayLCD.display(mainMenu);
+                                this.currMenu = mainMenu;
                                 break;
                             case 3://>Dur=120 pressed
                                 //temporary block
@@ -174,12 +196,14 @@ class Menu {
                         switch (this.arrow) {
                             case 0://>Start pressed
                                 this.displayLCD.display(workDimmerMenu);
+                                this.currMenu = workDimmerMenu;
                                 break;
                             case 1://>P=000% pressed
                                 //temporary block
                                 break;
                             case 2://>Back pressed
                                 this.displayLCD.display(mainMenu);
+                                this.currMenu = mainMenu;
                                 break;
                             case 3://>Dur=120 pressed
                                 //temporary block
@@ -190,13 +214,14 @@ class Menu {
                         switch (this.arrow) {
                             case 0://>Pause pressed
                                 this.displayLCD.display(stayPbMinusMenu);
+                                this.currMenu = stayPbMinusMenu;
                                 break;
                             case 1://>Stop pressed
-                                //this.displayLCD.display(mainMenu);
                                 this.pbMinus.stop();
                                 break;
                             case 2://>Back pressed
                                 this.displayLCD.display(workPbMinusMenu);
+                                this.currMenu = workPbMinusMenu;
                                 break;
                         }
                         break;
@@ -204,12 +229,15 @@ class Menu {
                         switch (this.arrow) {
                             case 0://>Pause pressed
                                 this.displayLCD.display(stayPbPlusMenu);
+                                this.currMenu = stayPbPlusMenu;
                                 break;
                             case 1://>Stop pressed
                                 this.displayLCD.display(mainMenu);
+                                this.currMenu = mainMenu;
                                 break;
                             case 2://>Back pressed
                                 this.displayLCD.display(workPbPlusMenu);
+                                this.currMenu = workPbPlusMenu;
                                 break;
                         }
                         break;
@@ -217,26 +245,31 @@ class Menu {
                         switch (this.arrow) {
                             case 0://>Pause pressed
                                 this.displayLCD.display(stayConstMenu);
+                                this.currMenu = stayConstMenu;
                                 break;
                             case 1://>Stop pressed
                                 this.displayLCD.display(mainMenu);
+                                this.currMenu = mainMenu;
                                 break;
                             case 2://>Back pressed
                                 this.displayLCD.display(workConstMenu);
+                                this.currMenu = workConstMenu;
                                 break;
                         }
                         break;
                     case "pauseDimmerMenu":
                         switch (this.arrow) {
                             case 0://>Pause pressed
-                                this.currMenu = stayDimmerMenu;
                                 this.displayLCD.display(stayDimmerMenu);
+                                this.currMenu = stayDimmerMenu;
                                 break;
                             case 1://>Stop pressed
                                 this.displayLCD.display(mainMenu);
+                                this.currMenu = mainMenu;
                                 break;
                             case 2://>Back pressed
                                 this.displayLCD.display(workDimmerMenu);
+                                this.currMenu = workDimmerMenu;
                                 break;
                         }
                         break;
@@ -244,12 +277,15 @@ class Menu {
                         switch (this.arrow) {
                             case 0://>Resume pressed
                                 this.displayLCD.display(workPbMinusMenu);
+                                this.currMenu = workPbMinusMenu;
                                 break;
                             case 1://>Stop pressed
                                 this.displayLCD.display(mainMenu);
+                                this.currMenu = mainMenu;
                                 break;
                             case 2://>Back pressed
                                 this.displayLCD.display(stayPbMinusMenu);
+                                this.currMenu = stayPbMinusMenu;
                                 break;
                         }
                         break;
@@ -257,12 +293,15 @@ class Menu {
                         switch (this.arrow) {
                             case 0://>Resume pressed
                                 this.displayLCD.display(workPbPlusMenu);
+                                this.currMenu = workPbMinusMenu;
                                 break;
                             case 1://>Stop pressed
                                 this.displayLCD.display(mainMenu);
+                                this.currMenu = mainMenu;
                                 break;
                             case 2://>Back pressed
                                 this.displayLCD.display(stayPbPlusMenu);
+                                this.currMenu = stayPbPlusMenu;
                                 break;
                         }
                         break;
@@ -270,12 +309,15 @@ class Menu {
                         switch (this.arrow) {
                             case 0://>Resume pressed
                                 this.displayLCD.display(workConstMenu);
+                                this.currMenu = workConstMenu;
                                 break;
                             case 1://>Stop pressed
                                 this.displayLCD.display(mainMenu);
+                                this.currMenu = mainMenu;
                                 break;
                             case 2://>Back pressed
                                 this.displayLCD.display(stayConstMenu);
+                                this.currMenu = stayConstMenu;
                                 break;
                         }
                         break;
@@ -283,12 +325,15 @@ class Menu {
                         switch (this.arrow) {
                             case 0://>Resume pressed
                                 this.displayLCD.display(workDimmerMenu);
+                                this.currMenu = workDimmerMenu;
                                 break;
                             case 1://>Stop pressed
                                 this.displayLCD.display(mainMenu);
+                                this.currMenu = mainMenu;
                                 break;
                             case 2://>Back pressed
                                 this.displayLCD.display(stayDimmerMenu);
+                                this.currMenu = stayDimmerMenu;
                                 break;
                         }
                         break;

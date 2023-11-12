@@ -6,92 +6,80 @@ class DisplayLCD {
     constructor () {
         this.lcd.beginSync();
         this.lcd.clearSync();
-        this.arrow = 0;
     }
 
     #display1items = (menu)=>{
-        this.currMenu = menu;
-        this.arrow = 0;
         this.lcd.clearSync();
-
         this.lcd.setCursorSync(5, 0);
-        this.lcd.printSync(this.currMenu[1]);
+        this.lcd.printSync(menu[1]);
     }
 
     #display3items = (menu)=>{
-        this.currMenu = menu;
-        this.arrow = 0;
         this.lcd.clearSync();
         this.lcd.setCursorSync(0, 0);
         this.lcd.printSync(">");
 
         this.lcd.setCursorSync(1, 0);
-        this.lcd.printSync(this.currMenu[1]);
+        this.lcd.printSync(menu[1]);
         this.lcd.setCursorSync(1, 1);
-        this.lcd.printSync(this.currMenu[2]);
+        this.lcd.printSync(menu[2]);
 
         this.lcd.setCursorSync(8, 0);
-        this.lcd.printSync(this.currMenu[3]);
+        this.lcd.printSync(menu[3]);
     }
 
     #display4items = (menu)=>{
-        this.currMenu = menu;
-        this.arrow = 0;
         this.lcd.clearSync();
         this.lcd.setCursorSync(0, 0);
         this.lcd.printSync(">");
 
         this.lcd.setCursorSync(1, 0);
-        this.lcd.printSync(this.currMenu[1]);
+        this.lcd.printSync(menu[1]);
         this.lcd.setCursorSync(1, 1);
-        this.lcd.printSync(this.currMenu[2]);
+        this.lcd.printSync(menu[2]);
 
         this.lcd.setCursorSync(8, 0);
-        this.lcd.printSync(this.currMenu[3]);
+        this.lcd.printSync(menu[3]);
         this.lcd.setCursorSync(8, 1);
-        this.lcd.printSync(this.currMenu[4]);
+        this.lcd.printSync(menu[4]);
     }
 
     #display5items = (menu)=>{
-        this.currMenu = menu;
-        this.arrow = 0;
         this.lcd.clearSync();
         this.lcd.setCursorSync(0, 0);
         this.lcd.printSync(">");
 
         this.lcd.setCursorSync(1, 0);
-        this.lcd.printSync(this.currMenu[1]);
+        this.lcd.printSync(menu[1]);
         this.lcd.setCursorSync(1, 1);
-        this.lcd.printSync(this.currMenu[2]);
+        this.lcd.printSync(menu[2]);
 
         this.lcd.setCursorSync(8, 0);
-        this.lcd.printSync(this.currMenu[3]);
+        this.lcd.printSync(menu[3]);
         this.lcd.setCursorSync(8, 1);
-        this.lcd.printSync(this.currMenu[4]);
+        this.lcd.printSync(menu[4]);
 
         this.lcd.setCursorSync(15, 0);
-        this.lcd.printSync(this.currMenu[5]);
+        this.lcd.printSync(menu[5]);
     }
 
     #display6items = (menu)=>{
-        this.currMenu = menu;
-        this.arrow = 0;
         this.lcd.clearSync();
 
         this.lcd.setCursorSync(0, 0);
-        this.lcd.printSync(this.currMenu[1]);
+        this.lcd.printSync(menu[1]);
         this.lcd.setCursorSync(0, 1);
-        this.lcd.printSync(this.currMenu[2]);
+        this.lcd.printSync(menu[2]);
 
         this.lcd.setCursorSync(6, 0);
-        this.lcd.printSync(this.currMenu[3]);
+        this.lcd.printSync(menu[3]);
         this.lcd.setCursorSync(6, 1);
-        this.lcd.printSync(this.currMenu[4]);
+        this.lcd.printSync(menu[4]);
 
         this.lcd.setCursorSync(13, 0);
-        this.lcd.printSync(this.currMenu[5]);
+        this.lcd.printSync(menu[5]);
         this.lcd.setCursorSync(13, 1);
-        this.lcd.printSync(this.currMenu[6]);
+        this.lcd.printSync(menu[6]);
     }
 
     moveArrow (position){

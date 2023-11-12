@@ -244,11 +244,11 @@ class  PbMinus {
       dt: 1,
     });
     this.timerStopped = false;
-    displayTitles();
+    this.displayTitles();
 
 	  while(this.timerStopped){
 		  this.heat();
-      await displayData();
+      await this.displayData();
 		  await this.sleep(1000);
 	  }
 
