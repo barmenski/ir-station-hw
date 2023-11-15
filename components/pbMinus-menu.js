@@ -1,20 +1,19 @@
-const PID = require('./pid.js');
-const PWM = require('./pwm.js');
-
 const LCD = require('raspberrypi-liquid-crystal');
 const Max6675 = require('max6675-raspi');
 
+const DisplayLCD = require('./displayLCD');
+const PID = require('./pid.js');
+const PWM = require('./pwm.js');
 
 class  PbMinus {
-	lcd = new LCD(1, 0x27, 16, 2);
+  displayLCD = new DisplayLCD();
   max6675 = new Max6675();
   pwm = new PWM();
-	thermMenu = ["thermMenu", "t=000", "t=000", "C", "C"];
+
 	workPbMinusMenu = ["workPbMinusMenu", "t=000", "t=000", "P=000%", "P=000%", "pt1", "run"];
 	stayPbMinusMenu = ["stayPbMinusMenu", "t=000", "t=000", "P=000%", "P=000%", "pt1", "Zzz"];
 
 	constructor(){
-		this.lcd.began ? "" : this.lcd.beginSync();
 		const CS="4";
 		const SCK="24";
 		const SO= ['8', '25'];
@@ -64,89 +63,10 @@ class  PbMinus {
 		return new Promise((resolve) => setTimeout(resolve, ms));
 	}
 
-	displayTitles() {
-    this.lcd.clearSync();
-
-    this.lcd.setCursorSync(0, 0);
-    this.lcd.printSync(this.workPbMinusMenu[1]);
-    this.lcd.setCursorSync(0, 1);
-    this.lcd.printSync(this.workPbMinusMenu[2]);
-
-    this.lcd.setCursorSync(6, 0);
-    this.lcd.printSync(this.workPbMinusMenu[3]);
-    this.lcd.setCursorSync(6, 1);
-    this.lcd.printSync(this.workPbMinusMenu[4]);
-
-    this.lcd.setCursorSync(13, 0);
-    this.lcd.printSync(this.workPbMinusMenu[5]);
-    this.lcd.setCursorSync(13, 1);
-    this.lcd.printSync(this.workPbMinusMenu[6]);
-
-    //t=000 P=000% pt1
-    //t=000 P=000% run
-
-  }
-
-	async displayData() {
-
-		if (this.tempChip<1000 && this.tempChip>99) {
-			this.lcd.setCursorSync(2, 0);
-			this.lcd.printSync(this.tempChip);
-		} else if (this.tempChip<10){
-			this.lcd.setCursorSync(4, 0);
-			this.lcd.printSync(this.tempChip);
-		} else {
-			this.lcd.setCursorSync(3, 0);
-			this.lcd.printSync(this.tempChip);
-		}
-
-		if (this.tempBoard<1000 && this.tempBoard>99) {
-			this.lcd.setCursorSync(2, 1);
-			this.lcd.printSync(this.tempBoard);
-		} else if (this.tempBoard<10){
-			this.lcd.setCursorSync(4, 1);
-			this.lcd.printSync(this.tempBoard);
-		} else {
-			this.lcd.setCursorSync(3, 1);
-			this.lcd.printSync(this.tempBoard);
-		}
-
-    if (this.powerTop<1000 && this.powerTop>99) {
-			this.lcd.setCursorSync(8, 0);
-			this.lcd.printSync(this.powerTop);
-		} else if (this.powerTop<10){
-			this.lcd.setCursorSync(10, 0);
-			this.lcd.printSync(this.tempBoard);
-		} else {
-			this.lcd.setCursorSync(9, 0);
-			this.lcd.printSync(this.tempBoard);
-		}
-
-    if (this.powerBottom<1000 && this.powerBottom>99) {
-			this.lcd.setCursorSync(8, 1);
-			this.lcd.printSync(this.powerBottom);
-		} else if (this.powerBottom<10){
-			this.lcd.setCursorSync(10, 1);
-			this.lcd.printSync(this.powerBottom);
-		} else {
-			this.lcd.setCursorSync(9, 1);
-			this.lcd.printSync(this.powerBottom);
-		}
-
-      //t=000 P=000% pt1
-      //  ↑↑↑   ↑↑↑ 
-      //t=000 P=000% run
-      //  ↑↑↑   ↑↑↑
-
-	}
-
-
-
   getTemperature = () => {
     const { temp, unit } = this.max6675.readTemp();
     this.tempChip = Math.round(Number(temp[0]));
     this.tempBoard = Math.round(Number(temp[1]));
-
   };
 
   heat = () => {
@@ -223,7 +143,7 @@ class  PbMinus {
     
   };
 
-  async start ()  {
+  async start (menu)  {
     this.preHeatTime = this.profilePbMinus[0][0];
     this.preHeatTemp = this.profilePbMinus[0][1];
     this.liquidTime = this.profilePbMinus[1][0];
@@ -244,11 +164,11 @@ class  PbMinus {
       dt: 1,
     });
     this.timerStopped = false;
-    this.displayTitles();
+    this.displayLCD.display(menu);
 
 	  while(this.timerStopped){
 		  this.heat();
-      await this.displayData();
+      this.displayLCD.displayPbMinusmData(this.tempChip, this.tempBoard, this.powerTop, this.powerBottom);
 		  await this.sleep(1000);
 	  }
 

@@ -119,6 +119,58 @@ class DisplayLCD {
 		}
     }
 
+    displayPbMinusmData = (tempChip, tempBoard, powerTop, powerBottom)=>{
+        if (tempChip<1000 && tempChip>99) {
+			this.lcd.setCursorSync(2, 0);
+			this.lcd.printSync(tempChip);
+		} else if (tempChip<10){
+			this.lcd.setCursorSync(4, 0);
+			this.lcd.printSync(tempChip);
+		} else {
+			this.lcd.setCursorSync(3, 0);
+			this.lcd.printSync(tempChip);
+		}
+
+		if (tempBoard<1000 && tempBoard>99) {
+			this.lcd.setCursorSync(2, 1);
+			this.lcd.printSync(tempBoard);
+		} else if (tempBoard<10){
+			this.lcd.setCursorSync(4, 1);
+			this.lcd.printSync(tempBoard);
+		} else {
+			this.lcd.setCursorSync(3, 1);
+			this.lcd.printSync(tempBoard);
+		}
+
+    if (powerTop<1000 && powerTop>99) {
+			this.lcd.setCursorSync(8, 0);
+			this.lcd.printSync(powerTop);
+		} else if (powerTop<10){
+			this.lcd.setCursorSync(10, 0);
+			this.lcd.printSync(tempBoard);
+		} else {
+			this.lcd.setCursorSync(9, 0);
+			this.lcd.printSync(tempBoard);
+		}
+
+    if (powerBottom<1000 && powerBottom>99) {
+			this.lcd.setCursorSync(8, 1);
+			this.lcd.printSync(powerBottom);
+		} else if (powerBottom<10){
+			this.lcd.setCursorSync(10, 1);
+			this.lcd.printSync(powerBottom);
+		} else {
+			this.lcd.setCursorSync(9, 1);
+			this.lcd.printSync(powerBottom);
+		}
+
+      //t=000 P=000% pt1
+      //  ↑↑↑   ↑↑↑ 
+      //t=000 P=000% run
+      //  ↑↑↑   ↑↑↑
+
+    }
+
     moveArrow (position){
         switch (position){
             case 0:

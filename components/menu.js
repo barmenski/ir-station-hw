@@ -117,7 +117,7 @@ class Menu {
                 case "mainMenu":
                     switch (this.arrow){
                         case 0://>Pb- pressed
-                            this.displayLCD.display(pbMinusMenu);
+                            this.pbMinus.start(pbMinusMenu);
                             this.currMenu = pbMinusMenu;
                             break;
                         case 1://>Pb+ pressed
