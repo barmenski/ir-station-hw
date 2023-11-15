@@ -82,6 +82,43 @@ class DisplayLCD {
         this.lcd.printSync(menu[6]);
     }
 
+    displayThermTitles = (menu)=>{
+        this.lcd.clearSync();
+        this.lcd.setCursorSync(0, 0);
+        this.lcd.printSync(menu[1]);
+        this.lcd.setCursorSync(0, 1);
+        this.lcd.printSync(menu[2]);
+
+        this.lcd.setCursorSync(6, 0);
+        this.lcd.printSync(menu[3]);
+        this.lcd.setCursorSync(6, 1);
+        this.lcd.printSync(menu[4]);
+    }
+
+    displayThermData = (tempChip, tempBoard)=>{
+        if (tempChip<1000 && tempChip>99) {
+			this.lcd.setCursorSync(2, 0);
+			this.lcd.printSync(tempChip);
+		} else if (tempChip<10){
+			this.lcd.setCursorSync(4, 0);
+			this.lcd.printSync(tempChip);
+		} else {
+			this.lcd.setCursorSync(3, 0);
+			this.lcd.printSync(tempChip);
+		}
+
+		if (tempChip<1000 && tempBoard>99) {
+			this.lcd.setCursorSync(2, 1);
+			this.lcd.printSync(tempBoard);
+		} else if (tempChip<10){
+			this.lcd.setCursorSync(4, 1);
+			this.lcd.printSync(tempBoard);
+		} else {
+			this.lcd.setCursorSync(3, 1);
+			this.lcd.printSync(tempBoard);
+		}
+    }
+
     moveArrow (position){
         switch (position){
             case 0:

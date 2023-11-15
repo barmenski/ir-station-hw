@@ -134,7 +134,7 @@ class Menu {
                             break;
                         case 4://>T pressed
                             this.currMenu=thermMenu;
-                            await this.thermometer.measure();//waiting for measuring process
+                            await this.thermometer.start(thermMenu);//waiting for measuring process
                             this.displayLCD.display(mainMenu);//display mainMenu after this.therm.stop();
                             this.currMenu = mainMenu;
                             break;
