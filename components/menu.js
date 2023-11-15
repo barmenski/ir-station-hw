@@ -117,7 +117,7 @@ class Menu {
                 case "mainMenu":
                     switch (this.arrow){
                         case 0://>Pb- pressed
-                            this.pbMinus.start(pbMinusMenu);
+                            this.displayLCD.display(pbMinusMenu);
                             this.currMenu = pbMinusMenu;
                             break;
                         case 1://>Pb+ pressed
@@ -145,8 +145,7 @@ class Menu {
                             case 0://>Start pressed
                                 //this.displayLCD.display(workPbMinusMenu);
                                 this.currMenu=pbMinusMenu;
-                                this.pbMinus.displayTitles();
-                                await this.pbMinus.start();
+                                await this.pbMinus.start(workPbMinusMenu);
                                 this.displayLCD.display(mainMenu);//display mainMenu after this.pbMinus.stop();
                                 this.currMenu = mainMenu;
                                 break;
