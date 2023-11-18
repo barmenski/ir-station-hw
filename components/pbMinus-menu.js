@@ -1,25 +1,14 @@
-const LCD = require('raspberrypi-liquid-crystal');
-const Max6675 = require('max6675-raspi');
+const Thermometer = require("./thermometer");
+const DisplayLCD = require("./displayLCD");
+const PID = require("./pid.js");
+const PWM = require("./pwm.js");
 
-const DisplayLCD = require('./displayLCD');
-const PID = require('./pid.js');
-const PWM = require('./pwm.js');
-
-class  PbMinus {
+class PbMinus {
   displayLCD = new DisplayLCD();
-  max6675 = new Max6675();
+  thermometer = new Thermometer();
   pwm = new PWM();
 
-	workPbMinusMenu = ["workPbMinusMenu", "t=000", "t=000", "P=000%", "P=000%", "pt1", "run"];
-	stayPbMinusMenu = ["stayPbMinusMenu", "t=000", "t=000", "P=000%", "P=000%", "pt1", "Zzz"];
-
-	constructor(){
-		const CS="4";
-		const SCK="24";
-		const SO= ['8', '25'];
-		const UNIT=1;
-		this.max6675.setPin(CS, SCK, SO, UNIT);
-
+  constructor() {
     this.powerTop = 0;
     this.powerBottom = 0;
     this.powerTopMax = 350;
@@ -57,41 +46,42 @@ class  PbMinus {
     //[time sec, temp C],
     //[time sec, temp C],
     //[time sec, temp C]
-	}
+  }
 
-	async sleep(ms) {
-		return new Promise((resolve) => setTimeout(resolve, ms));
-	}
-
-  getTemperature = () => {
-    const { temp, unit } = this.max6675.readTemp();
-    this.tempChip = Math.round(Number(temp[0]));
-    this.tempBoard = Math.round(Number(temp[1]));
-  };
+  async sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
   heat = () => {
     this.currTime++;
 
-    this.getTemperature(); 
+    let allTemp = this.thermometer.measure();
+    this.tempChip = allTemp[0];
+    this.tempBoard = allTemp[1];
 
     if (this.tempChip < this.preHeatTemp) {
       //1 stage - prepare Heat
 
-      if (this.startTemp===null) 
-        {
-          this.rise = Number(
-            ((this.preHeatTemp - this.tempChip) / (this.preHeatTime - 0)).toFixed(2)
-          );
-          this.startTemp = this.tempChip;
-        } else {this.startTemp = this.startTemp + this.rise}
+      if (this.startTemp === null) {
+        this.rise = Number(
+          ((this.preHeatTemp - this.tempChip) / (this.preHeatTime - 0)).toFixed(
+            2
+          )
+        );
+        this.startTemp = this.tempChip;
+      } else {
+        this.startTemp = this.startTemp + this.rise;
+      }
       this.pidBottom.setTarget(
         this.startTemp,
         this.PBottom,
         this.IBottom,
         this.DBottom
       );
-      this.powerBottom = Number(this.pidBottom.update(this.tempChip).toFixed(2));
-      this.pwm.outBottom (this.powerBottom);
+      this.powerBottom = Number(
+        this.pidBottom.update(this.tempChip).toFixed(2)
+      );
+      this.pwm.outBottom(this.powerBottom);
     } else if (
       this.tempChip >= this.preHeatTemp &&
       this.tempChip <= this.liquidTemp
@@ -103,16 +93,21 @@ class  PbMinus {
           (this.liquidTime - this.preHeatTime)
         ).toFixed(2)
       );
-      this.startTemp = this.startTemp + this.rise
+      this.startTemp = this.startTemp + this.rise;
       this.pidBottom.setTarget(
         this.startTemp,
         this.PBottom,
         this.IBottom,
         this.DBottom
       );
-      this.powerBottom = Number(this.pidBottom.update(this.tempChip).toFixed(2));
-      this.pwm.outBottom (this.powerBottom);
-    } else if (this.tempChip >= this.liquidTemp && this.tempChip < this.peakTemp) {
+      this.powerBottom = Number(
+        this.pidBottom.update(this.tempChip).toFixed(2)
+      );
+      this.pwm.outBottom(this.powerBottom);
+    } else if (
+      this.tempChip >= this.liquidTemp &&
+      this.tempChip < this.peakTemp
+    ) {
       //3  stage - constant power for bottom heater and rise for maximum
       this.rise = Number(
         (
@@ -120,30 +115,18 @@ class  PbMinus {
           (this.peakTime - this.liquidTime)
         ).toFixed(2)
       );
-      this.pidTop.setTarget(
-        this.startTemp,
-        this.PTop,
-        this.ITop,
-        this.DTop
-      );
+      this.pidTop.setTarget(this.startTemp, this.PTop, this.ITop, this.DTop);
       this.startTemp = this.startTemp + this.rise;
       this.powerTop = Number(this.pidTop.update(this.tempChip).toFixed(2));
       this.pwm.outTop(this.powerTop);
     } else if (this.tempChip >= this.peakTemp) {
-      this.pidTop.setTarget(
-        this.peakTemp,
-        this.PTop,
-        this.ITop,
-        this.DTop
-      );
+      this.pidTop.setTarget(this.peakTemp, this.PTop, this.ITop, this.DTop);
       this.powerTop = Number(this.pidTop.update(this.tempChip).toFixed(2));
       this.pwm.outTop(this.powerTop);
     }
-
-    
   };
 
-  async start (menu)  {
+  async start(menu) {
     this.preHeatTime = this.profilePbMinus[0][0];
     this.preHeatTemp = this.profilePbMinus[0][1];
     this.liquidTime = this.profilePbMinus[1][0];
@@ -166,13 +149,17 @@ class  PbMinus {
     this.timerStopped = false;
     this.displayLCD.display(menu);
 
-	  while(this.timerStopped){
-		  this.heat();
-      this.displayLCD.displayPbMinusmData(this.tempChip, this.tempBoard, this.powerTop, this.powerBottom);
-		  await this.sleep(1000);
-	  }
-
-  };
+    while (this.timerStopped) {
+      this.heat();
+      this.displayLCD.displayPbMinusmData(
+        this.tempChip,
+        this.tempBoard,
+        this.powerTop,
+        this.powerBottom
+      );
+      await this.sleep(1000);
+    }
+  }
 
   reset = () => {
     this.powerTop = 0;
@@ -184,18 +171,16 @@ class  PbMinus {
     this.pidBottom = null;
     this.pidTop = null;
     this.rise = 0;
-  }
+  };
 
   pause = () => {
     this.timerStopped = true;
-  }
+  };
 
   stop = () => {
     this.timerStopped = true;
     this.currTime = 0;
     this.reset();
   };
-
-
 }
 module.exports = PbMinus;
