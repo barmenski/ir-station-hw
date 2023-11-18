@@ -1,8 +1,9 @@
 const Thermometer = require("./thermometer");
+const DisplayLCD = require("./displayLCD");
 
 class ThermShow {
   thermometer = new Thermometer();
-
+  displayLCD = new DisplayLCD();
   constructor() {
     this.active = false;
     this.cycle = false;
