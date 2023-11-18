@@ -147,10 +147,10 @@ class DisplayLCD {
       this.lcd.printSync(powerTop);
     } else if (powerTop < 10) {
       this.lcd.setCursorSync(10, 0);
-      this.lcd.printSync(tempBoard);
+      this.lcd.printSync(powerTop);
     } else {
       this.lcd.setCursorSync(9, 0);
-      this.lcd.printSync(tempBoard);
+      this.lcd.printSync(powerTop);
     }
 
     if (powerBottom < 1000 && powerBottom > 99) {
