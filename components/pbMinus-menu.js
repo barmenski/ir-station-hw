@@ -118,13 +118,13 @@ class PbMinus {
       this.pidTop.setTarget(this.startTemp, this.PTop, this.ITop, this.DTop);
       this.startTemp = this.startTemp + this.rise;
       this.powerTop = Math.round(Number(this.pidTop.update(this.tempChip)));
-      this.pwm.updateTop(this.powerTop);
+      this.pwm.updateTop(this.powerTop*0.01);
     } else if (this.tempChip >= this.peakTemp) {
       this.pidTop.setTarget(this.peakTemp, this.PTop, this.ITop, this.DTop);
       this.powerTop = Math.round(
         Number(this.pidTop.update(this.tempChip))
       );
-      this.pwm.updatetop(this.powerTop*0.01);
+      this.pwm.updateTop(this.powerTop*0.01);
     }
   };
 
