@@ -81,7 +81,7 @@ class PbMinus {
       this.powerBottom = Number(
         this.pidBottom.update(this.tempChip).toFixed(2)
       );
-      this.pwm.outBottom(this.powerBottom);
+      this.pwm.updateBottom(this.powerBottom);
     } else if (
       this.tempChip >= this.preHeatTemp &&
       this.tempChip <= this.liquidTemp
@@ -103,7 +103,7 @@ class PbMinus {
       this.powerBottom = Number(
         this.pidBottom.update(this.tempChip).toFixed(2)
       );
-      this.pwm.outBottom(this.powerBottom);
+      this.pwm.updateBottom(this.powerBottom);
     } else if (
       this.tempChip >= this.liquidTemp &&
       this.tempChip < this.peakTemp
@@ -118,11 +118,11 @@ class PbMinus {
       this.pidTop.setTarget(this.startTemp, this.PTop, this.ITop, this.DTop);
       this.startTemp = this.startTemp + this.rise;
       this.powerTop = Number(this.pidTop.update(this.tempChip).toFixed(2));
-      this.pwm.outTop(this.powerTop);
+      this.pwm.updateTop(this.powerTop);
     } else if (this.tempChip >= this.peakTemp) {
       this.pidTop.setTarget(this.peakTemp, this.PTop, this.ITop, this.DTop);
       this.powerTop = Number(this.pidTop.update(this.tempChip).toFixed(2));
-      this.pwm.outTop(this.powerTop);
+      this.pwm.updatetop(this.powerTop);
     }
   };
 
