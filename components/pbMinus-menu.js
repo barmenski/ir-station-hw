@@ -53,7 +53,6 @@ class PbMinus {
   }
 
   heat = () => {
-    console.log(this.targetTemp, this.powerBottom, this.powerTop, this.pidBottom.update(25));
     this.currTime++;
 
     let allTemp = this.thermometer.measure();
@@ -63,15 +62,13 @@ class PbMinus {
     if (this.tempChip < this.preHeatTemp) {
       //1 stage - prepare Heat (bottom heater ON; top heater OFF)
       this.rise = Number(
-        ((this.preHeatTemp - this.tempChip) / (this.preHeatTime - 0)).toFixed(
-          2
-        )
+        ((this.preHeatTemp - this.tempChip) / (this.preHeatTime - 0)).toFixed(2)
       );
 
       if (this.targetTemp === null) {
         this.targetTemp = this.tempChip;
       } else {
-        this.targetTemp = this.targetTemp + this.rise;
+        this.targetTemp = Number((this.targetTemp + this.rise).toFixed(2));
       }
       this.pidBottom.setTarget(
         this.targetTemp,
@@ -82,7 +79,13 @@ class PbMinus {
       this.powerBottom = Math.round(
         Number(this.pidBottom.update(this.targetTemp))
       );
-      this.pwm.updateBottom(this.powerBottom*0.01);
+      console.log(
+        this.targetTemp,
+        this.powerBottom,
+        this.powerTop,
+        this.pidBottom.update(targetTemp)
+      );
+      this.pwm.updateBottom(this.powerBottom * 0.01);
     } else if (
       this.tempChip >= this.preHeatTemp &&
       this.tempChip <= this.liquidTemp
@@ -104,12 +107,12 @@ class PbMinus {
       this.powerBottom = Math.round(
         Number(this.pidBottom.update(this.tempChip))
       );
-      this.pwm.updateBottom(this.powerBottom*0.01);
+      this.pwm.updateBottom(this.powerBottom * 0.01);
     } else if (
       this.tempChip >= this.liquidTemp &&
       this.tempChip < this.peakTemp
     ) {
-      //3  stage - constant power for bottom heater and rise for maximum 
+      //3  stage - constant power for bottom heater and rise for maximum
       //                              (bottom heater ON; top heater ON)
       this.rise = Number(
         (
@@ -120,13 +123,11 @@ class PbMinus {
       this.pidTop.setTarget(this.targetTemp, this.PTop, this.ITop, this.DTop);
       this.targetTemp = this.targetTemp + this.rise;
       this.powerTop = Math.round(Number(this.pidTop.update(this.tempChip)));
-      this.pwm.updateTop(this.powerTop*0.01);
+      this.pwm.updateTop(this.powerTop * 0.01);
     } else if (this.tempChip >= this.peakTemp) {
       this.pidTop.setTarget(this.peakTemp, this.PTop, this.ITop, this.DTop);
-      this.powerTop = Math.round(
-        Number(this.pidTop.update(this.tempChip))
-      );
-      this.pwm.updateTop(this.powerTop*0.01);
+      this.powerTop = Math.round(Number(this.pidTop.update(this.tempChip)));
+      this.pwm.updateTop(this.powerTop * 0.01);
     }
   };
 
