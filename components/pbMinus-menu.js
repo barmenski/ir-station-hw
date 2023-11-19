@@ -83,7 +83,7 @@ class PbMinus {
         this.targetTemp,
         this.powerBottom,
         this.powerTop,
-        this.pidBottom.update(targetTemp)
+        this.pidBottom.update(this.targetTemp)
       );
       this.pwm.updateBottom(this.powerBottom * 0.01);
     } else if (
