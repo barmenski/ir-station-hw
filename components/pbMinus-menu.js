@@ -15,7 +15,7 @@ class PbMinus {
     this.powerBottomMax = 3420;
     this.tempChip = 25;
     this.targetTemp = 25;
-    this.startTemp = null;
+    this.targetTemp = null;
     this.tempBoard = 25;
     this.pidBottom = null;
     this.pidTop = null;
@@ -60,42 +60,42 @@ class PbMinus {
     this.tempBoard = allTemp[1];
 
     if (this.tempChip < this.preHeatTemp) {
-      //1 stage - prepare Heat
+      //1 stage - prepare Heat (bottom heater ON; top heater OFF)
+      this.rise = Number(
+        ((this.preHeatTemp - this.tempChip) / (this.preHeatTime - 0)).toFixed(
+          2
+        )
+      );
 
-      if (this.startTemp === null) {
-        this.rise = Number(
-          ((this.preHeatTemp - this.tempChip) / (this.preHeatTime - 0)).toFixed(
-            2
-          )
-        );
-        this.startTemp = this.tempChip;
+      if (this.targetTemp === null) {
+        this.targetTemp = this.tempChip;
       } else {
-        this.startTemp = this.startTemp + this.rise;
+        this.targetTemp = this.targetTemp + this.rise;
       }
       this.pidBottom.setTarget(
-        this.startTemp,
+        this.targetTemp,
         this.PBottom,
         this.IBottom,
         this.DBottom
       );
       this.powerBottom = Math.round(
-        Number(this.pidBottom.update(this.tempChip))
+        Number(this.pidBottom.update(this.targetTemp))
       );
       this.pwm.updateBottom(this.powerBottom*0.01);
     } else if (
       this.tempChip >= this.preHeatTemp &&
       this.tempChip <= this.liquidTemp
     ) {
-      //2  stage - waitting
+      //2  stage - waitting (bottom heater ON; top heater OFF)
       this.rise = Number(
         (
           (this.liquidTemp - this.preHeatTemp) /
           (this.liquidTime - this.preHeatTime)
         ).toFixed(2)
       );
-      this.startTemp = this.startTemp + this.rise;
+      this.targetTemp = this.targetTemp + this.rise;
       this.pidBottom.setTarget(
-        this.startTemp,
+        this.targetTemp,
         this.PBottom,
         this.IBottom,
         this.DBottom
@@ -108,15 +108,16 @@ class PbMinus {
       this.tempChip >= this.liquidTemp &&
       this.tempChip < this.peakTemp
     ) {
-      //3  stage - constant power for bottom heater and rise for maximum
+      //3  stage - constant power for bottom heater and rise for maximum 
+      //                              (bottom heater ON; top heater ON)
       this.rise = Number(
         (
           (this.peakTemp - this.liquidTemp) /
           (this.peakTime - this.liquidTime)
         ).toFixed(2)
       );
-      this.pidTop.setTarget(this.startTemp, this.PTop, this.ITop, this.DTop);
-      this.startTemp = this.startTemp + this.rise;
+      this.pidTop.setTarget(this.targetTemp, this.PTop, this.ITop, this.DTop);
+      this.targetTemp = this.targetTemp + this.rise;
       this.powerTop = Math.round(Number(this.pidTop.update(this.tempChip)));
       this.pwm.updateTop(this.powerTop*0.01);
     } else if (this.tempChip >= this.peakTemp) {
@@ -168,7 +169,7 @@ class PbMinus {
     this.powerBottom = 0;
     this.tempChip = 25;
     this.targetTemp = 25;
-    this.startTemp = null;
+    this.targetTemp = null;
     this.tempBoard = 25;
     this.pidBottom = null;
     this.pidTop = null;
