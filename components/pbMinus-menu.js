@@ -53,7 +53,7 @@ class PbMinus {
   }
 
   heat = () => {
-    console.log(this.targetTemp, this.powerBottom, this.powerTop);
+    console.log(this.targetTemp, this.powerBottom, this.powerTop, this.pidBottom.update(this.targetTemp));
     this.currTime++;
 
     let allTemp = this.thermometer.measure();
