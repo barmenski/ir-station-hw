@@ -1,6 +1,6 @@
 const ThermShow = require("./therm-show");
 const PbMinus = require("./pbMinus");
-const ConstTemp = require("./consttemp");
+const ConstTemp = require("./constTemp");
 const DisplayLCD = require("./displayLCD");
 
 const Rotary = require("raspberrypi-rotary-encoder");
