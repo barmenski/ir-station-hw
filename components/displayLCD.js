@@ -119,7 +119,7 @@ class DisplayLCD {
     }
   };
 
-  displayPbMinusmData = (tempChip, tempBoard, powerTop, powerBottom) => {
+  displayPbMinusData = (tempChip, tempBoard, powerTop, powerBottom) => {
     if (tempChip < 1000 && tempChip > 99) {
       this.lcd.setCursorSync(2, 0);
       this.lcd.printSync(tempChip);

@@ -156,7 +156,7 @@ class PbMinus {
 
     while (!this.timerStopped) {
       this.heat();
-      this.displayLCD.displayPbMinusmData(
+      this.displayLCD.displayPbMinusData(
         this.tempChip,
         this.tempBoard,
         this.powerTop,

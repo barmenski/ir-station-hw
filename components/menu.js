@@ -1,5 +1,6 @@
 const ThermShow = require("./therm-show");
-const PbMinus = require("./pbMinus-menu");
+const PbMinus = require("./pbMinus");
+const ConstTemp = require("./consttemp");
 const DisplayLCD = require("./displayLCD");
 
 const Rotary = require("raspberrypi-rotary-encoder");
@@ -8,6 +9,7 @@ class Menu {
   rotary = new Rotary(13, 14, 12); //(pinClk, pinDt, pinSwitch);
   thermShow = new ThermShow();
   pbMinus = new PbMinus();
+  constTemp = new ConstTemp();
   displayLCD = new DisplayLCD();
 
   constructor() {
@@ -60,7 +62,7 @@ class Menu {
     let resumePbMinusMenu = ["resumePbMinusMenu", "Resume", "Stop", "Back"];
     let pausePbPlusMenu = ["pausePbPlusMenu", "Pause", "Stop", "Back"];
     let resumePbPlusMenu = ["resumePbPlusMenu", "Resume", "Stop", "Back"];
-    let constMenu = ["constMenu", "Start", "t=200", "Back", "Dur=120"];
+    let constMenu = ["constMenu", "Start", "t=200", "Back", "Spd=1 C/s"];
     let dimmerMenu = ["dimmerMenu", "Start", "P=000%", "Back", "Dur=120"];
     let workConstMenu = [
       "workConstMenu",
@@ -256,8 +258,11 @@ class Menu {
         case "constMenu":
           switch (this.arrow) {
             case 0: //>Start pressed
-              this.displayLCD.display(workConstMenu);
               this.currMenu = workConstMenu;
+              await this.constTemp.start(workConstMenu);
+              this.displayLCD.display(mainMenu); //display mainMenu after this.constTemp.stop();
+              this.currMenu = mainMenu;
+              this.arrow = 0;
               break;
             case 1: //>t=200 pressed
               //temporary block
@@ -330,9 +335,7 @@ class Menu {
               this.currMenu = stayConstMenu;
               break;
             case 1: //>Stop pressed
-              this.displayLCD.display(mainMenu);
-              this.currMenu = mainMenu;
-              this.arrow = 0;
+              this.constTemp.stop();
               break;
             case 2: //>Back pressed
               this.displayLCD.display(workConstMenu);
