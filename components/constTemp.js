@@ -9,7 +9,26 @@ class ConstTemp {
   pwm = new PWM();
 
   constructor() { 
+    this.powerTop = 0;
+    this.powerBottom = 0;
+    this.powerTopMax = 350;
+    this.powerBottomMax = 3420;
+    this.tempChip = 25;
+    this.targetTemp = null;
+    this.tempBoard = 25;
+    this.pidBottom = null;
+    this.pidTop = null;
+    this.currTime = 0;
+    this.rise = 0;
+    this.timerStopped = true;
 
+    this.PBottom = 40;
+    this.IBottom = 0.05;
+    this.DBottom = 80;
+
+    this.PTop = 40;
+    this.ITop = 0.05;
+    this.DTop = 80;
    }
 
   async sleep(ms) {
