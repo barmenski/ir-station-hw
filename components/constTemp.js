@@ -78,7 +78,7 @@ class ConstTemp {
 
     while (!this.timerStopped) {
       this.heat();
-      if(!this.noDisplayData){
+      if(!this.hiddenData){
         this.displayLCD.displayPbMinusData(
           this.tempChip,
           this.tempBoard,
