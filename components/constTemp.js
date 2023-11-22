@@ -21,6 +21,7 @@ class ConstTemp {
     this.currTime = 0;
     this.rise = 0;
     this.timerStopped = true;
+    this.hiddenData = false;
 
     this.PBottom = 40;
     this.IBottom = 0.05;
@@ -72,16 +73,20 @@ class ConstTemp {
     });
 
     this.timerStopped = false;
+    this.hiddenData = false;
     this.displayLCD.display(menu);
 
     while (!this.timerStopped) {
       this.heat();
-      this.displayLCD.displayPbMinusData(
-        this.tempChip,
-        this.tempBoard,
-        this.powerTop,
-        this.powerBottom
-      );
+      if(!this.noDisplayData){
+        this.displayLCD.displayPbMinusData(
+          this.tempChip,
+          this.tempBoard,
+          this.powerTop,
+          this.powerBottom
+        );
+      }
+
       await this.sleep(1000);
     }
   }
@@ -98,8 +103,8 @@ class ConstTemp {
     this.rise = 0;
   };
 
-  pause = () => {
-    this.timerStopped = true;
+  noDisplayData = () => {
+    this.hiddenData = true;
   };
 
   stop = () => {

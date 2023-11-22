@@ -62,7 +62,7 @@ class Menu {
     let resumePbMinusMenu = ["resumePbMinusMenu", "Resume", "Stop", "Back"];
     let pausePbPlusMenu = ["pausePbPlusMenu", "Pause", "Stop", "Back"];
     let resumePbPlusMenu = ["resumePbPlusMenu", "Resume", "Stop", "Back"];
-    let constMenu = ["constMenu", "Start", "t=200", "Back", "Spd=1 C/s"];
+    let constMenu = ["constMenu", "Start", "t=200", "Back", "Spd=1C/s"];
     let dimmerMenu = ["dimmerMenu", "Start", "P=000%", "Back", "Dur=120"];
     let workConstMenu = [
       "workConstMenu",
@@ -82,15 +82,7 @@ class Menu {
       "120",
       "*D",
     ];
-    let stayConstMenu = [
-      "stayConstMenu",
-      "t=000",
-      "t=000",
-      "P=000%",
-      "P=000%",
-      "200",
-      "Zzz",
-    ];
+
     let stayDimmerMenu = [
       "stayDimmerMenu",
       "t=000",
@@ -100,8 +92,8 @@ class Menu {
       "200",
       "Zzz",
     ];
-    let pauseConstMenu = ["pauseConstMenu", "Pause", "Stop", "Back"];
-    let resumeConstMenu = ["resumeConstMenu", "Resume", "Stop", "Back"];
+    let pauseConstMenu = ["pauseConstMenu", "Stop", "Back"];
+
     let pauseDimmerMenu = ["pauseDimmerMenu", "Pause", "Stop", "Back"];
     let resumeDimmerMenu = ["resumeDimmerMenu", "Resume", "Stop", "Back"];
     let thermMenu = ["thermMenu", "t=000", "t=000", "C", "C"];
@@ -124,12 +116,13 @@ class Menu {
           this.currMenu = pausePbMinusMenu;
           this.arrow = 0;
           break;
-        case "workPbPlusMenu": //display pause menu
+        case "workPbPlusMenu": //display pause menu ["pauseConstMenu", "Pause", "Stop", "Back"];
           this.displayLCD.display(pausePbPlusMenu);
           this.currMenu = pausePbPlusMenu;
           this.arrow = 0;
           break;
         case "workConstMenu": //display pause menu
+          this.constTemp.noDisplayData();
           this.displayLCD.display(pauseConstMenu);
           this.currMenu = pauseConstMenu;
           this.arrow = 0;
@@ -147,11 +140,6 @@ class Menu {
         case "stayPbPlusMenu": //display resume menu
           this.displayLCD.display(resumePbPlusMenu);
           this.currMenu = resumePbPlusMenu;
-          this.arrow = 0;
-          break;
-        case "stayConstMenu":
-          this.displayLCD.display(resumeConstMenu);
-          this.currMenu = resumeConstMenu;
           this.arrow = 0;
           break;
         case "stayDimmerMenu":
@@ -330,14 +318,10 @@ class Menu {
           break;
         case "pauseConstMenu":
           switch (this.arrow) {
-            case 0: //>Pause pressed
-              this.displayLCD.display(stayConstMenu);
-              this.currMenu = stayConstMenu;
-              break;
-            case 1: //>Stop pressed
+            case 0: //>Stop pressed
               this.constTemp.stop();
               break;
-            case 2: //>Back pressed
+            case 1: //>Back pressed
               this.displayLCD.display(workConstMenu);
               this.currMenu = workConstMenu;
               break;
@@ -394,23 +378,7 @@ class Menu {
               break;
           }
           break;
-        case "resumeConstMenu":
-          switch (this.arrow) {
-            case 0: //>Resume pressed
-              this.displayLCD.display(workConstMenu);
-              this.currMenu = workConstMenu;
-              break;
-            case 1: //>Stop pressed
-              this.displayLCD.display(mainMenu);
-              this.currMenu = mainMenu;
-              this.arrow = 0;
-              break;
-            case 2: //>Back pressed
-              this.displayLCD.display(stayConstMenu);
-              this.currMenu = stayConstMenu;
-              break;
-          }
-          break;
+
         case "resumeDimmerMenu":
           switch (this.arrow) {
             case 0: //>Resume pressed

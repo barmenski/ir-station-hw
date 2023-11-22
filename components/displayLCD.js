@@ -14,6 +14,17 @@ class DisplayLCD {
     this.lcd.printSync(menu[1]);
   };
 
+  #display2items = (menu) => {
+    this.lcd.clearSync();
+    this.lcd.setCursorSync(0, 0);
+    this.lcd.printSync(">");
+
+    this.lcd.setCursorSync(1, 0);
+    this.lcd.printSync(menu[1]);
+    this.lcd.setCursorSync(1, 1);
+    this.lcd.printSync(menu[2]);
+  };
+
   #display3items = (menu) => {
     this.lcd.clearSync();
     this.lcd.setCursorSync(0, 0);
@@ -239,6 +250,9 @@ class DisplayLCD {
     switch (menu.length - 1) {
       case 1:
         this.#display1items(menu);
+        break;
+      case 2:
+        this.#display2items(menu);
         break;
       case 3:
         this.#display3items(menu);
