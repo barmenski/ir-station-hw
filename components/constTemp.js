@@ -8,7 +8,7 @@ class ConstTemp {
   thermometer = new Thermometer();
   pwm = new PWM();
 
-  constructor() { 
+  constructor() {
     this.powerTop = 0;
     this.powerBottom = 0;
     this.powerTopMax = 350;
@@ -30,7 +30,7 @@ class ConstTemp {
     this.PTop = 40;
     this.ITop = 0.05;
     this.DTop = 80;
-   }
+  }
 
   async sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -44,8 +44,7 @@ class ConstTemp {
     this.tempBoard = allTemp[1];
 
     if (this.tempBoard < this.targetTemp) {
-      
-      this.targetTemp = Number((this.tempChip + this.speed - 0)).toFixed(2);
+      this.targetTemp = Number(this.tempChip + this.speed - 0).toFixed(2);
 
       this.pidBottom.setTarget(
         this.targetTemp,
@@ -78,7 +77,7 @@ class ConstTemp {
 
     while (!this.timerStopped) {
       this.heat();
-      if(!this.hiddenData){
+      if (!this.hiddenData) {
         this.displayLCD.displayPbMinusData(
           this.tempChip,
           this.tempBoard,
@@ -103,8 +102,8 @@ class ConstTemp {
     this.rise = 0;
   };
 
-  noDisplayData = () => {
-    this.hiddenData = true;
+  displayData = (answer) => {
+    answer ? (this.hiddenData = false) : (this.hiddenData = true);
   };
 
   stop = () => {
@@ -112,5 +111,5 @@ class ConstTemp {
     this.currTime = 0;
     this.reset();
   };
-};
+}
 module.exports = ConstTemp;

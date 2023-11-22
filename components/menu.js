@@ -122,7 +122,7 @@ class Menu {
           this.arrow = 0;
           break;
         case "workConstMenu": //display pause menu
-          this.constTemp.noDisplayData();
+          this.constTemp.displayData(false);
           this.displayLCD.display(pauseConstMenu);
           this.currMenu = pauseConstMenu;
           this.arrow = 0;
@@ -323,6 +323,7 @@ class Menu {
               break;
             case 1: //>Back pressed
               this.displayLCD.display(workConstMenu);
+              this.constTemp.displayData(true);
               this.currMenu = workConstMenu;
               break;
           }
