@@ -63,6 +63,8 @@ class Menu {
     let pausePbPlusMenu = ["pausePbPlusMenu", "Pause", "Stop", "Back"];
     let resumePbPlusMenu = ["resumePbPlusMenu", "Resume", "Stop", "Back"];
     let constMenu = ["constMenu", "Start", "t=200", "Back", "Spd=1C/s"];
+    let setTargetTemp = ["setTargetTemp", "Start", "t=200", "Back", "Spd=1C/s"];
+    let setSpeed = ["setTargetTemp", "Start", "t=200", "Back", "Spd=1C/s"];
     let dimmerMenu = ["dimmerMenu", "Start", "P=000%", "Back", "Dur=120"];
     let workConstMenu = [
       "workConstMenu",
@@ -70,8 +72,8 @@ class Menu {
       "t=000",
       "P=000%",
       "P=000%",
-      "120",
-      "*C",
+      "200",
+      "1",
     ];
     let workDimmerMenu = [
       "workDimmerMenu",
@@ -97,6 +99,8 @@ class Menu {
     let pauseDimmerMenu = ["pauseDimmerMenu", "Pause", "Stop", "Back"];
     let resumeDimmerMenu = ["resumeDimmerMenu", "Resume", "Stop", "Back"];
     let thermMenu = ["thermMenu", "t=000", "t=000", "C", "C"];
+
+    this.ConstTargetTemp = this.constTemp.targetTemp;
 
     this.rotary.on("rotate", async (delta) => {
       switch (this.currMenu[0]) {
@@ -126,6 +130,11 @@ class Menu {
           this.displayLCD.display(pauseConstMenu);
           this.currMenu = pauseConstMenu;
           this.arrow = 0;
+          break;
+        case "setTargetTemp": //display setTargetTemp
+          this.ConstTargetTemp = this.ConstTargetTemp + delta;
+          this.constTemp.setTargetTemp(this.ConstTargetTemp);
+          this.displayLCD.set3digit(5, 1, this.ConstTargetTemp);
           break;
         case "workDimmerMenu": //display pause menu
           this.displayLCD.display(pauseDimmerMenu);
@@ -253,15 +262,23 @@ class Menu {
               this.arrow = 0;
               break;
             case 1: //>t=200 pressed
-              //temporary block
+              this.currMenu = setTargetTemp;
+              await this.displayLCD.setBlinkFlag(true).blink3digit(5, 1);
+              this.displayLCD.display(constMenu);
+              this.currMenu = constMenu;
+              this.arrow = 1;
               break;
             case 2: //>Back pressed
               this.displayLCD.display(mainMenu);
               this.currMenu = mainMenu;
               this.arrow = 0;
               break;
-            case 3: //>Dur=120 pressed
-              //temporary block
+            case 3: //>Spd=1C/s pressed
+              this.currMenu = setSpeed;
+              this.constTemp.setSpeed("begin");
+              this.displayLCD.display(constMenu);
+              this.currMenu = constMenu;
+              this.arrow = 1;
               break;
           }
           break;

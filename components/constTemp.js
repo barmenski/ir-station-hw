@@ -14,7 +14,8 @@ class ConstTemp {
     this.powerTopMax = 350;
     this.powerBottomMax = 3420;
     this.tempChip = 25;
-    this.targetTemp = null;
+    this.targetTemp = 50;
+    this.speed = 1;
     this.tempBoard = 25;
     this.pidBottom = null;
     this.pidTop = null;
@@ -60,10 +61,15 @@ class ConstTemp {
     }
   };
 
-  async start(menu) {
-    this.speed = 1;
-    this.targetTemp = 50;
+  setTargetTemp = (temp) => {
+    this.targetTemp = temp;
+  }
 
+  setSpeed = (speed) => {
+    this.speed = speed;
+  }
+
+  async start(menu) {
     this.pidBottom = new PID({
       k_p: this.PBottom,
       k_i: this.IBottom,
@@ -89,6 +95,9 @@ class ConstTemp {
       await this.sleep(1000);
     }
   }
+
+
+
 
   reset = () => {
     this.powerTop = 0;
