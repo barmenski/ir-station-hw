@@ -8,8 +8,8 @@ class DisplayLCD {
     this.lcd.clearSync();
     this.blinkFlag = false;
     this.lcd
-      .createCharSync(0, [0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f])
-      .createCharSync(1, [0x0, 0x8, 0xc, 0xe, 0xc, 0x8, 0x0, 0x0]); //▊,>
+      .createCharSync(0, [0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f]) // ▊
+      .createCharSync(1, [0x0, 0x8, 0xc, 0xe, 0xc, 0x8, 0x0, 0x0]); // >
   }
 
   async sleep(ms) {
@@ -198,13 +198,14 @@ class DisplayLCD {
   }
 
   async blink3digit(col, row) {
+    let solidRect = this.lcd.getChar(0);
     while (this.blinkFlag) {
       this.lcd.setCursorSync(col, row);
-      this.lcd.printSync(this.lcd.getChar(0));
+      this.lcd.printSync(solidRect);
       this.lcd.setCursorSync(col - 1, row);
-      this.lcd.printSync(this.lcd.getChar(0));
+      this.lcd.printSync(solidRect);
       this.lcd.setCursorSync(col - 2, row);
-      this.lcd.printSync(this.lcd.getChar(0));
+      this.lcd.printSync(solidRect);
       await this.sleep(1500);
     }
   }
