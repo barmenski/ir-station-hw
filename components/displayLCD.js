@@ -1,9 +1,8 @@
 const LCD = require("raspberrypi-liquid-crystal");
-const ConstTemp = require("./constTemp");
 
 class DisplayLCD {
   lcd = new LCD(1, 0x27, 16, 2);
-  constTemp = new ConstTemp();
+  constTemp = 0;
 
 
   constructor() {
@@ -200,6 +199,10 @@ class DisplayLCD {
     }
   }
 
+  setTargetTemp(temp) {
+    this.constTemp = temp;
+  }
+
   async blink3digit(col, row) {
     while (this.blinkFlag) {
       this.lcd.setCursorSync(col, row);
@@ -210,8 +213,7 @@ class DisplayLCD {
       this.lcd.printSync(LCD.getChar(0));
       await this.sleep(1500);
       this.lcd.setCursorSync(col, row);
-      this.ConstTargetTemp = this.constTemp.targetTemp;
-      this.lcd.printSync(this.ConstTargetTemp);
+      this.lcd.printSync(this.constTemp);
       await this.sleep(1500);
     }
   }

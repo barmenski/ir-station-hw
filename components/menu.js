@@ -134,6 +134,7 @@ class Menu {
         case "setTargetTemp": //display setTargetTemp
           this.ConstTargetTemp = this.ConstTargetTemp + delta;
           this.constTemp.setTargetTemp(this.ConstTargetTemp);
+          this.displayLCD.setTargetTemp(this.ConstTargetTemp);
           break;
         case "workDimmerMenu": //display pause menu
           this.displayLCD.display(pauseDimmerMenu);
