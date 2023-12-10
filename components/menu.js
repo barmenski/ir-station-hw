@@ -62,7 +62,7 @@ class Menu {
     let resumePbMinusMenu = ["resumePbMinusMenu", "Resume", "Stop", "Back"];
     let pausePbPlusMenu = ["pausePbPlusMenu", "Pause", "Stop", "Back"];
     let resumePbPlusMenu = ["resumePbPlusMenu", "Resume", "Stop", "Back"];
-    let constMenu = ["constMenu", "Start", "t=200", "Back", "Spd=1C/s"];
+    let constMenu = ["constMenu", "Start", `t=${this.ConstTargetTemp}!`, "Back", "Spd=1C/s"];
     let setTargetTemp = ["setTargetTemp", "Start", `t=${this.ConstTargetTemp}!`, "Back", "Spd=1C/s"];
     let setSpeed = ["setTargetTemp", "Start", "t=200", "Back", "Spd=1C/s"];
     let dimmerMenu = ["dimmerMenu", "Start", "P=000%", "Back", "Dur=120"];
