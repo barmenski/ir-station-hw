@@ -134,7 +134,6 @@ class Menu {
         case "setTargetTemp": //display setTargetTemp
           this.ConstTargetTemp = this.ConstTargetTemp + delta;
           this.constTemp.setTargetTemp(this.ConstTargetTemp);
-          this.displayLCD.set3digit(5, 1, this.ConstTargetTemp);
           break;
         case "workDimmerMenu": //display pause menu
           this.displayLCD.display(pauseDimmerMenu);
@@ -264,10 +263,10 @@ class Menu {
             case 1: //>t=200 pressed
               this.currMenu = setTargetTemp;
               this.displayLCD.setBlinkFlag(true);
-              await this.displayLCD.blink3digit(5, 1);
+              await this.displayLCD.blink3digit(3, 1);
               this.displayLCD.display(constMenu);
-              this.currMenu = constMenu;
               this.arrow = 1;
+              this.currMenu = constMenu;
               break;
             case 2: //>Back pressed
               this.displayLCD.display(mainMenu);

@@ -1,7 +1,10 @@
 const LCD = require("raspberrypi-liquid-crystal");
+const ConstTemp = require("./constTemp");
 
 class DisplayLCD {
   lcd = new LCD(1, 0x27, 16, 2);
+  constTemp = new ConstTemp();
+
 
   constructor() {
     this.lcd.beginSync();
@@ -10,6 +13,7 @@ class DisplayLCD {
     this.lcd
       .createCharSync(0, [0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f, 0x1f]) // ▊
       .createCharSync(1, [0x0, 0x8, 0xc, 0xe, 0xc, 0x8, 0x0, 0x0]); // >
+    this.ConstTargetTemp = this.constTemp.targetTemp;
   }
 
   async sleep(ms) {
@@ -201,18 +205,18 @@ class DisplayLCD {
     while (this.blinkFlag) {
       this.lcd.setCursorSync(col, row);
       this.lcd.printSync(LCD.getChar(0));
-      this.lcd.setCursorSync(col - 1, row);
+      this.lcd.setCursorSync(col + 1, row);
       this.lcd.printSync(LCD.getChar(0));
-      this.lcd.setCursorSync(col - 2, row);
+      this.lcd.setCursorSync(col + 2, row);
       this.lcd.printSync(LCD.getChar(0));
+      await this.sleep(1500);
+      this.lcd.setCursorSync(col, row);
+      this.ConstTargetTemp = this.constTemp.targetTemp;
+      this.lcd.printSync(this.ConstTargetTemp);
       await this.sleep(1500);
     }
   }
 
-  set3digit(col, row, delta) {
-    this.lcd.setCursorSync(col, row);
-    this.lcd.printSync(delta);
-  }
 
   moveArrow(position) {
     switch (position) {
