@@ -198,14 +198,13 @@ class DisplayLCD {
   }
 
   blink3digit(col, row) {
-    let solidRect = this.lcd.getChar(0);
     while (this.blinkFlag) {
       this.lcd.setCursorSync(col, row);
-      this.lcd.printSync(solidRect);
+      this.lcd.printSync(LCD.getChar(0));
       this.lcd.setCursorSync(col - 1, row);
-      this.lcd.printSync(solidRect);
+      this.lcd.printSync(LCD.getChar(0));
       this.lcd.setCursorSync(col - 2, row);
-      this.lcd.printSync(solidRect);
+      this.lcd.printSync(LCD.getChar(0));
       this.sleep(1500);
     }
   }
