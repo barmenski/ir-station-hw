@@ -197,7 +197,7 @@ class DisplayLCD {
     }
   }
 
-  async blink3digit(col, row) {
+  blink3digit(col, row) {
     let solidRect = this.lcd.getChar(0);
     while (this.blinkFlag) {
       this.lcd.setCursorSync(col, row);
@@ -206,7 +206,7 @@ class DisplayLCD {
       this.lcd.printSync(solidRect);
       this.lcd.setCursorSync(col - 2, row);
       this.lcd.printSync(solidRect);
-      await this.sleep(1500);
+      this.sleep(1500);
     }
   }
 
