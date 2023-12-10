@@ -197,7 +197,7 @@ class DisplayLCD {
     }
   }
 
-  blink3digit(col, row) {
+  async blink3digit(col, row) {
     while (this.blinkFlag) {
       this.lcd.setCursorSync(col, row);
       this.lcd.printSync(LCD.getChar(0));
@@ -205,7 +205,7 @@ class DisplayLCD {
       this.lcd.printSync(LCD.getChar(0));
       this.lcd.setCursorSync(col - 2, row);
       this.lcd.printSync(LCD.getChar(0));
-      this.sleep(1500);
+      await this.sleep(1500);
     }
   }
 

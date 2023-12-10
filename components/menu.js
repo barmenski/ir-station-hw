@@ -279,10 +279,15 @@ class Menu {
               this.constTemp.setSpeed("begin");
               this.displayLCD.display(constMenu);
               this.currMenu = constMenu;
-              this.arrow = 1;
+              this.arrow = 3;
               break;
           }
           break;
+        case "setTargetTemp":
+          switch(this.arrow) {
+            case 1: 
+              this.displayLCD.setBlinkFlag(false);
+          }
         case "dimmerMenu":
           switch (this.arrow) {
             case 0: //>Start pressed
