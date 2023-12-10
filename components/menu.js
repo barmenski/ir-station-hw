@@ -63,7 +63,7 @@ class Menu {
     let pausePbPlusMenu = ["pausePbPlusMenu", "Pause", "Stop", "Back"];
     let resumePbPlusMenu = ["resumePbPlusMenu", "Resume", "Stop", "Back"];
     let constMenu = ["constMenu", "Start", "t=200", "Back", "Spd=1C/s"];
-    let setTargetTemp = ["setTargetTemp", "Start", "t=200", "Back", "Spd=1C/s"];
+    let setTargetTemp = ["setTargetTemp", "Start", `t=${this.ConstTargetTemp}!`, "Back", "Spd=1C/s"];
     let setSpeed = ["setTargetTemp", "Start", "t=200", "Back", "Spd=1C/s"];
     let dimmerMenu = ["dimmerMenu", "Start", "P=000%", "Back", "Dur=120"];
     let workConstMenu = [
@@ -135,6 +135,7 @@ class Menu {
           this.ConstTargetTemp = this.ConstTargetTemp + delta;
           this.constTemp.setTargetTemp(this.ConstTargetTemp);
           this.displayLCD.setTargetTemp(this.ConstTargetTemp);
+          this.displayLCD.show3digit(3, 1);
           break;
         case "workDimmerMenu": //display pause menu
           this.displayLCD.display(pauseDimmerMenu);

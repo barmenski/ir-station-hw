@@ -203,6 +203,11 @@ class DisplayLCD {
     this.constTemp = temp;
   }
 
+  show3digit(col, row) {
+    this.lcd.setCursorSync(col, row);
+    this.lcd.printSync(this.constTemp);
+}
+
   async blink3digit(col, row) {
     while (this.blinkFlag) {
       this.lcd.setCursorSync(col, row);
@@ -211,13 +216,11 @@ class DisplayLCD {
       this.lcd.printSync(LCD.getChar(0));
       this.lcd.setCursorSync(col + 2, row);
       this.lcd.printSync(LCD.getChar(0));
-      await this.sleep(1500);
-      this.lcd.setCursorSync(col, row);
-      this.lcd.printSync(this.constTemp);
-      await this.sleep(1500);
+      await this.sleep(1000);
+      this.show3digit(col, row);
+      await this.sleep(1000);
     }
   }
-
 
   moveArrow(position) {
     switch (position) {
