@@ -30,7 +30,7 @@ class ThermShow {
     this.cycle = false;
   }
 
-  async start(menu) {
+  async start(menu, arrow) {
     if (!this.active) {
       console.log("measure");
       this.active = true;

@@ -4,7 +4,6 @@ class DisplayLCD {
   lcd = new LCD(1, 0x27, 16, 2);
   constTemp = 0;
 
-
   constructor() {
     this.lcd.beginSync();
     this.lcd.clearSync();
@@ -21,99 +20,100 @@ class DisplayLCD {
   #display1items = (menu) => {
     this.lcd.clearSync();
     this.lcd.setCursorSync(5, 0);
-    this.lcd.printSync(menu[1]);
+    this.lcd.printSync(menu.text1);
   };
 
-  #display2items = (menu) => {
+  #display2items = (menu, arrow) => {
     this.lcd.clearSync();
-    this.lcd.setCursorSync(0, 0);
-    this.lcd.printSync(">");
+    this.moveArrow(arrow);
 
     this.lcd.setCursorSync(1, 0);
-    this.lcd.printSync(menu[1]);
+    this.lcd.printSync(menu.text1);
     this.lcd.setCursorSync(1, 1);
-    this.lcd.printSync(menu[2]);
+    this.lcd.printSync(menu.text2);
   };
 
-  #display3items = (menu) => {
+  #display3items = (menu, arrow) => {
     this.lcd.clearSync();
-    this.lcd.setCursorSync(0, 0);
-    this.lcd.printSync(">");
+    this.moveArrow(arrow);
 
     this.lcd.setCursorSync(1, 0);
-    this.lcd.printSync(menu[1]);
+    this.lcd.printSync(menu.text1);
     this.lcd.setCursorSync(1, 1);
-    this.lcd.printSync(menu[2]);
+    this.lcd.printSync(menu.text2);
 
     this.lcd.setCursorSync(8, 0);
-    this.lcd.printSync(menu[3]);
+    this.lcd.printSync(menu.text3);
   };
 
-  #display4items = (menu) => {
+  #display4items = (menu, arrow) => {
     this.lcd.clearSync();
-    this.lcd.setCursorSync(0, 0);
-    this.lcd.printSync(">");
+    this.moveArrow(arrow);
 
     this.lcd.setCursorSync(1, 0);
-    this.lcd.printSync(menu[1]);
+    this.lcd.printSync(menu.text1);
     this.lcd.setCursorSync(1, 1);
-    this.lcd.printSync(menu[2]);
+    this.lcd.printSync(menu.text2);
 
     this.lcd.setCursorSync(8, 0);
-    this.lcd.printSync(menu[3]);
+    this.lcd.printSync(menu.text3);
     this.lcd.setCursorSync(8, 1);
-    this.lcd.printSync(menu[4]);
+    this.lcd.printSync(menu.text4);
   };
 
-  #display5items = (menu) => {
+  #display5items = (menu, arrow) => {
     this.lcd.clearSync();
-    this.lcd.setCursorSync(0, 0);
-    this.lcd.printSync(">");
+    this.moveArrow(arrow);
 
     this.lcd.setCursorSync(1, 0);
-    this.lcd.printSync(menu[1]);
+    this.lcd.printSync(menu.text1);
     this.lcd.setCursorSync(1, 1);
-    this.lcd.printSync(menu[2]);
+    this.lcd.printSync(menu.text2);
 
     this.lcd.setCursorSync(8, 0);
-    this.lcd.printSync(menu[3]);
+    this.lcd.printSync(menu.text3);
     this.lcd.setCursorSync(8, 1);
-    this.lcd.printSync(menu[4]);
+    this.lcd.printSync(menu.text4);
 
     this.lcd.setCursorSync(15, 0);
-    this.lcd.printSync(menu[5]);
+    this.lcd.printSync(menu.text5);
   };
 
   #display6items = (menu) => {
     this.lcd.clearSync();
 
     this.lcd.setCursorSync(0, 0);
-    this.lcd.printSync(menu[1]);
+    this.lcd.printSync(menu.text1);
     this.lcd.setCursorSync(0, 1);
-    this.lcd.printSync(menu[2]);
+    this.lcd.printSync(menu.text2);
 
     this.lcd.setCursorSync(6, 0);
-    this.lcd.printSync(menu[3]);
+    this.lcd.printSync(menu.text3);
     this.lcd.setCursorSync(6, 1);
-    this.lcd.printSync(menu[4]);
+    this.lcd.printSync(menu.text4);
 
     this.lcd.setCursorSync(13, 0);
-    this.lcd.printSync(menu[5]);
+    this.lcd.printSync(menu.text5);
     this.lcd.setCursorSync(13, 1);
-    this.lcd.printSync(menu[6]);
+    this.lcd.printSync(menu.text6);
   };
 
   displayThermTitles = (menu) => {
     this.lcd.clearSync();
     this.lcd.setCursorSync(0, 0);
-    this.lcd.printSync(menu[1]);
+    this.lcd.printSync(menu.text1);
     this.lcd.setCursorSync(0, 1);
-    this.lcd.printSync(menu[2]);
+    this.lcd.printSync(menu.text2);
+
+    this.lcd.setCursorSync(2, 0);
+    this.lcd.printSync(menu.data1);
+    this.lcd.setCursorSync(2, 1);
+    this.lcd.printSync(menu.data2);
 
     this.lcd.setCursorSync(6, 0);
-    this.lcd.printSync(menu[3]);
+    this.lcd.printSync(menu.text3);
     this.lcd.setCursorSync(6, 1);
-    this.lcd.printSync(menu[4]);
+    this.lcd.printSync(menu.text4);
   };
 
   displayThermData = (tempChip, tempBoard) => {
@@ -206,7 +206,7 @@ class DisplayLCD {
   show3digit(col, row) {
     this.lcd.setCursorSync(col, row);
     this.lcd.printSync(this.constTemp);
-}
+  }
 
   async blink3digit(col, row) {
     while (this.blinkFlag) {
@@ -287,24 +287,24 @@ class DisplayLCD {
     }
   }
 
-  display(menu) {
-    switch (menu.length - 1) {
-      case 1:
+  display(menu, arrow) {
+    switch (menu.type) {
+      case "1":
         this.#display1items(menu);
         break;
-      case 2:
-        this.#display2items(menu);
+      case "2":
+        this.#display2items(menu, arrow);
         break;
-      case 3:
-        this.#display3items(menu);
+      case "3":
+        this.#display3items(menu, arrow);
         break;
-      case 4:
-        this.#display4items(menu);
+      case "4":
+        this.#display4items(menu, arrow);
         break;
-      case 5:
-        this.#display5items(menu);
+      case "5":
+        this.#display5items(menu, arrow);
         break;
-      case 6:
+      case "6":
         this.#display6items(menu);
         break;
       default:
