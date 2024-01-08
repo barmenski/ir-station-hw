@@ -232,7 +232,7 @@ class Menu {
   }
 
   init = () => {
-    this.ConstTargetTemp = this.constTemp.targetTemp;
+    this.ConstTargetTemp = this.constTemp.getTargetTemp();
     this.displayLCD.display(this.menuList.startMenu, this.arrow);
     this.currMenu = "startMenu";
 

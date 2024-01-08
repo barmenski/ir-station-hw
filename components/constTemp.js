@@ -65,6 +65,10 @@ class ConstTemp {
     this.targetTemp = temp;
   }
 
+  getTargetTemp = () => {
+    return this.targetTemp;
+  }
+
   setSpeed = (speed) => {
     this.speed = speed;
   }
