@@ -70,6 +70,11 @@ class DisplayLCD {
     this.lcd.setCursorSync(1, 1);
     this.lcd.printSync(menu.text2);
 
+    this.lcd.setCursorSync(3, 0);
+    this.lcd.printSync(menu.data1);
+    this.lcd.setCursorSync(12, 1);
+    this.lcd.printSync(menu.data2);
+
     this.lcd.setCursorSync(8, 0);
     this.lcd.printSync(menu.text3);
     this.lcd.setCursorSync(8, 1);
@@ -216,9 +221,9 @@ class DisplayLCD {
       this.lcd.printSync(LCD.getChar(0));
       this.lcd.setCursorSync(col + 2, row);
       this.lcd.printSync(LCD.getChar(0));
-      await this.sleep(1000);
+      await this.sleep(600);
       this.show3digit(col, row);
-      await this.sleep(1000);
+      await this.sleep(800);
     }
   }
 

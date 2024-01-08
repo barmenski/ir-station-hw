@@ -391,7 +391,7 @@ class Menu {
               this.currMenu = "mainMenu";
               break;
             case 1: //>t=200 pressed
-              this.arrow = 0;
+              this.arrow = 1;
               this.currMenu = "setTargetTemp";
               this.displayLCD.setBlinkFlag(true);
               await this.displayLCD.blink3digit(3, 1);
