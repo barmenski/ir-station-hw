@@ -4,6 +4,8 @@ const ConstTemp = require("./constTemp");
 const DisplayLCD = require("./displayLCD");
 
 const Rotary = require("raspberrypi-rotary-encoder");
+const fs = require('fs');
+var path = require('path');
 
 class Menu {
   rotary = new Rotary(13, 14, 12); //(pinClk, pinDt, pinSwitch);
@@ -13,7 +15,11 @@ class Menu {
   displayLCD = new DisplayLCD();
 
   //name of profile: max 6 symbols
-  menuList = {
+
+ menuList = JSON.parse(fs.readFileSync(path.join(__dirname, '/menuList.json'), (err, data) => (data)));
+ 
+
+  /*menuList = {
     startMenu: { name: "startMenu", type: "1", text1: "Hello!" },
     mainMenu: {
       name: "mainMenu",
@@ -225,6 +231,7 @@ class Menu {
       text4: "C",
     },
   };
+*/
 
   constructor() {
     this.currMenu = "";
@@ -232,6 +239,7 @@ class Menu {
   }
 
   init = () => {
+    console.log(this.menuList.thermMenu.name);
     this.ConstTargetTemp = this.constTemp.getTargetTemp();
     this.displayLCD.display(this.menuList.startMenu, this.arrow);
     this.currMenu = "startMenu";
