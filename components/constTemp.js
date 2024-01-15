@@ -60,7 +60,7 @@ class ConstTemp {
       this.pwm.updateBottom(this.powerBottom * 0.01);
     }
   };
-
+/*
   setTargetTemp = (temp) => {
     this.targetTemp = temp;
   }
@@ -72,8 +72,8 @@ class ConstTemp {
   setSpeed = (speed) => {
     this.speed = speed;
   }
-
-  async start(menu) {
+*/
+  async start(menuList) {
     this.pidBottom = new PID({
       k_p: this.PBottom,
       k_i: this.IBottom,
@@ -83,7 +83,8 @@ class ConstTemp {
 
     this.timerStopped = false;
     this.hiddenData = false;
-    this.displayLCD.display(menu);
+    this.targetTemp = menuList.constMenu.data1;
+    this.displayLCD.display(menuList.workConstMenu);
 
     while (!this.timerStopped) {
       this.heat();

@@ -4,8 +4,8 @@ const ConstTemp = require("./constTemp");
 const DisplayLCD = require("./displayLCD");
 
 const Rotary = require("raspberrypi-rotary-encoder");
-const fs = require('fs');
-var path = require('path');
+const fs = require("fs");
+var path = require("path");
 
 class Menu {
   rotary = new Rotary(13, 14, 12); //(pinClk, pinDt, pinSwitch);
@@ -14,8 +14,10 @@ class Menu {
   constTemp = new ConstTemp();
   displayLCD = new DisplayLCD();
 
-  menuList = JSON.parse(fs.readFileSync(path.join(__dirname, '/menuList.json'), (err, data) => (data)));
- 
+  menuList = JSON.parse(
+    fs.readFileSync(path.join(__dirname, "/menuList.json"), (err, data) => data)
+  );
+
   constructor() {
     this.currMenu = "";
     this.arrow = 0;
@@ -23,7 +25,7 @@ class Menu {
 
   init = () => {
     console.log(this.menuList.thermMenu.name);
-    this.ConstTargetTemp = this.constTemp.getTargetTemp();
+    //this.ConstTargetTemp = this.constTemp.getTargetTemp();
     this.displayLCD.display(this.menuList.startMenu, this.arrow);
     this.currMenu = "startMenu";
 
@@ -53,10 +55,11 @@ class Menu {
           this.currMenu = "pauseConstMenu";
           break;
         case "setTargetTemp": //display setTargetTemp
-          this.ConstTargetTemp = this.ConstTargetTemp + delta;
-          this.constTemp.setTargetTemp(this.ConstTargetTemp);
-          this.displayLCD.setTargetTemp(this.ConstTargetTemp);
-          this.displayLCD.show3digit(3, 1);
+          /*this.ConstTargetTemp = this.ConstTargetTemp + delta;
+          this.constTemp.setTargetTemp(this.ConstTargetTemp);*/
+          this.menuList.constMenu.data1 = this.menuList.constMenu.data1 + delta;
+          //this.displayLCD.setTargetTemp(this.menuList.constMenu.data1);
+          this.displayLCD.show3digit(3, 1, this.menuList.constMenu.data1);
           break;
         case "workDimmerMenu": //display pause menu
           this.arrow = 0;
@@ -177,7 +180,8 @@ class Menu {
             case 0: //>Start pressed
               this.arrow = 0;
               this.currMenu = "workConstMenu";
-              await this.constTemp.start(this.menuList.workConstMenu, this.arrow);
+              await this.constTemp.start(this.menuList, this.arrow);
+              this.arrow = 2;
               this.displayLCD.display(this.menuList.mainMenu, this.arrow); //display mainMenu after this.constTemp.stop();
               this.currMenu = "mainMenu";
               break;
@@ -185,9 +189,21 @@ class Menu {
               this.arrow = 1;
               this.currMenu = "setTargetTemp";
               this.displayLCD.setBlinkFlag(true);
-              await this.displayLCD.blink3digit(3, 1);
-              //fs.writeFileSync((path.join(__dirname, '/menuList.json'), JSON.stringify(this.menuList));
-              //this.arrow = 1; arrow position need add to .display(constMenu, 1)
+              await this.displayLCD.blink3digit(
+                3,
+                1,
+                this.menuList.constMenu.data1
+              );
+              fs.writeFile(
+                path.join(__dirname, "/menuList.json"),
+                JSON.stringify(this.menuList),
+                (err) => {
+                  if (err) console.log(err);
+                  else {
+                    console.log("menuList.json written successfully");
+                  }
+                }
+              );
               this.currMenu = "constMenu";
               this.displayLCD.display(this.menuList.constMenu, this.arrow);
               break;

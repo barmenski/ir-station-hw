@@ -204,16 +204,14 @@ class DisplayLCD {
     }
   }
 
-  setTargetTemp(temp) {
-    this.constTemp = temp;
-  }
-
-  show3digit(col, row) {
+  show3digit(col, row, digit) {
+    this.constTemp = digit;
     this.lcd.setCursorSync(col, row);
-    this.lcd.printSync(this.constTemp);
+    this.lcd.printSync(digit);
   }
 
-  async blink3digit(col, row) {
+  async blink3digit(col, row, digit) {
+    this.constTemp = digit;
     while (this.blinkFlag) {
       this.lcd.setCursorSync(col, row);
       this.lcd.printSync(LCD.getChar(0));
@@ -221,8 +219,8 @@ class DisplayLCD {
       this.lcd.printSync(LCD.getChar(0));
       this.lcd.setCursorSync(col + 2, row);
       this.lcd.printSync(LCD.getChar(0));
-      await this.sleep(600);
-      this.show3digit(col, row);
+      await this.sleep(200);
+      this.show3digit(col, row, this.constTemp);
       await this.sleep(800);
     }
   }
