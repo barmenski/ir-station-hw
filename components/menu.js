@@ -25,7 +25,6 @@ class Menu {
 
   init = () => {
     console.log(this.menuList.thermMenu.name);
-    //this.ConstTargetTemp = this.constTemp.getTargetTemp();
     this.displayLCD.display(this.menuList.startMenu, this.arrow);
     this.currMenu = "startMenu";
 
@@ -55,10 +54,7 @@ class Menu {
           this.currMenu = "pauseConstMenu";
           break;
         case "setTargetTemp": //display setTargetTemp
-          /*this.ConstTargetTemp = this.ConstTargetTemp + delta;
-          this.constTemp.setTargetTemp(this.ConstTargetTemp);*/
           this.menuList.constMenu.data1 = this.menuList.constMenu.data1 + delta;
-          //this.displayLCD.setTargetTemp(this.menuList.constMenu.data1);
           this.displayLCD.show3digit(3, 1, this.menuList.constMenu.data1);
           break;
         case "workDimmerMenu": //display pause menu
@@ -138,7 +134,6 @@ class Menu {
         case "pbMinusMenu":
           switch (this.arrow) {
             case 0: //>Start pressed
-              //this.displayLCD.display(workPbMinusMenu);
               this.arrow = 0;
               this.currMenu = "workPbMinusMenu";
               await this.pbMinus.start(
