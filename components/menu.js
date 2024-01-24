@@ -2,12 +2,13 @@ const ThermShow = require("./therm-show");
 const PbMinus = require("./pbMinus");
 const ConstTemp = require("./constTemp");
 const DisplayLCD = require("./displayLCD");
+const BaseComponent = require("./baseComponent");
 
 const Rotary = require("raspberrypi-rotary-encoder");
 const fs = require("fs");
 var path = require("path");
 
-class Menu {
+class Menu extends BaseComponent{
   rotary = new Rotary(13, 14, 12); //(pinClk, pinDt, pinSwitch);
   thermShow = new ThermShow();
   pbMinus = new PbMinus();
@@ -19,14 +20,18 @@ class Menu {
   );
 
   constructor() {
+    super();
     this.currMenu = "";
     this.arrow = 0;
   }
 
-  init = () => {
+  async init () {
     console.log(this.menuList.thermMenu.name);
     this.displayLCD.display(this.menuList.startMenu, this.arrow);
     this.currMenu = "startMenu";
+    await this.sleep(2000);
+    this.displayLCD.display(this.menuList.mainMenu, this.arrow);
+    this.currMenu = "mainMenu";
 
     this.rotary.on("rotate", async (delta) => {
       switch (this.currMenu) {

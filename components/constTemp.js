@@ -2,13 +2,15 @@ const Thermometer = require("./thermometer");
 const DisplayLCD = require("./displayLCD");
 const PID = require("./pid.js");
 const PWM = require("./pwm.js");
+const BaseComponent = require("./baseComponent");
 
-class ConstTemp {
+class ConstTemp extends BaseComponent{
   displayLCD = new DisplayLCD();
   thermometer = new Thermometer();
   pwm = new PWM();
 
   constructor() {
+    super();
     this.powerTop = 0;
     this.powerBottom = 0;
     this.powerTopMax = 350;
@@ -33,9 +35,7 @@ class ConstTemp {
     this.DTop = 80;
   }
 
-  async sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+
 
   heat = () => {
     this.currTime++;
