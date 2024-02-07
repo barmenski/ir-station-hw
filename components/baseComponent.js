@@ -10,7 +10,9 @@ class BaseComponent {
     async sleep(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms));
     }
-  
+    fs = fs;
+    path = path;
+    
     constructor() {
 
     }

@@ -4,7 +4,10 @@ const PID = require("./pid.js");
 const PWM = require("./pwm.js");
 const BaseComponent = require("./baseComponent");
 
-class ConstTemp extends BaseComponent{
+//const fs = require("fs");
+//var path = require("path");
+
+class ConstTemp extends BaseComponent {
   displayLCD = new DisplayLCD();
   thermometer = new Thermometer();
   pwm = new PWM();
@@ -35,7 +38,116 @@ class ConstTemp extends BaseComponent{
     this.DTop = 80;
   }
 
+  async init () {
+    this.arrow = 0;
+    this.displayLCD.display(this.menuList.constMenu, this.arrow);
+    await this.sleep(2000);
+    this.currMenu = "constMenu";
+    this.currMenuLength = 4;
 
+
+    this.rotary.on("rotate", async (delta) => {
+      switch (this.currMenu) {
+        case "workConstMenu": //display pause menu
+          this.displayData(false);
+          this.arrow = 0;
+          this.displayLCD.display(this.menuList.pauseConstMenu, this.arrow);
+          this.currMenu = "pauseConstMenu";
+          this.currMenuLength=this.menuList.pauseConstMenu.type;
+          break;
+        case "setTargetTemp": //display setTargetTemp
+          this.menuList.constMenu.data1 = this.menuList.constMenu.data1 + delta;
+          this.displayLCD.show3digit(3, 1, this.menuList.constMenu.data1);
+          break;
+        default:
+          this.arrow = this.arrow + delta;
+          if (this.arrow > this.currMenuLength - 2) {
+            this.arrow = 0;
+          }
+          if (this.arrow < 0) {
+            this.arrow = this.currMenuLength - 2;
+          }
+
+          this.displayLCD.moveArrow(this.arrow);
+            console.log("this.currmenu (constTemp.js): "+this.currMenu+" "+this.arrow);
+      }
+    });
+
+    this.rotary.on("pressed", async () => {
+      switch (this.currMenu) {
+        case "constMenu":
+          switch (this.arrow) {
+            case 0: //>Start pressed
+              this.arrow = 0;
+              this.currMenu = "workConstMenu";
+              await this.start(this.menuList, this.arrow);
+              this.arrow = 2;
+              this.displayLCD.display(this.menuList.constMenu, this.arrow); //display constMenu after this.constTemp.stop();
+              this.currMenu = "constMenu";
+              this.currMenuLength=this.menuList.constMenu.type;
+              break;
+            case 1: //>t=200 pressed
+              this.arrow = 1;
+              this.currMenu = "setTargetTemp";
+              this.displayLCD.setBlinkFlag(true);
+              await this.displayLCD.blink3digit(
+                3,
+                1,
+                this.menuList.constMenu.data1
+              );
+              this.fs.writeFile(
+                this.path.join(__dirname, "/menuList.json"),
+                JSON.stringify(this.menuList),
+                (err) => {
+                  if (err) console.log(err);
+                  else {
+                    console.log("menuList.json written successfully");
+                  }
+                }
+              );
+              this.currMenu = "constMenu";
+              this.currMenuLength=this.menuList.constMenu.type;
+              this.displayLCD.display(this.menuList.constMenu, this.arrow);
+              break;
+            case 2: //>Back pressed
+              this.arrow = 0;
+              this.displayLCD.display(this.menuList.mainMenu, this.arrow);
+              this.currMenu = "mainMenu";
+              return "constMenu is stopped";
+              break;
+            case 3: //>Spd=1C/s pressed
+              this.arrow = 0;
+              this.currMenu = "setSpeed";
+              this.setSpeed("begin");
+              this.displayLCD.display(this.menuList.constMenu, this.arrow);
+              this.currMenu = "constMenu";
+              //this.arrow = 3;
+              break;
+          }
+          case "setTargetTemp":
+            this.displayLCD.setBlinkFlag(false);
+            break;
+
+          case "pauseConstMenu":
+            switch (this.arrow) {
+              case 0: //>Stop pressed
+                this.stop();
+                break;
+              case 1: //>Back pressed
+                this.displayLCD.display(this.menuList.workConstMenu, this.arrow);
+                this.displayData(true);
+                this.currMenu = "workConstMenu";
+                this.currMenuLength=this.menuList.workConstMenu.type;
+                break;
+            }
+            break;
+          default:
+      }
+      console.log(
+        "Rotary switch pressed. this.currMenu: " +
+          this.currMenu + " constTemp.js")
+    });
+  };
 
   heat = () => {
     this.currTime++;
@@ -60,19 +172,7 @@ class ConstTemp extends BaseComponent{
       this.pwm.updateBottom(this.powerBottom * 0.01);
     }
   };
-/*
-  setTargetTemp = (temp) => {
-    this.targetTemp = temp;
-  }
 
-  getTargetTemp = () => {
-    return this.targetTemp;
-  }
-
-  setSpeed = (speed) => {
-    this.speed = speed;
-  }
-*/
   async start(menuList) {
     this.pidBottom = new PID({
       k_p: this.PBottom,
@@ -100,9 +200,6 @@ class ConstTemp extends BaseComponent{
       await this.sleep(1000);
     }
   }
-
-
-
 
   reset = () => {
     this.powerTop = 0;
