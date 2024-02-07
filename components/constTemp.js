@@ -4,9 +4,6 @@ const PID = require("./pid.js");
 const PWM = require("./pwm.js");
 const BaseComponent = require("./baseComponent");
 
-//const fs = require("fs");
-//var path = require("path");
-
 class ConstTemp extends BaseComponent {
   displayLCD = new DisplayLCD();
   thermometer = new Thermometer();
@@ -14,6 +11,7 @@ class ConstTemp extends BaseComponent {
 
   constructor() {
     super();
+    this.flag = false;
     this.powerTop = 0;
     this.powerBottom = 0;
     this.powerTopMax = 350;
@@ -36,6 +34,13 @@ class ConstTemp extends BaseComponent {
     this.PTop = 40;
     this.ITop = 0.05;
     this.DTop = 80;
+  }
+
+  async disInit (resolve) {
+    if (this.flag) {
+      ()=>(resolve("stop"));
+    }
+
   }
 
   async init () {
@@ -110,10 +115,11 @@ class ConstTemp extends BaseComponent {
               this.displayLCD.display(this.menuList.constMenu, this.arrow);
               break;
             case 2: //>Back pressed
+              this.flag = true;
               this.arrow = 0;
               this.displayLCD.display(this.menuList.mainMenu, this.arrow);
               this.currMenu = "mainMenu";
-              return "constMenu is stopped";
+              
               break;
             case 3: //>Spd=1C/s pressed
               this.arrow = 0;
@@ -145,8 +151,9 @@ class ConstTemp extends BaseComponent {
       }
       console.log(
         "Rotary switch pressed. this.currMenu: " +
-          this.currMenu + " constTemp.js")
+          this.currMenu + " constTemp.js")  
     });
+    return await new Promise((resolve, reject) =>this.disInit(resolve, reject));
   };
 
   heat = () => {

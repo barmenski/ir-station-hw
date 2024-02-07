@@ -104,9 +104,10 @@ constructor() {
           }
 
           this.displayLCD.moveArrow(this.arrow);
+          console.log("this.currmenu (main.js): "+this.currMenu+" "+this.arrow);
           break;
           default:
-            console.log("this.currmenu (main.js): "+this.currMenu)+" "+this.arrow;
+            break;
       }
     });
 
@@ -129,6 +130,7 @@ constructor() {
             case 2: //>Const pressed
               this.currMenu = "constMenu";
               await this.constTemp.init();
+              console.log("const.init stopped");
               this.currMenu = "mainMenu";
               break;
             case 3: //>Dimmer pressed
