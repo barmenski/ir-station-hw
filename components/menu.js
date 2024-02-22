@@ -10,7 +10,7 @@ const BaseComponent = require("./baseComponent");
 class Menu extends BaseComponent{
   thermShow = new ThermShow();
   pbMinus = new PbMinus();
-  constTemp = new ConstTemp();
+  constTemp = new ConstTemp(this);
   displayLCD = new DisplayLCD();
 
 constructor() {
@@ -20,10 +20,18 @@ constructor() {
     this.arrow = 0;
   }
 
-  async init () {
+  async start () {
     this.displayLCD.display(this.menuList.startMenu, this.arrow);
     this.currMenu = "startMenu";
     await this.sleep(2000);
+    this.init();
+  }
+
+  async init () {
+    // this.displayLCD.display(this.menuList.startMenu, this.arrow);
+    // this.currMenu = "startMenu";
+    // await this.sleep(2000);
+    await this.sleep(200);
     this.displayLCD.display(this.menuList.mainMenu, this.arrow);
     this.currMenu = "mainMenu";
     this.currMenuLength=this.menuList.mainMenu.type;
@@ -95,12 +103,13 @@ constructor() {
     this.rotary.on("rotate", async (delta) => {
       switch (this.currMenu) {
         case "mainMenu":
+        case "constMenu":
               this.arrow = this.arrow + delta;
-          if (this.arrow > this.currMenuLength - 2) {
+          if (this.arrow > this.currMenuLength - 1) {
             this.arrow = 0;
           }
           if (this.arrow < 0) {
-            this.arrow = this.currMenuLength - 2;
+            this.arrow = this.currMenuLength - 1;
           }
 
           this.displayLCD.moveArrow(this.arrow);
@@ -129,9 +138,10 @@ constructor() {
               break;
             case 2: //>Const pressed
               this.currMenu = "constMenu";
+              this.removeListeners();
               await this.constTemp.init();
-              console.log("const.init stopped");
-              this.currMenu = "mainMenu";
+              //console.log("return to main.js");
+              //this.currMenu = "mainMenu";
               break;
             case 3: //>Dimmer pressed
               this.arrow = 0;
@@ -330,6 +340,12 @@ constructor() {
       );
     });
   };
+
+  removeListeners () {
+    this.rotary.removeAllListeners('pressed');
+    this.rotary.removeAllListeners('rotate');
+  
+  }
 }
 
 module.exports = Menu;

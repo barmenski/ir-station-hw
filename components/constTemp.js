@@ -9,9 +9,8 @@ class ConstTemp extends BaseComponent {
   thermometer = new Thermometer();
   pwm = new PWM();
 
-  constructor() {
+  constructor(parent) {
     super();
-    this.flag = false;
     this.powerTop = 0;
     this.powerBottom = 0;
     this.powerTopMax = 350;
@@ -34,31 +33,25 @@ class ConstTemp extends BaseComponent {
     this.PTop = 40;
     this.ITop = 0.05;
     this.DTop = 80;
+    this.eventName = "stop";
+    this.parent = parent;
   }
 
-  async disInit (resolve) {
-    if (this.flag) {
-      ()=>(resolve("stop"));
-    }
-
-  }
-
-  async init () {
+  async init() {
     this.arrow = 0;
     this.displayLCD.display(this.menuList.constMenu, this.arrow);
-    await this.sleep(2000);
+    await this.sleep(200);
     this.currMenu = "constMenu";
-    this.currMenuLength = 4;
-
+    this.currMenuLength = this.menuList.constMenu.type;
 
     this.rotary.on("rotate", async (delta) => {
       switch (this.currMenu) {
         case "workConstMenu": //display pause menu
-          this.displayData(false);
+          this.hiddenData = true;
           this.arrow = 0;
           this.displayLCD.display(this.menuList.pauseConstMenu, this.arrow);
           this.currMenu = "pauseConstMenu";
-          this.currMenuLength=this.menuList.pauseConstMenu.type;
+          this.currMenuLength = this.menuList.pauseConstMenu.type;
           break;
         case "setTargetTemp": //display setTargetTemp
           this.menuList.constMenu.data1 = this.menuList.constMenu.data1 + delta;
@@ -66,15 +59,17 @@ class ConstTemp extends BaseComponent {
           break;
         default:
           this.arrow = this.arrow + delta;
-          if (this.arrow > this.currMenuLength - 2) {
+          if (this.arrow > this.currMenuLength - 1) {
             this.arrow = 0;
           }
           if (this.arrow < 0) {
-            this.arrow = this.currMenuLength - 2;
+            this.arrow = this.currMenuLength - 1;
           }
 
           this.displayLCD.moveArrow(this.arrow);
-            console.log("this.currmenu (constTemp.js): "+this.currMenu+" "+this.arrow);
+          console.log(
+            "this.currmenu (constTemp.js): " + this.currMenu + " " + this.arrow
+          );
       }
     });
 
@@ -89,7 +84,7 @@ class ConstTemp extends BaseComponent {
               this.arrow = 2;
               this.displayLCD.display(this.menuList.constMenu, this.arrow); //display constMenu after this.constTemp.stop();
               this.currMenu = "constMenu";
-              this.currMenuLength=this.menuList.constMenu.type;
+              this.currMenuLength = this.menuList.constMenu.type;
               break;
             case 1: //>t=200 pressed
               this.arrow = 1;
@@ -111,15 +106,13 @@ class ConstTemp extends BaseComponent {
                 }
               );
               this.currMenu = "constMenu";
-              this.currMenuLength=this.menuList.constMenu.type;
+              this.currMenuLength = this.menuList.constMenu.type;
               this.displayLCD.display(this.menuList.constMenu, this.arrow);
               break;
             case 2: //>Back pressed
-              this.flag = true;
               this.arrow = 0;
-              this.displayLCD.display(this.menuList.mainMenu, this.arrow);
-              this.currMenu = "mainMenu";
-              
+              this.removeListeners();
+              this.parent.init();
               break;
             case 3: //>Spd=1C/s pressed
               this.arrow = 0;
@@ -127,36 +120,35 @@ class ConstTemp extends BaseComponent {
               this.setSpeed("begin");
               this.displayLCD.display(this.menuList.constMenu, this.arrow);
               this.currMenu = "constMenu";
-              //this.arrow = 3;
               break;
           }
-          case "setTargetTemp":
-            this.displayLCD.setBlinkFlag(false);
-            break;
-
-          case "pauseConstMenu":
-            switch (this.arrow) {
-              case 0: //>Stop pressed
-                this.stop();
-                break;
-              case 1: //>Back pressed
-                this.displayLCD.display(this.menuList.workConstMenu, this.arrow);
-                this.displayData(true);
-                this.currMenu = "workConstMenu";
-                this.currMenuLength=this.menuList.workConstMenu.type;
-                break;
-            }
-            break;
-          default:
-      }
-      console.log(
-        "Rotary switch pressed. this.currMenu: " +
-          this.currMenu + " constTemp.js")  
+        case "setTargetTemp":
+          this.displayLCD.setBlinkFlag(false);
+          break;
+        case "pauseConstMenu":
+          switch (this.arrow) {
+            case 0: //>Stop pressed
+              this.stop();
+              break;
+            case 1: //>Back pressed
+              this.displayLCD.display(this.menuList.workConstMenu, this.arrow);
+              this.hiddenData = false;
+              this.currMenu = "workConstMenu";
+              this.currMenuLength = this.menuList.workConstMenu.type;
+              break;
+          }
+          break;
+        default:
+      };
     });
-    return await new Promise((resolve, reject) =>this.disInit(resolve, reject));
-  };
+  }
 
-  heat = () => {
+  removeListeners() {
+    this.rotary.removeAllListeners("pressed");
+    this.rotary.removeAllListeners("rotate");
+  }
+
+  heat() {
     this.currTime++;
 
     let allTemp = this.thermometer.measure();
@@ -178,7 +170,7 @@ class ConstTemp extends BaseComponent {
 
       this.pwm.updateBottom(this.powerBottom * 0.01);
     }
-  };
+  }
 
   async start(menuList) {
     this.pidBottom = new PID({
@@ -218,10 +210,6 @@ class ConstTemp extends BaseComponent {
     this.pidBottom = null;
     this.pidTop = null;
     this.rise = 0;
-  };
-
-  displayData = (answer) => {
-    answer ? (this.hiddenData = false) : (this.hiddenData = true);
   };
 
   stop = () => {
