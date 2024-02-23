@@ -4,37 +4,31 @@ const ConstTemp = require("./constTemp");
 const DisplayLCD = require("./displayLCD");
 const BaseComponent = require("./baseComponent");
 
-// const fs = require("fs");
-// var path = require("path");
-
-class Menu extends BaseComponent{
+class Menu extends BaseComponent {
   thermShow = new ThermShow();
   pbMinus = new PbMinus();
   constTemp = new ConstTemp(this);
   displayLCD = new DisplayLCD();
 
-constructor() {
+  constructor() {
     super();
     this.currMenu = "";
     this.currMenuLength = 1;
     this.arrow = 0;
   }
 
-  async start () {
+  async start() {
     this.displayLCD.display(this.menuList.startMenu, this.arrow);
     this.currMenu = "startMenu";
     await this.sleep(2000);
     this.init();
   }
 
-  async init () {
-    // this.displayLCD.display(this.menuList.startMenu, this.arrow);
-    // this.currMenu = "startMenu";
-    // await this.sleep(2000);
-    await this.sleep(200);
+  async init() {
+    await this.sleep(100);
     this.displayLCD.display(this.menuList.mainMenu, this.arrow);
     this.currMenu = "mainMenu";
-    this.currMenuLength=this.menuList.mainMenu.type;
+    this.currMenuLength = this.menuList.mainMenu.type;
 
     // this.rotary.on("rotate", async (delta) => {
     //   switch (this.currMenu) {
@@ -55,16 +49,7 @@ constructor() {
     //       this.displayLCD.display(this.menuList.pausePbPlusMenu, this.arrow);
     //       this.currMenu = "pausePbPlusMenu";
     //       break;
-    //     case "workConstMenu": //display pause menu
-    //       this.constTemp.displayData(false);
-    //       this.arrow = 0;
-    //       this.displayLCD.display(this.menuList.pauseConstMenu, this.arrow);
-    //       this.currMenu = "pauseConstMenu";
-    //       break;
-    //     case "setTargetTemp": //display setTargetTemp
-    //       this.menuList.constMenu.data1 = this.menuList.constMenu.data1 + delta;
-    //       this.displayLCD.show3digit(3, 1, this.menuList.constMenu.data1);
-    //       break;
+
     //     case "workDimmerMenu": //display pause menu
     //       this.arrow = 0;
     //       this.displayLCD.display(this.menuList.pauseDimmerMenu, this.arrow);
@@ -85,38 +70,27 @@ constructor() {
     //       this.displayLCD.display(this.menuList.resumeDimmerMenu, this.arrow);
     //       this.currMenu = "resumeDimmerMenu";
     //       break;
-    //     case "thermMenu":
-    //       this.thermShow.stop();
-    //       break;
-    //     default:
-    //       this.arrow = this.arrow + delta;
-    //       if (this.arrow > this.currMenu.length - 2) {
-    //         this.arrow = 0;
-    //       }
-    //       if (this.arrow < 0) {
-    //         this.arrow = this.currMenu.length - 2;
-    //       }
 
-    //       this.displayLCD.moveArrow(this.arrow);
-    //   }
-    // });
     this.rotary.on("rotate", async (delta) => {
       switch (this.currMenu) {
         case "mainMenu":
-        case "constMenu":
-              this.arrow = this.arrow + delta;
+          this.arrow = this.arrow + delta;
           if (this.arrow > this.currMenuLength - 1) {
             this.arrow = 0;
           }
           if (this.arrow < 0) {
             this.arrow = this.currMenuLength - 1;
           }
-
           this.displayLCD.moveArrow(this.arrow);
-          console.log("this.currmenu (main.js): "+this.currMenu+" "+this.arrow);
+          console.log(
+            "this.currmenu (main.js): " + this.currMenu + " " + this.arrow
+          );
           break;
-          default:
-            break;
+        case "thermMenu":
+          this.thermShow.stop();
+          break;
+        default:
+          break;
       }
     });
 
@@ -128,223 +102,221 @@ constructor() {
               this.arrow = 0;
               this.displayLCD.display(this.menuList.pbMinusMenu, this.arrow);
               this.currMenu = "pbMinusMenu";
-              this.currMenuLength=this.menuList.pbMinusMenu.type;
+              this.currMenuLength = this.menuList.pbMinusMenu.type;
               break;
             case 1: //>Pb+ pressed
               this.arrow = 0;
               this.displayLCD.display(this.menuList.pbPlusMenu, this.arrow);
               this.currMenu = "pbPlusMenu";
-              this.currMenuLength=this.menuList.pbPlusMenu.type;
+              this.currMenuLength = this.menuList.pbPlusMenu.type;
               break;
             case 2: //>Const pressed
               this.currMenu = "constMenu";
               this.removeListeners();
               await this.constTemp.init();
-              //console.log("return to main.js");
-              //this.currMenu = "mainMenu";
               break;
             case 3: //>Dimmer pressed
               this.arrow = 0;
               this.displayLCD.display(this.menuList.dimmerMenu, this.arrow);
               this.currMenu = "dimmerMenu";
-              this.currMenuLength=this.menuList.dimmerMenu.type;
+              this.currMenuLength = this.menuList.dimmerMenu.type;
               break;
             case 4: //>T pressed
               this.arrow = 0;
               this.currMenu = "thermMenu";
               await this.thermShow.start(this.menuList.thermMenu, this.arrow); //waiting for measuring process
+              this.arrow = 4;
               this.displayLCD.display(this.menuList.mainMenu, this.arrow); //display mainMenu after this.therm.stop();
               this.currMenu = "mainMenu";
+              this.currMenuLength = this.menuList.mainMenu.type;
               break;
           }
           break;
-      //   case "pbMinusMenu":
-      //     switch (this.arrow) {
-      //       case 0: //>Start pressed
-      //         this.arrow = 0;
-      //         this.currMenu = "workPbMinusMenu";
-      //         await this.pbMinus.start(
-      //           this.menuList.workPbMinusMenu,
-      //           this.arrow
-      //         );
-      //         this.displayLCD.display(this.menuList.mainMenu, this.arrow); //display mainMenu after this.pbMinus.stop();
-      //         this.currMenu = "mainMenu";
-      //         break;
-      //       case 1: //>Profile01 pressed
-      //         //temporary block
-      //         break;
-      //       case 2: //>Back pressed
-      //         this.arrow = 0;
-      //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
-      //         this.currMenu = "mainMenu";
-      //         break;
-      //     }
-      //     break;
-      //   case "pbPlusMenu":
-      //     switch (this.arrow) {
-      //       case 0: //>Start pressed
-      //         this.arrow = 0;
-      //         this.displayLCD.display(this.menuList.workPbPlusMenu, this.arrow);
-      //         this.currMenu = "workPbPlusMenu";
-      //         break;
-      //       case 1: //>Profile01 pressed
-      //         //temporary block
-      //         break;
-      //       case 2: //>Back pressed
-      //         this.arrow = 0;
-      //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
-      //         this.currMenu = "mainMenu";
-      //         break;
-      //     }
-      //     break;
-      //   case "dimmerMenu":
-      //     switch (this.arrow) {
-      //       case 0: //>Start pressed
-      //         this.displayLCD.display(this.menuList.workDimmerMenu, this.arrow);
-      //         this.currMenu = "workDimmerMenu";
-      //         break;
-      //       case 1: //>P=000% pressed
-      //         //temporary block
-      //         break;
-      //       case 2: //>Back pressed
-      //         this.arrow = 0;
-      //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
-      //         this.currMenu = "mainMenu";
-      //         break;
-      //       case 3: //>Dur=120 pressed
-      //         //temporary block
-      //         break;
-      //     }
-      //     break;
-      //   case "pausePbMinusMenu":
-      //     switch (this.arrow) {
-      //       case 0: //>Pause pressed
-      //         this.displayLCD.display(
-      //           this.menuList.stayPbMinusMenu,
-      //           this.arrow
-      //         );
-      //         this.currMenu = "stayPbMinusMenu";
-      //         break;
-      //       case 1: //>Stop pressed
-      //         this.pbMinus.stop();
-      //         break;
-      //       case 2: //>Back pressed
-      //         this.displayLCD.display(
-      //           this.menuList.workPbMinusMenu,
-      //           this.arrow
-      //         );
-      //         this.currMenu = "workPbMinusMenu";
-      //         break;
-      //     }
-      //     break;
-      //   case "pausePbPlusMenu":
-      //     switch (this.arrow) {
-      //       case 0: //>Pause pressed
-      //         this.displayLCD.display(this.menuList.stayPbPlusMenu, this.arrow);
-      //         this.currMenu = "stayPbPlusMenu";
-      //         break;
-      //       case 1: //>Stop pressed
-      //         this.arrow = 0;
-      //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
-      //         this.currMenu = "mainMenu";
-      //         break;
-      //       case 2: //>Back pressed
-      //         this.displayLCD.display(this.menuList.workPbPlusMenu, this.arrow);
-      //         this.currMenu = "workPbPlusMenu";
-      //         break;
-      //     }
-      //     break;
+        //   case "pbMinusMenu":
+        //     switch (this.arrow) {
+        //       case 0: //>Start pressed
+        //         this.arrow = 0;
+        //         this.currMenu = "workPbMinusMenu";
+        //         await this.pbMinus.start(
+        //           this.menuList.workPbMinusMenu,
+        //           this.arrow
+        //         );
+        //         this.displayLCD.display(this.menuList.mainMenu, this.arrow); //display mainMenu after this.pbMinus.stop();
+        //         this.currMenu = "mainMenu";
+        //         break;
+        //       case 1: //>Profile01 pressed
+        //         //temporary block
+        //         break;
+        //       case 2: //>Back pressed
+        //         this.arrow = 0;
+        //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
+        //         this.currMenu = "mainMenu";
+        //         break;
+        //     }
+        //     break;
+        //   case "pbPlusMenu":
+        //     switch (this.arrow) {
+        //       case 0: //>Start pressed
+        //         this.arrow = 0;
+        //         this.displayLCD.display(this.menuList.workPbPlusMenu, this.arrow);
+        //         this.currMenu = "workPbPlusMenu";
+        //         break;
+        //       case 1: //>Profile01 pressed
+        //         //temporary block
+        //         break;
+        //       case 2: //>Back pressed
+        //         this.arrow = 0;
+        //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
+        //         this.currMenu = "mainMenu";
+        //         break;
+        //     }
+        //     break;
+        //   case "dimmerMenu":
+        //     switch (this.arrow) {
+        //       case 0: //>Start pressed
+        //         this.displayLCD.display(this.menuList.workDimmerMenu, this.arrow);
+        //         this.currMenu = "workDimmerMenu";
+        //         break;
+        //       case 1: //>P=000% pressed
+        //         //temporary block
+        //         break;
+        //       case 2: //>Back pressed
+        //         this.arrow = 0;
+        //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
+        //         this.currMenu = "mainMenu";
+        //         break;
+        //       case 3: //>Dur=120 pressed
+        //         //temporary block
+        //         break;
+        //     }
+        //     break;
+        //   case "pausePbMinusMenu":
+        //     switch (this.arrow) {
+        //       case 0: //>Pause pressed
+        //         this.displayLCD.display(
+        //           this.menuList.stayPbMinusMenu,
+        //           this.arrow
+        //         );
+        //         this.currMenu = "stayPbMinusMenu";
+        //         break;
+        //       case 1: //>Stop pressed
+        //         this.pbMinus.stop();
+        //         break;
+        //       case 2: //>Back pressed
+        //         this.displayLCD.display(
+        //           this.menuList.workPbMinusMenu,
+        //           this.arrow
+        //         );
+        //         this.currMenu = "workPbMinusMenu";
+        //         break;
+        //     }
+        //     break;
+        //   case "pausePbPlusMenu":
+        //     switch (this.arrow) {
+        //       case 0: //>Pause pressed
+        //         this.displayLCD.display(this.menuList.stayPbPlusMenu, this.arrow);
+        //         this.currMenu = "stayPbPlusMenu";
+        //         break;
+        //       case 1: //>Stop pressed
+        //         this.arrow = 0;
+        //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
+        //         this.currMenu = "mainMenu";
+        //         break;
+        //       case 2: //>Back pressed
+        //         this.displayLCD.display(this.menuList.workPbPlusMenu, this.arrow);
+        //         this.currMenu = "workPbPlusMenu";
+        //         break;
+        //     }
+        //     break;
 
-      //   case "pauseDimmerMenu":
-      //     switch (this.arrow) {
-      //       case 0: //>Pause pressed
-      //         this.displayLCD.display(this.menuList.stayDimmerMenu, this.arrow);
-      //         this.currMenu = "stayDimmerMenu";
-      //         break;
-      //       case 1: //>Stop pressed
-      //         this.arrow = 0;
-      //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
-      //         this.currMenu = "mainMenu";
+        //   case "pauseDimmerMenu":
+        //     switch (this.arrow) {
+        //       case 0: //>Pause pressed
+        //         this.displayLCD.display(this.menuList.stayDimmerMenu, this.arrow);
+        //         this.currMenu = "stayDimmerMenu";
+        //         break;
+        //       case 1: //>Stop pressed
+        //         this.arrow = 0;
+        //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
+        //         this.currMenu = "mainMenu";
 
-      //         break;
-      //       case 2: //>Back pressed
-      //         this.displayLCD.display(this.menuList.workDimmerMenu, this.arrow);
-      //         this.currMenu = "workDimmerMenu";
-      //         break;
-      //     }
-      //     break;
-      //   case "resumePbMinusMenu":
-      //     switch (this.arrow) {
-      //       case 0: //>Resume pressed
-      //         this.displayLCD.display(
-      //           this.menuList.workPbMinusMenu,
-      //           this.arrow
-      //         );
-      //         this.currMenu = "workPbMinusMenu";
-      //         break;
-      //       case 1: //>Stop pressed
-      //         this.arrow = 0;
-      //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
-      //         this.currMenu = "mainMenu";
-      //         break;
-      //       case 2: //>Back pressed
-      //         this.displayLCD.display(
-      //           this.menuList.stayPbMinusMenu,
-      //           this.arrow
-      //         );
-      //         this.currMenu = "stayPbMinusMenu";
-      //         break;
-      //     }
-      //     break;
-      //   case "resumePbPlusMenu":
-      //     switch (this.arrow) {
-      //       case 0: //>Resume pressed
-      //         this.displayLCD.display(this.menuList.workPbPlusMenu, this.arrow);
-      //         this.currMenu = "workPbMinusMenu";
-      //         break;
-      //       case 1: //>Stop pressed
-      //         this.arrow = 0;
-      //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
-      //         this.currMenu = "mainMenu";
-      //         break;
-      //       case 2: //>Back pressed
-      //         this.displayLCD.display(this.menuList.stayPbPlusMenu, this.arrow);
-      //         this.currMenu = "stayPbPlusMenu";
-      //         break;
-      //     }
-      //     break;
+        //         break;
+        //       case 2: //>Back pressed
+        //         this.displayLCD.display(this.menuList.workDimmerMenu, this.arrow);
+        //         this.currMenu = "workDimmerMenu";
+        //         break;
+        //     }
+        //     break;
+        //   case "resumePbMinusMenu":
+        //     switch (this.arrow) {
+        //       case 0: //>Resume pressed
+        //         this.displayLCD.display(
+        //           this.menuList.workPbMinusMenu,
+        //           this.arrow
+        //         );
+        //         this.currMenu = "workPbMinusMenu";
+        //         break;
+        //       case 1: //>Stop pressed
+        //         this.arrow = 0;
+        //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
+        //         this.currMenu = "mainMenu";
+        //         break;
+        //       case 2: //>Back pressed
+        //         this.displayLCD.display(
+        //           this.menuList.stayPbMinusMenu,
+        //           this.arrow
+        //         );
+        //         this.currMenu = "stayPbMinusMenu";
+        //         break;
+        //     }
+        //     break;
+        //   case "resumePbPlusMenu":
+        //     switch (this.arrow) {
+        //       case 0: //>Resume pressed
+        //         this.displayLCD.display(this.menuList.workPbPlusMenu, this.arrow);
+        //         this.currMenu = "workPbMinusMenu";
+        //         break;
+        //       case 1: //>Stop pressed
+        //         this.arrow = 0;
+        //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
+        //         this.currMenu = "mainMenu";
+        //         break;
+        //       case 2: //>Back pressed
+        //         this.displayLCD.display(this.menuList.stayPbPlusMenu, this.arrow);
+        //         this.currMenu = "stayPbPlusMenu";
+        //         break;
+        //     }
+        //     break;
 
-      //   case "resumeDimmerMenu":
-      //     switch (this.arrow) {
-      //       case 0: //>Resume pressed
-      //         this.displayLCD.display(this.menuList.workDimmerMenu, this.arrow);
-      //         this.currMenu = "workDimmerMenu";
-      //         break;
-      //       case 1: //>Stop pressed
-      //         this.arrow = 0;
-      //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
-      //         this.currMenu = "mainMenu";
-      //         break;
-      //       case 2: //>Back pressed
-      //         this.displayLCD.display(this.menuList.stayDimmerMenu, this.arrow);
-      //         this.currMenu = "stayDimmerMenu";
-      //         break;
-      //     }
-      //     break;
+        //   case "resumeDimmerMenu":
+        //     switch (this.arrow) {
+        //       case 0: //>Resume pressed
+        //         this.displayLCD.display(this.menuList.workDimmerMenu, this.arrow);
+        //         this.currMenu = "workDimmerMenu";
+        //         break;
+        //       case 1: //>Stop pressed
+        //         this.arrow = 0;
+        //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
+        //         this.currMenu = "mainMenu";
+        //         break;
+        //       case 2: //>Back pressed
+        //         this.displayLCD.display(this.menuList.stayDimmerMenu, this.arrow);
+        //         this.currMenu = "stayDimmerMenu";
+        //         break;
+        //     }
+        //     break;
         default:
           break;
       }
       console.log(
-        "Rotary switch pressed. this.currMenu: " +
-          this.currMenu + " menu.js"
+        "Rotary switch pressed. this.currMenu: " + this.currMenu + " menu.js"
       );
     });
-  };
+  }
 
-  removeListeners () {
-    this.rotary.removeAllListeners('pressed');
-    this.rotary.removeAllListeners('rotate');
-  
+  removeListeners() {
+    this.rotary.removeAllListeners("pressed");
+    this.rotary.removeAllListeners("rotate");
   }
 }
 

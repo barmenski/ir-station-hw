@@ -33,14 +33,13 @@ class ConstTemp extends BaseComponent {
     this.PTop = 40;
     this.ITop = 0.05;
     this.DTop = 80;
-    this.eventName = "stop";
     this.parent = parent;
   }
 
   async init() {
     this.arrow = 0;
     this.displayLCD.display(this.menuList.constMenu, this.arrow);
-    await this.sleep(200);
+    await this.sleep(100);
     this.currMenu = "constMenu";
     this.currMenuLength = this.menuList.constMenu.type;
 
@@ -53,9 +52,14 @@ class ConstTemp extends BaseComponent {
           this.currMenu = "pauseConstMenu";
           this.currMenuLength = this.menuList.pauseConstMenu.type;
           break;
-        case "setTargetTemp": //display setTargetTemp
+        case "setTargetTemp": //calculate targetTemp
           this.menuList.constMenu.data1 = this.menuList.constMenu.data1 + delta;
           this.displayLCD.show3digit(3, 1, this.menuList.constMenu.data1);
+          break;
+        case "setTargetSpeed": //calculate targetSpeed
+          this.menuList.constMenu.data2 = parseFloat(this.menuList.constMenu.data2) + delta*0.1;
+          this.menuList.constMenu.data2 = Number(this.menuList.constMenu.data2.toFixed(1));
+          this.displayLCD.show3digit(12, 1, this.menuList.constMenu.data2);
           break;
         default:
           this.arrow = this.arrow + delta;
@@ -95,16 +99,8 @@ class ConstTemp extends BaseComponent {
                 1,
                 this.menuList.constMenu.data1
               );
-              this.fs.writeFile(
-                this.path.join(__dirname, "/menuList.json"),
-                JSON.stringify(this.menuList),
-                (err) => {
-                  if (err) console.log(err);
-                  else {
-                    console.log("menuList.json written successfully");
-                  }
-                }
-              );
+              this.menuList.workConstMenu.text5=this.menuList.constMenu.data1;
+              this.writeData();
               this.currMenu = "constMenu";
               this.currMenuLength = this.menuList.constMenu.type;
               this.displayLCD.display(this.menuList.constMenu, this.arrow);
@@ -116,13 +112,22 @@ class ConstTemp extends BaseComponent {
               break;
             case 3: //>Spd=1C/s pressed
               this.arrow = 0;
-              this.currMenu = "setSpeed";
-              this.setSpeed("begin");
+              this.currMenu = "setTargetSpeed";
+              this.displayLCD.setBlinkFlag(true);
+              await this.displayLCD.blink3digit(
+                12,
+                1,
+                this.menuList.constMenu.data2
+              );
+              this.menuList.workConstMenu.text6=this.menuList.constMenu.data2;
+              this.writeData();
               this.displayLCD.display(this.menuList.constMenu, this.arrow);
+              this.currMenuLength = this.menuList.constMenu.type;
               this.currMenu = "constMenu";
               break;
           }
         case "setTargetTemp":
+        case "setTargetSpeed":
           this.displayLCD.setBlinkFlag(false);
           break;
         case "pauseConstMenu":
@@ -146,6 +151,19 @@ class ConstTemp extends BaseComponent {
   removeListeners() {
     this.rotary.removeAllListeners("pressed");
     this.rotary.removeAllListeners("rotate");
+  }
+
+  writeData() {
+    this.fs.writeFile(
+      this.path.join(__dirname, "/menuList.json"),
+      JSON.stringify(this.menuList),
+      (err) => {
+        if (err) console.log(err);
+        else {
+          console.log("menuList.json written successfully");
+        }
+      }
+    );
   }
 
   heat() {
