@@ -16,8 +16,8 @@ class ConstTemp extends BaseComponent {
     this.powerTopMax = 350;
     this.powerBottomMax = 3420;
     this.tempChip = 25;
-    this.targetTemp = 50;
-    this.speed = 1;
+    this.targetTemp = this.menuList.constMenu.data1;
+    this.targetSpeed = this.menuList.constMenu.data2;
     this.tempBoard = 25;
     this.pidBottom = null;
     this.pidTop = null;
@@ -57,8 +57,11 @@ class ConstTemp extends BaseComponent {
           this.displayLCD.show3digit(3, 1, this.menuList.constMenu.data1);
           break;
         case "setTargetSpeed": //calculate targetSpeed
-          this.menuList.constMenu.data2 = parseFloat(this.menuList.constMenu.data2) + delta*0.1;
-          this.menuList.constMenu.data2 = Number(this.menuList.constMenu.data2.toFixed(1));
+          this.menuList.constMenu.data2 =
+            parseFloat(this.menuList.constMenu.data2) + delta * 0.1;
+          this.menuList.constMenu.data2 = Number(
+            this.menuList.constMenu.data2.toFixed(1)
+          );
           this.displayLCD.show3digit(12, 1, this.menuList.constMenu.data2);
           break;
         default:
@@ -91,39 +94,21 @@ class ConstTemp extends BaseComponent {
               this.currMenuLength = this.menuList.constMenu.type;
               break;
             case 1: //>t=200 pressed
-              this.arrow = 1;
-              this.currMenu = "setTargetTemp";
-              this.displayLCD.setBlinkFlag(true);
-              await this.displayLCD.blink3digit(
-                3,
-                1,
-                this.menuList.constMenu.data1
-              );
-              this.menuList.workConstMenu.text5=this.menuList.constMenu.data1;
-              this.writeData();
+              await this.#setTargetTemp();
               this.currMenu = "constMenu";
-              this.currMenuLength = this.menuList.constMenu.type;
               this.displayLCD.display(this.menuList.constMenu, this.arrow);
+              this.currMenuLength = this.menuList.constMenu.type;
               break;
             case 2: //>Back pressed
               this.arrow = 0;
-              this.removeListeners();
+              this.#removeListeners();
               this.parent.init();
               break;
             case 3: //>Spd=1C/s pressed
-              this.arrow = 0;
-              this.currMenu = "setTargetSpeed";
-              this.displayLCD.setBlinkFlag(true);
-              await this.displayLCD.blink3digit(
-                12,
-                1,
-                this.menuList.constMenu.data2
-              );
-              this.menuList.workConstMenu.text6=this.menuList.constMenu.data2;
-              this.writeData();
+              await this.#setTargetSpeed("constMenu");
+              this.currMenu = "constMenu";
               this.displayLCD.display(this.menuList.constMenu, this.arrow);
               this.currMenuLength = this.menuList.constMenu.type;
-              this.currMenu = "constMenu";
               break;
           }
         case "setTargetTemp":
@@ -135,25 +120,37 @@ class ConstTemp extends BaseComponent {
             case 0: //>Stop pressed
               this.stop();
               break;
-            case 1: //>Back pressed
+            case 1: //>t=200 pressed
+              await this.#setTargetTemp();
+              this.currMenu = "pauseConstMenu";
+              this.displayLCD.display(this.menuList.pauseConstMenu, this.arrow);
+              this.currMenuLength = this.menuList.pauseConstMenu.type;
+              break;
+            case 2: //>Back pressed
               this.displayLCD.display(this.menuList.workConstMenu, this.arrow);
               this.hiddenData = false;
               this.currMenu = "workConstMenu";
               this.currMenuLength = this.menuList.workConstMenu.type;
               break;
+            case 3:
+              await this.#setTargetSpeed();
+              this.currMenu = "pauseConstMenu";
+              this.displayLCD.display(this.menuList.pauseConstMenu, this.arrow);
+              this.currMenuLength = this.menuList.pauseConstMenu.type;
+              break;
           }
           break;
         default:
-      };
+      }
     });
   }
 
-  removeListeners() {
+  #removeListeners() {
     this.rotary.removeAllListeners("pressed");
     this.rotary.removeAllListeners("rotate");
   }
 
-  writeData() {
+  #writeData() {
     this.fs.writeFile(
       this.path.join(__dirname, "/menuList.json"),
       JSON.stringify(this.menuList),
@@ -166,7 +163,30 @@ class ConstTemp extends BaseComponent {
     );
   }
 
-  heat() {
+  async #setTargetTemp() {
+    this.arrow = 1;
+    this.currMenu = "setTargetTemp";
+    this.displayLCD.setBlinkFlag(true);
+    await this.displayLCD.blink3digit(3, 1, this.menuList.constMenu.data1);
+    this.targetTemp = this.menuList.constMenu.data1; 
+    this.menuList.workConstMenu.text5 = this.menuList.constMenu.data1;
+    this.menuList.pauseConstMenu.data1 = this.menuList.constMenu.data1;
+    this.#writeData();
+  }
+
+  async #setTargetSpeed() {
+    this.arrow = 3;
+    this.currMenu = "setTargetSpeed";
+    this.displayLCD.setBlinkFlag(true);
+    await this.displayLCD.blink3digit(12, 1, this.menuList.constMenu.data2);
+    this.targetSpeed = this.menuList.constMenu.data2;
+    this.menuList.workConstMenu.text6 = this.menuList.constMenu.data2;
+    this.menuList.pauseConstMenu.data2 = this.menuList.constMenu.data2;
+    this.#writeData();
+  }
+
+  #heat() {
+    console.log("this.tempBoard =" + this.tempBoard + " this.targetTemp =" + this.targetTemp);
     this.currTime++;
 
     let allTemp = this.thermometer.measure();
@@ -174,7 +194,7 @@ class ConstTemp extends BaseComponent {
     this.tempBoard = allTemp[1];
 
     if (this.tempBoard < this.targetTemp) {
-      this.targetTemp = Number(this.tempChip + this.speed - 0).toFixed(2);
+      this.targetTemp = Number(this.tempChip + this.targetSpeed - 0).toFixed(2);
 
       this.pidBottom.setTarget(
         this.targetTemp,
@@ -204,7 +224,7 @@ class ConstTemp extends BaseComponent {
     this.displayLCD.display(menuList.workConstMenu);
 
     while (!this.timerStopped) {
-      this.heat();
+      this.#heat();
       if (!this.hiddenData) {
         this.displayLCD.displayPbMinusData(
           this.tempChip,

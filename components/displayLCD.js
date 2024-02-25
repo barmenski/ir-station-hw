@@ -292,22 +292,22 @@ class DisplayLCD {
 
   display(menu, arrow) {
     switch (menu.type) {
-      case "1":
+      case 1:
         this.#display1items(menu);
         break;
-      case "2":
+      case 2:
         this.#display2items(menu, arrow);
         break;
-      case "3":
+      case 3:
         this.#display3items(menu, arrow);
         break;
-      case "4":
+      case 4:
         this.#display4items(menu, arrow);
         break;
-      case "5":
+      case 5:
         this.#display5items(menu, arrow);
         break;
-      case "6":
+      case 6:
         this.#display6items(menu);
         break;
       default:
