@@ -168,7 +168,7 @@ class ConstTemp extends BaseComponent {
     this.currMenu = "setTargetTemp";
     this.displayLCD.setBlinkFlag(true);
     await this.displayLCD.blink3digit(3, 1, this.menuList.constMenu.data1);
-    this.targetTemp = this.menuList.constMenu.data1; 
+    //this.targetTemp = this.menuList.constMenu.data1;
     this.menuList.workConstMenu.text5 = this.menuList.constMenu.data1;
     this.menuList.pauseConstMenu.data1 = this.menuList.constMenu.data1;
     this.#writeData();
@@ -186,14 +186,21 @@ class ConstTemp extends BaseComponent {
   }
 
   #heat() {
-    console.log("this.tempBoard =" + this.tempBoard + " this.targetTemp =" + this.targetTemp);
+    console.log(
+      "this.tempBoard =" +
+        this.tempBoard +
+        " this.targetTemp =" +
+        this.targetTemp +
+        " this.targetSpeed =" +
+        this.targetSpeed
+    );
     this.currTime++;
 
     let allTemp = this.thermometer.measure();
     this.tempChip = allTemp[0];
     this.tempBoard = allTemp[1];
 
-    if (this.tempBoard < this.targetTemp) {
+    if (this.tempBoard < this.menuList.constMenu.data1) {
       this.targetTemp = Number(this.tempChip + this.targetSpeed - 0).toFixed(2);
 
       this.pidBottom.setTarget(
@@ -207,7 +214,20 @@ class ConstTemp extends BaseComponent {
       );
 
       this.pwm.updateBottom(this.powerBottom * 0.01);
+    } else {
+      this.pidBottom.setTarget(
+        this.menuList.constMenu.data1,
+        this.PBottom,
+        this.IBottom,
+        this.DBottom
+      );
+      this.powerBottom = Math.round(
+        Number(this.pidBottom.update(this.tempBoard))
+      );
+
+      this.pwm.updateBottom(this.powerBottom * 0.01);
     }
+    console.log("this.powerBottom =" + this.powerBottom);
   }
 
   async start(menuList) {
@@ -238,22 +258,22 @@ class ConstTemp extends BaseComponent {
     }
   }
 
-  reset = () => {
+  reset() {
     this.powerTop = 0;
     this.powerBottom = 0;
     this.tempChip = 25;
     this.targetTemp = 25;
-    this.targetTemp = null;
+
     this.tempBoard = 25;
     this.pidBottom = null;
     this.pidTop = null;
     this.rise = 0;
-  };
+  }
 
-  stop = () => {
+  stop() {
     this.timerStopped = true;
     this.currTime = 0;
     this.reset();
-  };
+  }
 }
 module.exports = ConstTemp;

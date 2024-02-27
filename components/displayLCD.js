@@ -168,27 +168,15 @@ class DisplayLCD {
       this.lcd.printSync(tempBoard);
     }
 
-    if (powerTop < 1000 && powerTop > 99) {
-      this.lcd.setCursorSync(8, 0);
-      this.lcd.printSync(powerTop);
-    } else if (powerTop < 10) {
-      this.lcd.setCursorSync(10, 0);
-      this.lcd.printSync(powerTop);
-    } else {
-      this.lcd.setCursorSync(9, 0);
-      this.lcd.printSync(powerTop);
-    }
+    this.lcd.setCursorSync(8, 0);
+    this.lcd.printSync("   ");
+    this.lcd.setCursorSync(8, 0);
+    this.lcd.printSync(powerTop);
 
-    if (powerBottom < 1000 && powerBottom > 99) {
-      this.lcd.setCursorSync(8, 1);
-      this.lcd.printSync(powerBottom);
-    } else if (powerBottom < 10) {
-      this.lcd.setCursorSync(10, 1);
-      this.lcd.printSync(powerBottom);
-    } else {
-      this.lcd.setCursorSync(9, 1);
-      this.lcd.printSync(powerBottom);
-    }
+    this.lcd.setCursorSync(8, 1);
+    this.lcd.printSync("   ");
+    this.lcd.setCursorSync(8, 1);
+    this.lcd.printSync(powerBottom);
 
     //t=000 P=000% pt1
     //  ↑↑↑   ↑↑↑
