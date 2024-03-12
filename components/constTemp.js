@@ -1,13 +1,15 @@
 const Thermometer = require("./thermometer");
 const DisplayLCD = require("./displayLCD");
 const PID = require("./pid.js");
-const PWM = require("./pwm.js");
+//const PWM = require("./pwm.js");
+const PWMH = require("./pwm-h.js");
 const BaseComponent = require("./baseComponent");
 
 class ConstTemp extends BaseComponent {
   displayLCD = new DisplayLCD();
   thermometer = new Thermometer();
-  pwm = new PWM();
+  //pwm = new PWM();
+  pwmH = new PWMH();
 
   constructor(parent) {
     super();
@@ -54,7 +56,7 @@ class ConstTemp extends BaseComponent {
           break;
         case "setTargetTemp": //calculate targetTemp
           this.menuList.constMenu.data1 = this.menuList.constMenu.data1 + delta;
-          this.displayLCD.show3digit(3, 1, this.menuList.constMenu.data1);
+          this.displayLCD.show3digit(4, 1, this.menuList.constMenu.data1);
           break;
         case "setTargetSpeed": //calculate targetSpeed
           this.menuList.constMenu.data2 =
@@ -105,7 +107,7 @@ class ConstTemp extends BaseComponent {
               this.parent.init();
               break;
             case 3: //>Spd=1C/s pressed
-              await this.#setTargetSpeed("constMenu");
+              await this.#setTargetSpeed();
               this.currMenu = "constMenu";
               this.displayLCD.display(this.menuList.constMenu, this.arrow);
               this.currMenuLength = this.menuList.constMenu.type;
@@ -167,7 +169,7 @@ class ConstTemp extends BaseComponent {
     this.arrow = 1;
     this.currMenu = "setTargetTemp";
     this.displayLCD.setBlinkFlag(true);
-    await this.displayLCD.blink3digit(3, 1, this.menuList.constMenu.data1);
+    await this.displayLCD.blink3digit(4, 1, this.menuList.constMenu.data1);
     //this.targetTemp = this.menuList.constMenu.data1;
     this.menuList.workConstMenu.text5 = this.menuList.constMenu.data1;
     this.menuList.pauseConstMenu.data1 = this.menuList.constMenu.data1;
@@ -212,8 +214,8 @@ class ConstTemp extends BaseComponent {
       this.powerBottom = Math.round(
         Number(this.pidBottom.update(this.tempBoard))
       );
-
-      this.pwm.updateBottom(this.powerBottom * 0.01);
+      this.pwmH.updateBottom(this.powerBottom * 0.01);
+      //this.pwm.updateBottom(this.powerBottom * 0.01);
     } else {
       this.pidBottom.setTarget(
         this.menuList.constMenu.data1,
@@ -225,7 +227,7 @@ class ConstTemp extends BaseComponent {
         Number(this.pidBottom.update(this.tempBoard))
       );
 
-      this.pwm.updateBottom(this.powerBottom * 0.01);
+      this.pwmH.updateBottom(this.powerBottom * 0.01);
     }
     console.log("this.powerBottom =" + this.powerBottom);
   }

@@ -1,6 +1,8 @@
 const ThermShow = require("./therm-show");
 const PbMinus = require("./pbMinus");
 const ConstTemp = require("./constTemp");
+const Dimmer = require("./dimmer.js");
+//const Dimmer = require("./dimmer-h.js");
 const DisplayLCD = require("./displayLCD");
 const BaseComponent = require("./baseComponent");
 
@@ -8,6 +10,7 @@ class Menu extends BaseComponent {
   thermShow = new ThermShow();
   pbMinus = new PbMinus();
   constTemp = new ConstTemp(this);
+  dimmer = new Dimmer(this);
   displayLCD = new DisplayLCD();
 
   constructor() {
@@ -50,11 +53,6 @@ class Menu extends BaseComponent {
     //       this.currMenu = "pausePbPlusMenu";
     //       break;
 
-    //     case "workDimmerMenu": //display pause menu
-    //       this.arrow = 0;
-    //       this.displayLCD.display(this.menuList.pauseDimmerMenu, this.arrow);
-    //       this.currMenu = "pauseDimmerMenu";
-    //       break;
     //     case "stayPbMinusMenu": //display resume menu
     //       this.arrow = 0;
     //       this.displayLCD.display(this.menuList.resumePbMinusMenu, this.arrow);
@@ -116,10 +114,9 @@ class Menu extends BaseComponent {
               await this.constTemp.init();
               break;
             case 3: //>Dimmer pressed
-              this.arrow = 0;
-              this.displayLCD.display(this.menuList.dimmerMenu, this.arrow);
-              this.currMenu = "dimmerMenu";
-              this.currMenuLength = this.menuList.dimmerMenu.type;
+              this.currMenu = "dimmer";
+              this.removeListeners();
+              await this.dimmer.init();
               break;
             case 4: //>T pressed
               this.arrow = 0;
@@ -171,25 +168,7 @@ class Menu extends BaseComponent {
         //         break;
         //     }
         //     break;
-        //   case "dimmerMenu":
-        //     switch (this.arrow) {
-        //       case 0: //>Start pressed
-        //         this.displayLCD.display(this.menuList.workDimmerMenu, this.arrow);
-        //         this.currMenu = "workDimmerMenu";
-        //         break;
-        //       case 1: //>P=000% pressed
-        //         //temporary block
-        //         break;
-        //       case 2: //>Back pressed
-        //         this.arrow = 0;
-        //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
-        //         this.currMenu = "mainMenu";
-        //         break;
-        //       case 3: //>Dur=120 pressed
-        //         //temporary block
-        //         break;
-        //     }
-        //     break;
+
         //   case "pausePbMinusMenu":
         //     switch (this.arrow) {
         //       case 0: //>Pause pressed
@@ -229,24 +208,6 @@ class Menu extends BaseComponent {
         //     }
         //     break;
 
-        //   case "pauseDimmerMenu":
-        //     switch (this.arrow) {
-        //       case 0: //>Pause pressed
-        //         this.displayLCD.display(this.menuList.stayDimmerMenu, this.arrow);
-        //         this.currMenu = "stayDimmerMenu";
-        //         break;
-        //       case 1: //>Stop pressed
-        //         this.arrow = 0;
-        //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
-        //         this.currMenu = "mainMenu";
-
-        //         break;
-        //       case 2: //>Back pressed
-        //         this.displayLCD.display(this.menuList.workDimmerMenu, this.arrow);
-        //         this.currMenu = "workDimmerMenu";
-        //         break;
-        //     }
-        //     break;
         //   case "resumePbMinusMenu":
         //     switch (this.arrow) {
         //       case 0: //>Resume pressed
@@ -288,23 +249,6 @@ class Menu extends BaseComponent {
         //     }
         //     break;
 
-        //   case "resumeDimmerMenu":
-        //     switch (this.arrow) {
-        //       case 0: //>Resume pressed
-        //         this.displayLCD.display(this.menuList.workDimmerMenu, this.arrow);
-        //         this.currMenu = "workDimmerMenu";
-        //         break;
-        //       case 1: //>Stop pressed
-        //         this.arrow = 0;
-        //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
-        //         this.currMenu = "mainMenu";
-        //         break;
-        //       case 2: //>Back pressed
-        //         this.displayLCD.display(this.menuList.stayDimmerMenu, this.arrow);
-        //         this.currMenu = "stayDimmerMenu";
-        //         break;
-        //     }
-        //     break;
         default:
           break;
       }
