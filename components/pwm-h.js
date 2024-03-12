@@ -4,8 +4,8 @@ const rpio = require('rpio');
 
 class PWMH {
 
-pin1 = 32;           /* P32/GPIO12 */
-pin2 = 33;           /* P33/GPIO13 */
+pin1 = 33;           /* P32/GPIO12 */
+pin2 = 32;           /* P33/GPIO13 */
 range = 1024;       /* LEDs can quickly hit max brightness, so only use */
 max = 128;          /*   the bottom 8th of a larger scale */
 clockdiv = 8;       /* Clock divider (PWM refresh rate), 8 == 2.4MHz */
@@ -22,7 +22,6 @@ times = 5;          /* How many times to pulse before exiting */
     rpio.pwmSetRange(this.pin2, this.range);
   }
 
- 
   updateTop (dutyCycle) {
       rpio.pwmSetData(this.pin1, dutyCycle);
   }
@@ -31,16 +30,6 @@ times = 5;          /* How many times to pulse before exiting */
     rpio.pwmSetData(this.pin2, dutyCycle);
   }
 
-
-
-
-
-
-
-
-
-
 }
-
 
 module.exports = PWMH;
