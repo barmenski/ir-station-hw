@@ -11,10 +11,17 @@ max = 128;          /*   the bottom 8th of a larger scale */
 clockdiv = 8;       /* Clock divider (PWM refresh rate), 8 == 2.4MHz */
 interval = 5;       /* setInterval timer, speed of pulses */
 times = 5;          /* How many times to pulse before exiting */
+// options = {
+//   gpiomem: false,
+//   mapping: 'physical',
+//   mock: undefined,
+//   close_on_exit: true
+// }
 
   constructor(){
     // this.outTop = new pwm.PWM('GPIO12');
     // this.outBottom = new pwm.PWM('GPIO13');
+    //rpio.init(this.options);
     rpio.open(this.pin1, rpio.PWM);
     rpio.open(this.pin2, rpio.PWM);
     rpio.pwmSetClockDivider(this.clockdiv);

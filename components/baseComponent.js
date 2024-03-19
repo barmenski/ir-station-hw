@@ -1,9 +1,11 @@
-const Rotary = require("raspberrypi-rotary-encoder");
+//const Rotary = require("raspberrypi-rotary-encoder");
+const Rotary = require("./encoder");
 const fs = require("fs");
 var path = require("path");
 
 class BaseComponent {
-    rotary = new Rotary(13, 14, 12); //(pinClk, pinDt, pinSwitch);
+    rotary = new Rotary();
+
     menuList = JSON.parse(
         fs.readFileSync(path.join(__dirname, "/menuList.json"), (err, data) => data)
       );
@@ -14,7 +16,7 @@ class BaseComponent {
     path = path;
     
     constructor() {
-
+      //this.rotary.init();
     }
   }
   module.exports = BaseComponent;

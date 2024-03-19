@@ -15,6 +15,7 @@ class Menu extends BaseComponent {
 
   constructor() {
     super();
+    // this.rotary.init();
     this.currMenu = "";
     this.currMenuLength = 1;
     this.arrow = 0;
@@ -24,7 +25,10 @@ class Menu extends BaseComponent {
     this.displayLCD.display(this.menuList.startMenu, this.arrow);
     this.currMenu = "startMenu";
     await this.sleep(2000);
+    console.log("menu.js before this.init();");
+    this.rotary.init();
     this.init();
+    
   }
 
   async init() {
@@ -256,12 +260,14 @@ class Menu extends BaseComponent {
         "Rotary switch pressed. this.currMenu: " + this.currMenu + " menu.js"
       );
     });
+    console.log("menu.js end of  this.init();");
   }
 
   removeListeners() {
     this.rotary.removeAllListeners("pressed");
     this.rotary.removeAllListeners("rotate");
   }
+
 }
 
 module.exports = Menu;

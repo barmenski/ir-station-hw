@@ -1,4 +1,3 @@
-
 const Max6675 = require('max6675-raspi');
 
 class  Thermometer {
