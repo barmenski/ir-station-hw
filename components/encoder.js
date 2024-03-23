@@ -1,5 +1,6 @@
 const rpio = require('rpio');
 const EventEmitter = require('events');
+const { POLL_LOW, POLL_HIGH } = require('rpio');
 
 class  Encoder extends EventEmitter {
 	options = {
@@ -25,10 +26,10 @@ class  Encoder extends EventEmitter {
 		if (rpio.read(this.pinS1) == 1 && rpio.read(this.pinS2) == 1) {
 			this.emit("rotate", -1);
 			this.i--;
-			console.log(`cc ${this.i}`);
+			console.log(`<-${this.i}`);
 		  } else if (rpio.read(this.pinS1)==1 && rpio.read(this.pinS2)==0) {
 			this.i++;
-			console.log(`cw ${this.i}`);
+			console.log(`->${this.i}`);
 			this.emit("rotate", 1);
 		  }
 	}
@@ -36,21 +37,20 @@ class  Encoder extends EventEmitter {
 	#pollKey=()=> {
 		console.log('Button pressed');
 		this.emit("pressed");
-		// rpio.poll(cbpin, null);
 	}
 
-	init() {
+	init=()=> {
 		rpio.poll(this.pinS1, this.#pollS1S2);
-		rpio.poll(this.pinKey, this.#pollKey);
+		//rpio.poll(this.pinS2, this.#pollS1S2, POLL_HIGH);
+		rpio.poll(this.pinKey, this.#pollKey, POLL_LOW);
 		console.log("encoder.js init();")
 	}
 
-	// stop() {
-	// 	rpio.poll(this.pinS1, null);
-	// 	rpio.poll(this.pinS2, null);
-	// 	rpio.poll(this.pinKey, null);
-	// 	rpio.exit();
-	// };
+	stop=()=> {
+		rpio.poll(this.pinS1, null);
+		rpio.poll(this.pinKey, null);
+		//rpio.exit();
+	};
 	
 
 

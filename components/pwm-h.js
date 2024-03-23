@@ -1,42 +1,26 @@
-//const raspi = require('raspi');
-//const pwm = require('raspi-pwm');
-const rpio = require('rpio');
+const rpio = require("rpio");
 
 class PWMH {
+  pinUp = 33;
+  pinDown = 32;
+  range = 100; /* Max PWM */
+  clockdiv = 8; /* Clock divider (PWM refresh rate), 8 == 2.4MHz */
 
-pin1 = 33;           /* P32/GPIO12 */
-pin2 = 32;           /* P33/GPIO13 */
-range = 1024;       /* LEDs can quickly hit max brightness, so only use */
-max = 128;          /*   the bottom 8th of a larger scale */
-clockdiv = 8;       /* Clock divider (PWM refresh rate), 8 == 2.4MHz */
-interval = 5;       /* setInterval timer, speed of pulses */
-times = 5;          /* How many times to pulse before exiting */
-// options = {
-//   gpiomem: false,
-//   mapping: 'physical',
-//   mock: undefined,
-//   close_on_exit: true
-// }
-
-  constructor(){
-    // this.outTop = new pwm.PWM('GPIO12');
-    // this.outBottom = new pwm.PWM('GPIO13');
-    //rpio.init(this.options);
-    rpio.open(this.pin1, rpio.PWM);
-    rpio.open(this.pin2, rpio.PWM);
+  constructor() {
+    rpio.open(this.pinUp, rpio.PWM);
+    rpio.open(this.pinDown, rpio.PWM);
     rpio.pwmSetClockDivider(this.clockdiv);
-    rpio.pwmSetRange(this.pin1, this.range);
-    rpio.pwmSetRange(this.pin2, this.range);
+    rpio.pwmSetRange(this.pinUp, this.range);
+    rpio.pwmSetRange(this.pinDown, this.range);
   }
 
-  updateTop (dutyCycle) {
-      rpio.pwmSetData(this.pin1, dutyCycle);
+  updateTop(dutyCycle) {
+    rpio.pwmSetData(this.pinUp, dutyCycle);
   }
 
-  updateBottom (dutyCycle) {
-    rpio.pwmSetData(this.pin2, dutyCycle);
+  updateBottom(dutyCycle) {
+    rpio.pwmSetData(this.pinDown, dutyCycle);
   }
-
 }
 
 module.exports = PWMH;

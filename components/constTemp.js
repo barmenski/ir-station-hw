@@ -1,15 +1,15 @@
 const Thermometer = require("./thermometer");
 const DisplayLCD = require("./displayLCD");
 const PID = require("./pid.js");
-//const PWM = require("./pwm.js");
 const PWMH = require("./pwm-h.js");
 const BaseComponent = require("./baseComponent");
+const Rotary = require("./encoder");
 
 class ConstTemp extends BaseComponent {
   displayLCD = new DisplayLCD();
   thermometer = new Thermometer();
-  //pwm = new PWM();
   pwmH = new PWMH();
+  rotary = new Rotary();
 
   constructor(parent) {
     super();
@@ -42,6 +42,7 @@ class ConstTemp extends BaseComponent {
     this.arrow = 0;
     this.displayLCD.display(this.menuList.constMenu, this.arrow);
     await this.sleep(100);
+    this.rotary.init();
     this.currMenu = "constMenu";
     this.currMenuLength = this.menuList.constMenu.type;
 
@@ -150,6 +151,7 @@ class ConstTemp extends BaseComponent {
   #removeListeners() {
     this.rotary.removeAllListeners("pressed");
     this.rotary.removeAllListeners("rotate");
+    this.rotary.stop();
   }
 
   #writeData() {
@@ -214,7 +216,7 @@ class ConstTemp extends BaseComponent {
       this.powerBottom = Math.round(
         Number(this.pidBottom.update(this.tempBoard))
       );
-      this.pwmH.updateBottom(this.powerBottom * 0.01);
+      this.pwmH.updateBottom(this.powerBottom );
       //this.pwm.updateBottom(this.powerBottom * 0.01);
     } else {
       this.pidBottom.setTarget(
@@ -227,7 +229,7 @@ class ConstTemp extends BaseComponent {
         Number(this.pidBottom.update(this.tempBoard))
       );
 
-      this.pwmH.updateBottom(this.powerBottom * 0.01);
+      this.pwmH.updateBottom(this.powerBottom );
     }
     console.log("this.powerBottom =" + this.powerBottom);
   }

@@ -4,6 +4,7 @@ const ConstTemp = require("./constTemp");
 const Dimmer = require("./dimmer.js");
 //const Dimmer = require("./dimmer-h.js");
 const DisplayLCD = require("./displayLCD");
+const Rotary = require("./encoder");
 const BaseComponent = require("./baseComponent");
 
 class Menu extends BaseComponent {
@@ -12,10 +13,10 @@ class Menu extends BaseComponent {
   constTemp = new ConstTemp(this);
   dimmer = new Dimmer(this);
   displayLCD = new DisplayLCD();
+  rotary = new Rotary();
 
   constructor() {
     super();
-    // this.rotary.init();
     this.currMenu = "";
     this.currMenuLength = 1;
     this.arrow = 0;
@@ -26,13 +27,13 @@ class Menu extends BaseComponent {
     this.currMenu = "startMenu";
     await this.sleep(2000);
     console.log("menu.js before this.init();");
-    this.rotary.init();
     this.init();
     
   }
 
   async init() {
     await this.sleep(100);
+    this.rotary.init();
     this.displayLCD.display(this.menuList.mainMenu, this.arrow);
     this.currMenu = "mainMenu";
     this.currMenuLength = this.menuList.mainMenu.type;
@@ -266,6 +267,7 @@ class Menu extends BaseComponent {
   removeListeners() {
     this.rotary.removeAllListeners("pressed");
     this.rotary.removeAllListeners("rotate");
+    this.rotary.stop();
   }
 
 }
