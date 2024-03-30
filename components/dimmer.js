@@ -1,27 +1,28 @@
 const Thermometer = require("./thermometer");
 const DisplayLCD = require("./displayLCD");
 const PWM = require("./pwm.js");
+const Encoder = require("./encoder");
 const BaseComponent = require("./baseComponent");
 
 class Dimmer extends BaseComponent {
   displayLCD = new DisplayLCD();
   thermometer = new Thermometer();
   pwm = new PWM();
+  encoder = new Encoder();
 
   constructor(parent) {
     super();
-    this.powerTop = 0;
-    this.powerBottom = 0;
+    this.powerTop = this.menuList.dimmerMenu.data1;
+    this.powerBottom = this.menuList.dimmerMenu.data2;
     this.powerTopMax = 350;
     this.powerBottomMax = 3420;
     this.tempChip = 25;
-    this.targetTemp = this.menuList.constMenu.data1;
-    this.targetSpeed = this.menuList.constMenu.data2;
+
     this.tempBoard = 25;
     this.pidBottom = null;
     this.pidTop = null;
     this.currTime = 0;
-    this.rise = 0;
+
     this.timerStopped = true;
     this.hiddenData = false;
 
@@ -39,10 +40,11 @@ class Dimmer extends BaseComponent {
     this.arrow = 0;
     this.displayLCD.display(this.menuList.dimmerMenu, this.arrow);
     await this.sleep(100);
+    this.encoder.init();
     this.currMenu = "dimmerMenu";
     this.currMenuLength = this.menuList.dimmerMenu.type;
 
-    this.rotary.on("rotate", async (delta) => {
+    this.encoder.on("rotate", async (delta) => {
       switch (this.currMenu) {
         case "workDimmerMenu": //display pause menu
           this.hiddenData = true;
@@ -75,16 +77,17 @@ class Dimmer extends BaseComponent {
       }
     });
 
-    this.rotary.on("pressed", async () => {
+    this.encoder.on("pressed", async () => {
       switch (this.currMenu) {
         case "dimmerMenu":
           switch (this.arrow) {
             case 0: //>Start pressed
               this.arrow = 0;
               this.currMenu = "workDimmerMenu";
+              this.pwm.init();
               await this.start(this.menuList, this.arrow);
               this.arrow = 2;
-              this.displayLCD.display(this.menuList.dimmerMenu, this.arrow); //display constMenu after this.constTemp.stop();
+              this.displayLCD.display(this.menuList.dimmerMenu, this.arrow); 
               this.currMenu = "dimmerMenu";
               this.currMenuLength = this.menuList.dimmerMenu.type;
               break;
@@ -141,8 +144,9 @@ class Dimmer extends BaseComponent {
   }
 
   #removeListeners() {
-    this.rotary.removeAllListeners("pressed");
-    this.rotary.removeAllListeners("rotate");
+    this.encoder.removeAllListeners("pressed");
+    this.encoder.removeAllListeners("rotate");
+    this.encoder.stop();
   }
 
   #writeData() {
@@ -187,18 +191,16 @@ class Dimmer extends BaseComponent {
     let allTemp = this.thermometer.measure();
     this.tempChip = allTemp[0];
     this.tempBoard = allTemp[1];
-
-    this.pwm.updateTop(this.powerTop*0.01);
-    this.pwm.updateBottom(this.powerBottom*0.01);
-
-    console.log("this.powerTop =" + this.powerTop + " this.powerBottom =" + this.powerBottom);
+    this.powerTop = this.menuList.dimmerMenu.data1;
+    this.powerBottom = this.menuList.dimmerMenu.data2;
+    
+    this.pwm.update(this.powerTop, this.powerBottom);
+    //this.pwm.updateBottom(this.powerBottom);
   }
 
   async start(menuList) {
-
     this.timerStopped = false;
     this.hiddenData = false;
-    this.targetTemp = menuList.constMenu.data1;
     this.displayLCD.display(menuList.workDimmerMenu);
 
     while (!this.timerStopped) {
@@ -217,20 +219,16 @@ class Dimmer extends BaseComponent {
   }
 
   reset() {
-    this.powerTop = 0;
-    this.powerBottom = 0;
     this.tempChip = 25;
-    this.targetTemp = 25;
-
     this.tempBoard = 25;
     this.pidBottom = null;
     this.pidTop = null;
-    this.rise = 0;
   }
 
   stop() {
     this.timerStopped = true;
     this.currTime = 0;
+    this.pwm.stop();
     this.reset();
   }
 }

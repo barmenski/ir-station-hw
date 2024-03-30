@@ -1,10 +1,10 @@
 const ThermShow = require("./therm-show");
 const PbMinus = require("./pbMinus");
 const ConstTemp = require("./constTemp");
-const Dimmer = require("./dimmer.js");
-//const Dimmer = require("./dimmer-h.js");
+//const Dimmer = require("./dimmer.js");
+const Dimmer = require("./dimmer-h.js");
 const DisplayLCD = require("./displayLCD");
-const Rotary = require("./encoder");
+const Encoder = require("./encoder");
 const BaseComponent = require("./baseComponent");
 
 class Menu extends BaseComponent {
@@ -13,7 +13,7 @@ class Menu extends BaseComponent {
   constTemp = new ConstTemp(this);
   dimmer = new Dimmer(this);
   displayLCD = new DisplayLCD();
-  rotary = new Rotary();
+  encoder = new Encoder();
 
   constructor() {
     super();
@@ -33,7 +33,7 @@ class Menu extends BaseComponent {
 
   async init() {
     await this.sleep(100);
-    this.rotary.init();
+    this.encoder.init();
     this.displayLCD.display(this.menuList.mainMenu, this.arrow);
     this.currMenu = "mainMenu";
     this.currMenuLength = this.menuList.mainMenu.type;
@@ -74,7 +74,7 @@ class Menu extends BaseComponent {
     //       this.currMenu = "resumeDimmerMenu";
     //       break;
 
-    this.rotary.on("rotate", async (delta) => {
+    this.encoder.on("rotate", async (delta) => {
       switch (this.currMenu) {
         case "mainMenu":
           this.arrow = this.arrow + delta;
@@ -97,7 +97,7 @@ class Menu extends BaseComponent {
       }
     });
 
-    this.rotary.on("pressed", async () => {
+    this.encoder.on("pressed", async () => {
       switch (this.currMenu) {
         case "mainMenu":
           switch (this.arrow) {
@@ -265,9 +265,9 @@ class Menu extends BaseComponent {
   }
 
   removeListeners() {
-    this.rotary.removeAllListeners("pressed");
-    this.rotary.removeAllListeners("rotate");
-    this.rotary.stop();
+    this.encoder.removeAllListeners("pressed");
+    this.encoder.removeAllListeners("rotate");
+    this.encoder.stop();
   }
 
 }

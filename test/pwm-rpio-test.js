@@ -14,11 +14,11 @@ async function init () {
   heatTop(10);
   console.log(" this.pwm.updateTop(10)");
   await sleep(10000);
-  heatTop(520);
-  console.log(" this.pwm.updateTop(520)");
+  heatTop(50);
+  console.log(" this.pwm.updateTop(50)");
   await sleep(10000);
-  heatTop(920);
-  console.log(" this.pwm.updateTop(920)");
+  heatTop(90);
+  console.log(" this.pwm.updateTop(90)");
   await sleep(10000);
 };
 

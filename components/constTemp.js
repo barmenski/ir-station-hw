@@ -1,15 +1,15 @@
 const Thermometer = require("./thermometer");
 const DisplayLCD = require("./displayLCD");
 const PID = require("./pid.js");
-const PWMH = require("./pwm-h.js");
+const PWM = require("./pwm.js");
 const BaseComponent = require("./baseComponent");
-const Rotary = require("./encoder");
+const Encoder = require("./encoder");
 
 class ConstTemp extends BaseComponent {
   displayLCD = new DisplayLCD();
   thermometer = new Thermometer();
-  pwmH = new PWMH();
-  rotary = new Rotary();
+  pwm = new PWM();
+  encoder = new Encoder();
 
   constructor(parent) {
     super();
@@ -42,11 +42,11 @@ class ConstTemp extends BaseComponent {
     this.arrow = 0;
     this.displayLCD.display(this.menuList.constMenu, this.arrow);
     await this.sleep(100);
-    this.rotary.init();
+    this.encoder.init();
     this.currMenu = "constMenu";
     this.currMenuLength = this.menuList.constMenu.type;
 
-    this.rotary.on("rotate", async (delta) => {
+    this.encoder.on("rotate", async (delta) => {
       switch (this.currMenu) {
         case "workConstMenu": //display pause menu
           this.hiddenData = true;
@@ -83,7 +83,7 @@ class ConstTemp extends BaseComponent {
       }
     });
 
-    this.rotary.on("pressed", async () => {
+    this.encoder.on("pressed", async () => {
       switch (this.currMenu) {
         case "constMenu":
           switch (this.arrow) {
@@ -149,9 +149,9 @@ class ConstTemp extends BaseComponent {
   }
 
   #removeListeners() {
-    this.rotary.removeAllListeners("pressed");
-    this.rotary.removeAllListeners("rotate");
-    this.rotary.stop();
+    this.encoder.removeAllListeners("pressed");
+    this.encoder.removeAllListeners("rotate");
+    this.encoder.stop();
   }
 
   #writeData() {
@@ -172,7 +172,6 @@ class ConstTemp extends BaseComponent {
     this.currMenu = "setTargetTemp";
     this.displayLCD.setBlinkFlag(true);
     await this.displayLCD.blink3digit(4, 1, this.menuList.constMenu.data1);
-    //this.targetTemp = this.menuList.constMenu.data1;
     this.menuList.workConstMenu.text5 = this.menuList.constMenu.data1;
     this.menuList.pauseConstMenu.data1 = this.menuList.constMenu.data1;
     this.#writeData();
@@ -216,8 +215,7 @@ class ConstTemp extends BaseComponent {
       this.powerBottom = Math.round(
         Number(this.pidBottom.update(this.tempBoard))
       );
-      this.pwmH.updateBottom(this.powerBottom );
-      //this.pwm.updateBottom(this.powerBottom * 0.01);
+      this.pwm.updateBottom(this.powerBottom);
     } else {
       this.pidBottom.setTarget(
         this.menuList.constMenu.data1,
@@ -229,9 +227,8 @@ class ConstTemp extends BaseComponent {
         Number(this.pidBottom.update(this.tempBoard))
       );
 
-      this.pwmH.updateBottom(this.powerBottom );
+      this.pwm.updateBottom(this.powerBottom);
     }
-    console.log("this.powerBottom =" + this.powerBottom);
   }
 
   async start(menuList) {
@@ -263,8 +260,6 @@ class ConstTemp extends BaseComponent {
   }
 
   reset() {
-    this.powerTop = 0;
-    this.powerBottom = 0;
     this.tempChip = 25;
     this.targetTemp = 25;
 
@@ -277,6 +272,8 @@ class ConstTemp extends BaseComponent {
   stop() {
     this.timerStopped = true;
     this.currTime = 0;
+    this.pwm.updateTop(0);
+    this.pwm.updateBottom(0);
     this.reset();
   }
 }

@@ -1,35 +1,34 @@
-const raspi = require('raspi');
-const pwm = require('raspi-soft-pwm');
+const rpio = require("rpio");
 
 class PWM {
+  pinTop = 33;//33, pin35-gpio19 pwm1
+  pinBottom = 32; //32-problem! pin12-gpio18 pwm0
+  range = 100; /* Max PWM */
+  clockdiv = 64; /* Clock divider (PWM refresh rate), 8 == 2.4MHz 64=3khz 128=1.5khz 256=750hz*/
 
-  constructor(){
-    this.outTop = new pwm.SoftPWM('GPIO12');
-    this.outBottom = new pwm.SoftPWM('GPIO13');
+  constructor() {
+
   }
 
-  init () {
-    raspi.init(() => {
-      this.outTop.write(0); // 0% Duty Cycle
-      this.outBottom.write(0); // 0% Duty Cycle
-    });
+  init() {
+    rpio.open(this.pinTop, rpio.PWM);
+    rpio.open(this.pinBottom, rpio.PWM);
+    rpio.pwmSetClockDivider(this.clockdiv);
+    rpio.pwmSetRange(this.pinTop, this.range);
+    rpio.pwmSetRange(this.pinBottom, this.range);
   }
 
-  updateTop (dutyCycle) {
-    raspi.init(() => {
-      this.outTop.write(dutyCycle);
-    });
+  update(dutyCycle1, dutyCycle2) {
+    rpio.pwmSetData(this.pinTop, dutyCycle1);
+    console.log("powerTop =" + dutyCycle1);
+    rpio.pwmSetData(this.pinBottom, dutyCycle2);
+    console.log("powerBottom =" + dutyCycle2);
   }
 
-  updateBottom (dutyCycle) {
-    raspi.init(() => {
-      this.outBottom.write(dutyCycle);
-    });
+  stop(){
+    rpio.open(this.pinTop, rpio.INPUT);
+    rpio.open(this.pinBottom, rpio.INPUT);
   }
-
 }
-
-
-//install raspi, raspi-soft-pwm on raspberry pi before work here
 
 module.exports = PWM;

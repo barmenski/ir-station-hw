@@ -1,12 +1,12 @@
 const Thermometer = require("./thermometer");
 const DisplayLCD = require("./displayLCD");
-const PWMH = require("./pwm-h.js");
+const PWM = require("./pwm.js");
 const BaseComponent = require("./baseComponent");
 
 class Dimmer extends BaseComponent {
   displayLCD = new DisplayLCD();
   thermometer = new Thermometer();
-  pwm = new PWMH();
+  pwm = new PWM();
 
   constructor(parent) {
     super();

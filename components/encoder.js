@@ -22,26 +22,21 @@ class  Encoder extends EventEmitter {
 	}
 
 	 #pollS1S2=() => {
-		console.log(rpio.read(21), " ", rpio.read(23));
 		if (rpio.read(this.pinS1) == 1 && rpio.read(this.pinS2) == 1) {
 			this.emit("rotate", -1);
 			this.i--;
-			console.log(`<-${this.i}`);
 		  } else if (rpio.read(this.pinS1)==1 && rpio.read(this.pinS2)==0) {
 			this.i++;
-			console.log(`->${this.i}`);
 			this.emit("rotate", 1);
 		  }
 	}
 	
 	#pollKey=()=> {
-		console.log('Button pressed');
 		this.emit("pressed");
 	}
 
 	init=()=> {
 		rpio.poll(this.pinS1, this.#pollS1S2);
-		//rpio.poll(this.pinS2, this.#pollS1S2, POLL_HIGH);
 		rpio.poll(this.pinKey, this.#pollKey, POLL_LOW);
 		console.log("encoder.js init();")
 	}
@@ -49,7 +44,6 @@ class  Encoder extends EventEmitter {
 	stop=()=> {
 		rpio.poll(this.pinS1, null);
 		rpio.poll(this.pinKey, null);
-		//rpio.exit();
 	};
 	
 
