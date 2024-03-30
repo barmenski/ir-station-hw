@@ -84,7 +84,6 @@ class Dimmer extends BaseComponent {
             case 0: //>Start pressed
               this.arrow = 0;
               this.currMenu = "workDimmerMenu";
-              this.pwm.init();
               await this.start(this.menuList, this.arrow);
               this.arrow = 2;
               this.displayLCD.display(this.menuList.dimmerMenu, this.arrow); 
@@ -199,6 +198,7 @@ class Dimmer extends BaseComponent {
   }
 
   async start(menuList) {
+    this.pwm.init();
     this.timerStopped = false;
     this.hiddenData = false;
     this.displayLCD.display(menuList.workDimmerMenu);

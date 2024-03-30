@@ -189,14 +189,6 @@ class ConstTemp extends BaseComponent {
   }
 
   #heat() {
-    console.log(
-      "this.tempBoard =" +
-        this.tempBoard +
-        " this.targetTemp =" +
-        this.targetTemp +
-        " this.targetSpeed =" +
-        this.targetSpeed
-    );
     this.currTime++;
 
     let allTemp = this.thermometer.measure();
@@ -215,7 +207,7 @@ class ConstTemp extends BaseComponent {
       this.powerBottom = Math.round(
         Number(this.pidBottom.update(this.tempBoard))
       );
-      this.pwm.updateBottom(this.powerBottom);
+      this.pwm.update(this.powerTop, this.powerBottom);
     } else {
       this.pidBottom.setTarget(
         this.menuList.constMenu.data1,
@@ -227,11 +219,12 @@ class ConstTemp extends BaseComponent {
         Number(this.pidBottom.update(this.tempBoard))
       );
 
-      this.pwm.updateBottom(this.powerBottom);
+      this.pwm.update(this.powerTop, this.powerBottom);
     }
   }
 
   async start(menuList) {
+    this.pwm.init();
     this.pidBottom = new PID({
       k_p: this.PBottom,
       k_i: this.IBottom,
@@ -272,8 +265,7 @@ class ConstTemp extends BaseComponent {
   stop() {
     this.timerStopped = true;
     this.currTime = 0;
-    this.pwm.updateTop(0);
-    this.pwm.updateBottom(0);
+    this.pwm.stop();
     this.reset();
   }
 }
