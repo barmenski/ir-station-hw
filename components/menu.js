@@ -101,10 +101,9 @@ class Menu extends BaseComponent {
         case "mainMenu":
           switch (this.arrow) {
             case 0: //>Pb- pressed
-              this.arrow = 0;
-              this.displayLCD.display(this.menuList.pbMinusMenu, this.arrow);
               this.currMenu = "pbMinusMenu";
-              this.currMenuLength = this.menuList.pbMinusMenu.type;
+              this.removeListeners();
+              await this.pbMinus.init();
               break;
             case 1: //>Pb+ pressed
               this.arrow = 0;

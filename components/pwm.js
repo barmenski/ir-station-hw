@@ -1,8 +1,8 @@
 const rpio = require("rpio");
 
 class PWM {
-  pinTop = 33;//33, pin35-gpio19 pwm1
-  pinBottom = 32; //32-problem! pin12-gpio18 pwm0
+  pinTop = 33;// pwm1
+  pinBottom = 32; // pwm0
   range = 100; /* Max PWM */
   clockdiv = 64; /* Clock divider (PWM refresh rate), 8 == 2.4MHz 64=3khz 128=1.5khz 256=750hz*/
 
