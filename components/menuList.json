@@ -3,28 +3,58 @@
   "mainMenu": {
     "name": "mainMenu",
     "type": 5,
-    "text1": "Pb-",
-    "text2": "Pb+",
+    "text1": "Profil",
+    "text2": "PIDset",
     "text3": "Const",
     "text4": "Dimmer",
     "text5": "T"
   },
-  "pbMinusMenu": {
-    "name": "pbMinusMenu",
+  "profileMenu": {
+    "name": "profileMenu",
     "type": 3,
     "text1": "Start",
     "text2": "Pr01",
     "text3": "Back"
   },
-  "pbPlusMenu": {
-    "name": "pbPlusMenu",
+
+  "profilesMenu": {
+    "name": "profilesMenu",
+    "type": 4,
+    "text1": "123456",
+    "text2": "123456",
+    "text3": "123456",
+    "text4": "123456"
+  },
+
+  "editProfileMenu": {
+    "name": "editProfileMenu",
+    "type": 6,
+    "data1": 100,
+    "data2": 100,
+    "data3": 100,
+    "data4": 100,
+    "data5": 100,
+    "data6": 100,
+    "text1": "T",
+    "text2": "T",
+    "text3": "T",
+    "text4": "t",
+    "text5": "t",
+    "text6": "t",
+    "text7": "C",
+    "text8": "s"
+  },
+
+  "applyProfileMenu": {
+    "name": "applyProfileMenu",
     "type": 3,
-    "text1": "Start",
-    "text2": "Pr01",
+    "text1": "Apply",
+    "text2": "Edit",
     "text3": "Back"
   },
-  "workPbMinusMenu": {
-    "name": "workPbMinusMenu",
+
+  "workProfileMenu": {
+    "name": "workProfileMenu",
     "type": 6,
     "text1": "t=",
     "data1": "000",
@@ -37,8 +67,8 @@
     "text5": "pt1",
     "text6": "run"
   },
-  "stayPbMinusMenu": {
-    "name": "stayPbMinusMenu",
+  "stayProfileMenu": {
+    "name": "stayProfileMenu",
     "type": 6,
     "text1": "t=",
     "data1": "000",
@@ -51,62 +81,22 @@
     "text5": "pt1",
     "text6": "Zzz"
   },
-  "workPbPlusMenu": {
-    "name": "workPbPlusMenu",
-    "type": 6,
-    "text1": "t=",
-    "data1": "000",
-    "text2": "t=",
-    "data2": "000",
-    "text3": "P=",
-    "data3": "000",
-    "text4": "P=",
-    "data4": "000",
-    "text5": "pt1",
-    "text6": "run"
-  },
-  "stayPbPlusMenu": {
-    "name": "stayPbPlusMenu",
-    "type": 6,
-    "text1": "t=",
-    "data1": "000",
-    "text2": "t=",
-    "data2": "000",
-    "text3": "P=",
-    "data3": "000",
-    "text4": "P=",
-    "data4": "000",
-    "text5": "pt1",
-    "text6": "Zzz"
-  },
-  "pausePbMinusMenu": {
-    "name": "pausePbMinusMenu",
+
+  "pauseProfileMenu": {
+    "name": "pauseProfileMenu",
     "type": 3,
     "text1": "Pause",
     "text2": "Stop",
     "text3": "Back"
   },
-  "resumePbMinusMenu": {
-    "name": "resumePbMinusMenu",
+  "resumeProfileMenu": {
+    "name": "resumeProfileMenu",
     "type": 3,
     "text1": "Resume",
     "text2": "Stop",
     "text3": "Back"
   },
-  "pausePbPlusMenu": {
-    "name": "pausePbPlusMenu",
-    "type": 3,
-    "text1": "Pause",
-    "text2": "Stop",
-    "text3": "Back"
-  },
-  "resumePbPlusMenu": {
-    "name": "resumePbPlusMenu",
-    "type": 3,
-    "text1": "Resume",
-    "text2": "Stop",
-    "text3": "Back"
-  },
+
   "constMenu": {
     "name": "constMenu",
     "type": 4,

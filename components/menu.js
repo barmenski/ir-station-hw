@@ -1,5 +1,5 @@
 const ThermShow = require("./therm-show");
-const PbMinus = require("./pbMinus");
+const Profil = require("./profil");
 const ConstTemp = require("./constTemp");
 const Dimmer = require("./dimmer.js");
 const DisplayLCD = require("./displayLCD");
@@ -8,7 +8,7 @@ const BaseComponent = require("./baseComponent");
 
 class Menu extends BaseComponent {
   thermShow = new ThermShow();
-  pbMinus = new PbMinus();
+  profil = new Profil();
   constTemp = new ConstTemp(this);
   dimmer = new Dimmer(this);
   displayLCD = new DisplayLCD();
@@ -44,34 +44,21 @@ class Menu extends BaseComponent {
     //       this.displayLCD.display(this.menuList.mainMenu, this.arrow);
     //       this.currMenu = "mainMenu";
     //       break;
-    //     case "workPbMinusMenu": //display pause menu
+    //     case "workprofilMenu": //display pause menu
     //       this.pbMinus.pause();
     //       //start constant temp mode
     //       this.arrow = 0;
-    //       this.displayLCD.display(this.menuList.pausePbMinusMenu, this.arrow);
-    //       this.currMenu = "pausePbMinusMenu";
-    //       break;
-    //     case "workPbPlusMenu": //display pause menu
-    //       this.arrow = 0;
-    //       this.displayLCD.display(this.menuList.pausePbPlusMenu, this.arrow);
-    //       this.currMenu = "pausePbPlusMenu";
+    //       this.displayLCD.display(this.menuList.pauseprofilMenu, this.arrow);
+    //       this.currMenu = "pauseprofilMenu";
     //       break;
 
-    //     case "stayPbMinusMenu": //display resume menu
+
+    //     case "stayprofilMenu": //display resume menu
     //       this.arrow = 0;
-    //       this.displayLCD.display(this.menuList.resumePbMinusMenu, this.arrow);
-    //       this.currMenu = "resumePbMinusMenu";
+    //       this.displayLCD.display(this.menuList.resumeprofilMenu, this.arrow);
+    //       this.currMenu = "resumeprofilMenu";
     //       break;
-    //     case "stayPbPlusMenu": //display resume menu
-    //       this.displayLCD.display(this.menuList.resumePbPlusMenu);
-    //       this.currMenu = "resumePbPlusMenu";
-    //       this.arrow = 0;
-    //       break;
-    //     case "stayDimmerMenu":
-    //       this.arrow = 0;
-    //       this.displayLCD.display(this.menuList.resumeDimmerMenu, this.arrow);
-    //       this.currMenu = "resumeDimmerMenu";
-    //       break;
+
 
     this.encoder.on("rotate", async (delta) => {
       switch (this.currMenu) {
@@ -100,12 +87,12 @@ class Menu extends BaseComponent {
       switch (this.currMenu) {
         case "mainMenu":
           switch (this.arrow) {
-            case 0: //>Pb- pressed
-              this.currMenu = "pbMinusMenu";
+            case 0: //>Profil pressed
+              this.currMenu = "profilMenu";
               this.removeListeners();
-              await this.pbMinus.init();
+              await this.profil.init();
               break;
-            case 1: //>Pb+ pressed
+            case 1: //>PIDset pressed
               this.arrow = 0;
               this.displayLCD.display(this.menuList.pbPlusMenu, this.arrow);
               this.currMenu = "pbPlusMenu";
@@ -132,13 +119,13 @@ class Menu extends BaseComponent {
               break;
           }
           break;
-        //   case "pbMinusMenu":
+        //   case "profilMenu":
         //     switch (this.arrow) {
         //       case 0: //>Start pressed
         //         this.arrow = 0;
-        //         this.currMenu = "workPbMinusMenu";
+        //         this.currMenu = "workprofilMenu";
         //         await this.pbMinus.start(
-        //           this.menuList.workPbMinusMenu,
+        //           this.menuList.workprofilMenu,
         //           this.arrow
         //         );
         //         this.displayLCD.display(this.menuList.mainMenu, this.arrow); //display mainMenu after this.pbMinus.stop();
@@ -154,71 +141,37 @@ class Menu extends BaseComponent {
         //         break;
         //     }
         //     break;
-        //   case "pbPlusMenu":
-        //     switch (this.arrow) {
-        //       case 0: //>Start pressed
-        //         this.arrow = 0;
-        //         this.displayLCD.display(this.menuList.workPbPlusMenu, this.arrow);
-        //         this.currMenu = "workPbPlusMenu";
-        //         break;
-        //       case 1: //>Profile01 pressed
-        //         //temporary block
-        //         break;
-        //       case 2: //>Back pressed
-        //         this.arrow = 0;
-        //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
-        //         this.currMenu = "mainMenu";
-        //         break;
-        //     }
-        //     break;
 
-        //   case "pausePbMinusMenu":
+        //   case "pauseprofilMenu":
         //     switch (this.arrow) {
         //       case 0: //>Pause pressed
         //         this.displayLCD.display(
-        //           this.menuList.stayPbMinusMenu,
+        //           this.menuList.stayprofilMenu,
         //           this.arrow
         //         );
-        //         this.currMenu = "stayPbMinusMenu";
+        //         this.currMenu = "stayprofilMenu";
         //         break;
         //       case 1: //>Stop pressed
         //         this.pbMinus.stop();
         //         break;
         //       case 2: //>Back pressed
         //         this.displayLCD.display(
-        //           this.menuList.workPbMinusMenu,
+        //           this.menuList.workprofilMenu,
         //           this.arrow
         //         );
-        //         this.currMenu = "workPbMinusMenu";
-        //         break;
-        //     }
-        //     break;
-        //   case "pausePbPlusMenu":
-        //     switch (this.arrow) {
-        //       case 0: //>Pause pressed
-        //         this.displayLCD.display(this.menuList.stayPbPlusMenu, this.arrow);
-        //         this.currMenu = "stayPbPlusMenu";
-        //         break;
-        //       case 1: //>Stop pressed
-        //         this.arrow = 0;
-        //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
-        //         this.currMenu = "mainMenu";
-        //         break;
-        //       case 2: //>Back pressed
-        //         this.displayLCD.display(this.menuList.workPbPlusMenu, this.arrow);
-        //         this.currMenu = "workPbPlusMenu";
+        //         this.currMenu = "workprofilMenu";
         //         break;
         //     }
         //     break;
 
-        //   case "resumePbMinusMenu":
+        //   case "resumeprofilMenu":
         //     switch (this.arrow) {
         //       case 0: //>Resume pressed
         //         this.displayLCD.display(
-        //           this.menuList.workPbMinusMenu,
+        //           this.menuList.workprofilMenu,
         //           this.arrow
         //         );
-        //         this.currMenu = "workPbMinusMenu";
+        //         this.currMenu = "workprofilMenu";
         //         break;
         //       case 1: //>Stop pressed
         //         this.arrow = 0;
@@ -227,27 +180,10 @@ class Menu extends BaseComponent {
         //         break;
         //       case 2: //>Back pressed
         //         this.displayLCD.display(
-        //           this.menuList.stayPbMinusMenu,
+        //           this.menuList.stayprofilMenu,
         //           this.arrow
         //         );
-        //         this.currMenu = "stayPbMinusMenu";
-        //         break;
-        //     }
-        //     break;
-        //   case "resumePbPlusMenu":
-        //     switch (this.arrow) {
-        //       case 0: //>Resume pressed
-        //         this.displayLCD.display(this.menuList.workPbPlusMenu, this.arrow);
-        //         this.currMenu = "workPbMinusMenu";
-        //         break;
-        //       case 1: //>Stop pressed
-        //         this.arrow = 0;
-        //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
-        //         this.currMenu = "mainMenu";
-        //         break;
-        //       case 2: //>Back pressed
-        //         this.displayLCD.display(this.menuList.stayPbPlusMenu, this.arrow);
-        //         this.currMenu = "stayPbPlusMenu";
+        //         this.currMenu = "stayprofilMenu";
         //         break;
         //     }
         //     break;

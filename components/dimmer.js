@@ -194,7 +194,6 @@ class Dimmer extends BaseComponent {
     this.powerBottom = this.menuList.dimmerMenu.data2;
     
     this.pwm.update(this.powerTop, this.powerBottom);
-    //this.pwm.updateBottom(this.powerBottom);
   }
 
   async start(menuList) {
@@ -206,7 +205,7 @@ class Dimmer extends BaseComponent {
     while (!this.timerStopped) {
       this.#heat();
       if (!this.hiddenData) {
-        this.displayLCD.displayPbMinusData(
+        this.displayLCD.displayProfilData(
           this.tempChip,
           this.tempBoard,
           this.powerTop,

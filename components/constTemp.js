@@ -240,7 +240,7 @@ class ConstTemp extends BaseComponent {
     while (!this.timerStopped) {
       this.#heat();
       if (!this.hiddenData) {
-        this.displayLCD.displayPbMinusData(
+        this.displayLCD.displayProfilData(
           this.tempChip,
           this.tempBoard,
           this.powerTop,
