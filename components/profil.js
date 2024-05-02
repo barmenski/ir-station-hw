@@ -9,7 +9,6 @@ class Profil extends BaseComponent {
   displayLCD = new DisplayLCD();
   thermometer = new Thermometer();
   pwm = new PWM();
-  profiles = new Profiles();
   encoder = new Encoder();
 
   constructor(parent) {
@@ -143,10 +142,14 @@ class Profil extends BaseComponent {
           if (this.arrow > this.currMenuLength - 1) {
             this.arrow = 0; //rotate over number of menu → return to profileMenu
             this.displayLCD.display(this.menuList.profileMenu, 0);
+            this.currMenu = "profileMenu";
+            this.currMenuLength = this.menuList.profileMenu.type;
           }
           if (this.arrow < 0) {
             this.arrow = this.currMenuLength - 1; //rotate over number of menu → return to profileMenu
             this.displayLCD.display(this.menuList.profileMenu, 0);
+            this.currMenu = "profileMenu";
+            this.currMenuLength = this.menuList.profileMenu.type;
           }
 
           this.displayLCD.editProfileMoveArrow(this.arrow);
@@ -326,7 +329,7 @@ class Profil extends BaseComponent {
                 this.menuList.editProfileMenu.data5
               );
               break;
-            case 4:
+            case 5:
               await this.#setProfileData(
                 14,
                 1,
@@ -347,7 +350,6 @@ class Profil extends BaseComponent {
           break;
         default:
 
-        //set temp and time and exit need write
       }
     });
   }
@@ -474,7 +476,7 @@ class Profil extends BaseComponent {
     }
   }
 
-  async start(menu) {
+  async start(menuList) {
     this.pwm.init();
 
     this.preHeatTime = this.currProfile.time1;

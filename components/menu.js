@@ -8,7 +8,7 @@ const BaseComponent = require("./baseComponent");
 
 class Menu extends BaseComponent {
   thermShow = new ThermShow();
-  profil = new Profil();
+  profil = new Profil(this);
   constTemp = new ConstTemp(this);
   dimmer = new Dimmer(this);
   displayLCD = new DisplayLCD();
@@ -36,29 +36,6 @@ class Menu extends BaseComponent {
     this.displayLCD.display(this.menuList.mainMenu, this.arrow);
     this.currMenu = "mainMenu";
     this.currMenuLength = this.menuList.mainMenu.type;
-
-    // this.rotary.on("rotate", async (delta) => {
-    //   switch (this.currMenu) {
-    //     case "startMenu":
-    //       this.arrow = 0;
-    //       this.displayLCD.display(this.menuList.mainMenu, this.arrow);
-    //       this.currMenu = "mainMenu";
-    //       break;
-    //     case "workprofilMenu": //display pause menu
-    //       this.pbMinus.pause();
-    //       //start constant temp mode
-    //       this.arrow = 0;
-    //       this.displayLCD.display(this.menuList.pauseprofilMenu, this.arrow);
-    //       this.currMenu = "pauseprofilMenu";
-    //       break;
-
-
-    //     case "stayprofilMenu": //display resume menu
-    //       this.arrow = 0;
-    //       this.displayLCD.display(this.menuList.resumeprofilMenu, this.arrow);
-    //       this.currMenu = "resumeprofilMenu";
-    //       break;
-
 
     this.encoder.on("rotate", async (delta) => {
       switch (this.currMenu) {
@@ -93,10 +70,10 @@ class Menu extends BaseComponent {
               await this.profil.init();
               break;
             case 1: //>PIDset pressed
-              this.arrow = 0;
-              this.displayLCD.display(this.menuList.pbPlusMenu, this.arrow);
-              this.currMenu = "pbPlusMenu";
-              this.currMenuLength = this.menuList.pbPlusMenu.type;
+              // this.arrow = 0;
+              // this.displayLCD.display(this.menuList.pbPlusMenu, this.arrow);
+              // this.currMenu = "pbPlusMenu";
+              // this.currMenuLength = this.menuList.pbPlusMenu.type;
               break;
             case 2: //>Const pressed
               this.currMenu = "constMenu";
@@ -119,74 +96,6 @@ class Menu extends BaseComponent {
               break;
           }
           break;
-        //   case "profilMenu":
-        //     switch (this.arrow) {
-        //       case 0: //>Start pressed
-        //         this.arrow = 0;
-        //         this.currMenu = "workprofilMenu";
-        //         await this.pbMinus.start(
-        //           this.menuList.workprofilMenu,
-        //           this.arrow
-        //         );
-        //         this.displayLCD.display(this.menuList.mainMenu, this.arrow); //display mainMenu after this.pbMinus.stop();
-        //         this.currMenu = "mainMenu";
-        //         break;
-        //       case 1: //>Profile01 pressed
-        //         //temporary block
-        //         break;
-        //       case 2: //>Back pressed
-        //         this.arrow = 0;
-        //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
-        //         this.currMenu = "mainMenu";
-        //         break;
-        //     }
-        //     break;
-
-        //   case "pauseprofilMenu":
-        //     switch (this.arrow) {
-        //       case 0: //>Pause pressed
-        //         this.displayLCD.display(
-        //           this.menuList.stayprofilMenu,
-        //           this.arrow
-        //         );
-        //         this.currMenu = "stayprofilMenu";
-        //         break;
-        //       case 1: //>Stop pressed
-        //         this.pbMinus.stop();
-        //         break;
-        //       case 2: //>Back pressed
-        //         this.displayLCD.display(
-        //           this.menuList.workprofilMenu,
-        //           this.arrow
-        //         );
-        //         this.currMenu = "workprofilMenu";
-        //         break;
-        //     }
-        //     break;
-
-        //   case "resumeprofilMenu":
-        //     switch (this.arrow) {
-        //       case 0: //>Resume pressed
-        //         this.displayLCD.display(
-        //           this.menuList.workprofilMenu,
-        //           this.arrow
-        //         );
-        //         this.currMenu = "workprofilMenu";
-        //         break;
-        //       case 1: //>Stop pressed
-        //         this.arrow = 0;
-        //         this.displayLCD.display(this.menuList.mainMenu, this.arrow);
-        //         this.currMenu = "mainMenu";
-        //         break;
-        //       case 2: //>Back pressed
-        //         this.displayLCD.display(
-        //           this.menuList.stayprofilMenu,
-        //           this.arrow
-        //         );
-        //         this.currMenu = "stayprofilMenu";
-        //         break;
-        //     }
-        //     break;
 
         default:
           break;
