@@ -26,6 +26,7 @@ class Profil extends BaseComponent {
     this.currTime = 0;
     this.rise = 0;
     this.timerStopped = true;
+    this.hiddenData = false;
 
     this.preHeatTime = 0;
     this.preHeatTemp = 0;
@@ -55,7 +56,7 @@ class Profil extends BaseComponent {
       time3: 240,
     };
 
-    this.editProfile = {};
+    this.selectProfile = {};
 
     this.namesProfile = [];
   }
@@ -65,7 +66,7 @@ class Profil extends BaseComponent {
     this.displayLCD.display(this.menuList.profileMenu, this.arrow);
     await this.sleep(100);
     this.encoder.init();
-    this.#pullData();
+    await this.#pullData();
     this.currMenu = "profileMenu";
     this.currMenuLength = this.menuList.profileMenu.type;
 
@@ -84,7 +85,7 @@ class Profil extends BaseComponent {
               this.menuList.editProfileMenu.data1 =
                 this.menuList.editProfileMenu.data1 + delta;
               this.displayLCD.show3digit(
-                4,
+                2,
                 0,
                 this.menuList.editProfileMenu.data1
               );
@@ -93,7 +94,7 @@ class Profil extends BaseComponent {
               this.menuList.editProfileMenu.data2 =
                 this.menuList.editProfileMenu.data2 + delta;
               this.displayLCD.show3digit(
-                4,
+                2,
                 1,
                 this.menuList.editProfileMenu.data2
               );
@@ -102,7 +103,7 @@ class Profil extends BaseComponent {
               this.menuList.editProfileMenu.data3 =
                 this.menuList.editProfileMenu.data3 + delta;
               this.displayLCD.show3digit(
-                9,
+                7,
                 0,
                 this.menuList.editProfileMenu.data3
               );
@@ -111,7 +112,7 @@ class Profil extends BaseComponent {
               this.menuList.editProfileMenu.data4 =
                 this.menuList.editProfileMenu.data4 + delta;
               this.displayLCD.show3digit(
-                9,
+                7,
                 1,
                 this.menuList.editProfileMenu.data4
               );
@@ -120,7 +121,7 @@ class Profil extends BaseComponent {
               this.menuList.editProfileMenu.data5 =
                 this.menuList.editProfileMenu.data5 + delta;
               this.displayLCD.show3digit(
-                14,
+                12,
                 0,
                 this.menuList.editProfileMenu.data5
               );
@@ -129,30 +130,28 @@ class Profil extends BaseComponent {
               this.menuList.editProfileMenu.data6 =
                 this.menuList.editProfileMenu.data6 + delta;
               this.displayLCD.show3digit(
-                14,
+                12,
                 1,
                 this.menuList.editProfileMenu.data6
               );
               break;
+            default:
           }
           break;
 
-        case "editProfileMenu": //not standart menu
+        case "editProfileMenu": //for not standart menu
           this.arrow = this.arrow + delta;
           if (this.arrow > this.currMenuLength - 1) {
             this.arrow = 0; //rotate over number of menu → return to profileMenu
-            this.displayLCD.display(this.menuList.profileMenu, 0);
             this.currMenu = "profileMenu";
             this.currMenuLength = this.menuList.profileMenu.type;
-          }
-          if (this.arrow < 0) {
+            this.displayLCD.display(this.menuList.profileMenu, 0);
+          } else if (this.arrow < 0) {
             this.arrow = this.currMenuLength - 1; //rotate over number of menu → return to profileMenu
-            this.displayLCD.display(this.menuList.profileMenu, 0);
             this.currMenu = "profileMenu";
+            this.displayLCD.display(this.menuList.profileMenu, 0);
             this.currMenuLength = this.menuList.profileMenu.type;
-          }
-
-          this.displayLCD.editProfileMoveArrow(this.arrow);
+          } else this.displayLCD.editProfileMoveArrow(this.arrow);
           break;
         default:
           this.arrow = this.arrow + delta;
@@ -184,7 +183,7 @@ class Profil extends BaseComponent {
               this.arrow = 0;
               this.currMenu = "profilesMenu";
               this.currMenuLength = this.menuList.profilesMenu.type;
-              this.displayLCD.display(this.menuList.profileslMenu, this.arrow);
+              this.displayLCD.display(this.menuList.profilesMenu, this.arrow);
               break;
             case 2: //>Back pressed
               this.arrow = 0;
@@ -227,19 +226,20 @@ class Profil extends BaseComponent {
               this.arrow = 0;
               this.currMenu = "applyProfileMenu";
               this.currMenuLength = this.menuList.applyProfileMenu.type;
-              this.editProfile = this.profilesList.find(
+              this.selectProfile = this.profilesList.find(
                 (item) => item.name === this.namesProfile[0]
               );
               this.displayLCD.display(
                 this.menuList.applyProfileMenu,
                 this.arrow
               );
+
               break;
             case 1: //2th profile
               this.arrow = 0;
               this.currMenu = "applyProfileMenu";
               this.currMenuLength = this.menuList.applyProfileMenu.type;
-              this.editProfile = this.profilesList.find(
+              this.selectProfile = this.profilesList.find(
                 (item) => item.name === this.namesProfile[1]
               );
               this.displayLCD.display(
@@ -251,7 +251,7 @@ class Profil extends BaseComponent {
               this.arrow = 0;
               this.currMenu = "applyProfileMenu";
               this.currMenuLength = this.menuList.applyProfileMenu.type;
-              this.editProfile = this.profilesList.find(
+              this.selectProfile = this.profilesList.find(
                 (item) => item.name === this.namesProfile[2]
               );
               this.displayLCD.display(
@@ -263,7 +263,7 @@ class Profil extends BaseComponent {
               this.arrow = 0;
               this.currMenu = "applyProfileMenu";
               this.currMenuLength = this.menuList.applyProfileMenu.type;
-              this.editProfile = this.profilesList.find(
+              this.selectProfile = this.profilesList.find(
                 (item) => item.name === this.namesProfile[3]
               );
               this.displayLCD.display(
@@ -273,83 +273,104 @@ class Profil extends BaseComponent {
               break;
             default:
           }
+          break;
         case "applyProfileMenu":
           switch (this.arrow) {
             case 0: //Apply pressed
               this.arrow = 0;
-              this.currProfile = this.editProfile;
+              this.currProfile = this.selectProfile;
+              let index = this.profilesList.findIndex(
+                (item) => item.name === this.currProfile.name
+              );
+              this.profilesList[index].status = "current";
+              this.profilesList.forEach((item) => {
+                if (item.name != this.currProfile.name) {
+                  item.status = "rezerv";
+                }
+              });
+              this.#pullData();
               this.currMenu = "profileMenu";
               this.currMenuLength = this.menuList.profileMenu.type;
               this.displayLCD.display(this.menuList.profileMenu, this.arrow);
+              break;
             case 1: //Edit pressed
               this.arrow = 0;
               this.#pullData();
               this.currMenu = "editProfileMenu";
               this.currMenuLength = this.menuList.editProfileMenu.type;
-              this.displayLCD.displayProfileTitles(
-                this.menuList.editProfileMenu
+              this.displayLCD.displayEditTitles(
+                this.menuList.editProfileMenu,
+                0
               );
+              this.displayLCD.displayEditData(this.menuList.editProfileMenu, 0);
+              break;
+            case 2: //Back pressed
+              this.arrow = 0;
+              this.currMenu = "profileMenu";
+              this.currMenuLength = this.menuList.profileMenu.type;
+              this.displayLCD.display(this.menuList.profileMenu, this.arrow);
               break;
             default:
           }
+          break;
         case "editProfileMenu":
           switch (this.arrow) {
             case 0:
+              console.log("edit profile menu0");
               await this.#setProfileData(
-                4,
+                2,
                 0,
                 this.menuList.editProfileMenu.data1
               );
               break;
             case 1:
+              console.log("edit profile menu1");
               await this.#setProfileData(
-                4,
+                2,
                 1,
                 this.menuList.editProfileMenu.data2
               );
               break;
             case 2:
+              console.log("edit profile menu2");
               await this.#setProfileData(
-                9,
+                7,
                 0,
                 this.menuList.editProfileMenu.data3
               );
               break;
             case 3:
+              console.log("edit profile menu3");
               await this.#setProfileData(
-                9,
+                7,
                 1,
                 this.menuList.editProfileMenu.data4
               );
               break;
             case 4:
+              console.log("edit profile menu4");
               await this.#setProfileData(
-                14,
+                12,
                 0,
                 this.menuList.editProfileMenu.data5
               );
               break;
             case 5:
+              console.log("edit profile menu5");
               await this.#setProfileData(
-                14,
+                12,
                 1,
                 this.menuList.editProfileMenu.data6
               );
               break;
 
             default:
-              this.currMenu = "editProfileMenu";
-              this.displayLCD.display(
-                this.menuList.editProfileMenu,
-                this.arrow
-              );
-              this.currMenuLength = this.menuList.editProfileMenu.type;
           }
+          break;
         case "setProfileData":
           this.displayLCD.setBlinkFlag(false);
           break;
         default:
-
       }
     });
   }
@@ -360,19 +381,19 @@ class Profil extends BaseComponent {
     );
     this.menuList.profileMenu.text2 = this.currProfile.name;
 
-    this.menuList.editProfileMenu.data1 = this.editProfile.temp1;
-    this.menuList.editProfileMenu.data2 = this.editProfile.time1;
-    this.menuList.editProfileMenu.data3 = this.editProfile.temp2;
-    this.menuList.editProfileMenu.data4 = this.editProfile.time2;
-    this.menuList.editProfileMenu.data5 = this.editProfile.temp3;
-    this.menuList.editProfileMenu.data6 = this.editProfile.time3;
+    this.menuList.editProfileMenu.data1 = this.selectProfile.temp1;
+    this.menuList.editProfileMenu.data2 = this.selectProfile.time1;
+    this.menuList.editProfileMenu.data3 = this.selectProfile.temp2;
+    this.menuList.editProfileMenu.data4 = this.selectProfile.time2;
+    this.menuList.editProfileMenu.data5 = this.selectProfile.temp3;
+    this.menuList.editProfileMenu.data6 = this.selectProfile.time3;
 
     this.namesProfile = this.profilesList.map((item) => item.name);
 
-    this.menuList.profilesMenu.text1 = this.profilesList[0];
-    this.menuList.profilesMenu.text2 = this.profilesList[1];
-    this.menuList.profilesMenu.text3 = this.profilesList[2];
-    this.menuList.profilesMenu.text4 = this.profilesList[3];
+    this.menuList.profilesMenu.text1 = this.namesProfile[0];
+    this.menuList.profilesMenu.text2 = this.namesProfile[1];
+    this.menuList.profilesMenu.text3 = this.namesProfile[2];
+    this.menuList.profilesMenu.text4 = this.namesProfile[3];
     this.#writeData();
   }
 
@@ -393,6 +414,16 @@ class Profil extends BaseComponent {
         }
       }
     );
+    this.fs.writeFile(
+      this.path.join(__dirname, "/profilesList.json"),
+      JSON.stringify(this.profilesList),
+      (err) => {
+        if (err) console.log(err);
+        else {
+          console.log("profilesList.json written successfully");
+        }
+      }
+    );
   }
 
   async #setProfileData(col, row, data) {
@@ -400,6 +431,8 @@ class Profil extends BaseComponent {
     this.displayLCD.setBlinkFlag(true);
     await this.displayLCD.blink3digit(col, row, data);
     this.#writeData();
+    this.currMenu = "editProfileMenu";
+    this.displayLCD.displayEditData(this.menuList.editProfileMenu, this.arrow);
   }
 
   #heat() {
@@ -499,16 +532,19 @@ class Profil extends BaseComponent {
       dt: 1,
     });
     this.timerStopped = false;
+    this.hiddenData = false;
     this.displayLCD.display(menuList.workProfileMenu);
 
     while (!this.timerStopped) {
       this.#heat();
-      this.displayLCD.displayProfilData(
-        this.tempChip,
-        this.tempBoard,
-        this.powerTop,
-        this.powerBottom
-      );
+      if (!this.hiddenData) {
+        this.displayLCD.displayProfilData(
+          this.tempChip,
+          this.tempBoard,
+          this.powerTop,
+          this.powerBottom
+        );
+      }
       await this.sleep(1000);
     }
   }

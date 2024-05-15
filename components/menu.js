@@ -25,7 +25,6 @@ class Menu extends BaseComponent {
     this.displayLCD.display(this.menuList.startMenu, this.arrow);
     this.currMenu = "startMenu";
     await this.sleep(2000);
-    console.log("menu.js before this.init();");
     this.init();
     
   }
@@ -48,9 +47,6 @@ class Menu extends BaseComponent {
             this.arrow = this.currMenuLength - 1;
           }
           this.displayLCD.moveArrow(this.arrow);
-          console.log(
-            "this.currmenu (main.js): " + this.currMenu + " " + this.arrow
-          );
           break;
         case "thermMenu":
           this.thermShow.stop();
@@ -100,11 +96,7 @@ class Menu extends BaseComponent {
         default:
           break;
       }
-      console.log(
-        "Rotary switch pressed. this.currMenu: " + this.currMenu + " menu.js"
-      );
     });
-    console.log("menu.js end of  this.init();");
   }
 
   removeListeners() {

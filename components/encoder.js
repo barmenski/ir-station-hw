@@ -38,7 +38,6 @@ class  Encoder extends EventEmitter {
 	init=()=> {
 		rpio.poll(this.pinS1, this.#pollS1S2);
 		rpio.poll(this.pinKey, this.#pollKey, POLL_LOW);
-		console.log("encoder.js init();")
 	}
 
 	stop=()=> {

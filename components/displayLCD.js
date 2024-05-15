@@ -55,10 +55,14 @@ class DisplayLCD {
     this.lcd.setCursorSync(1, 1);
     this.lcd.printSync(menu.text2);
 
-    this.lcd.setCursorSync(4, 1);
-    this.lcd.printSync(menu.data1);
-    this.lcd.setCursorSync(12, 1);
-    this.lcd.printSync(menu.data2);
+    if(typeof menu.data1 !== "undefined"){
+      this.lcd.setCursorSync(4, 1);
+      this.lcd.printSync(menu.data1);
+    }
+    if(typeof menu.data2 !== "undefined"){
+      this.lcd.setCursorSync(12, 1);
+      this.lcd.printSync(menu.data2);
+    }
 
     this.lcd.setCursorSync(8, 0);
     this.lcd.printSync(menu.text3);
@@ -102,45 +106,6 @@ class DisplayLCD {
     this.lcd.setCursorSync(13, 1);
     this.lcd.printSync(menu.text6);
   };
-
-  // #display66items = (menu) => {
-  //   this.lcd.clearSync();
-
-  //   this.lcd.setCursorSync(1, 0);
-  //   this.lcd.printSync("T");
-  //   this.lcd.setCursorSync(1, 1);
-  //   this.lcd.printSync("t");
-
-  //   this.lcd.setCursorSync(6, 0);
-  //   this.lcd.printSync("T");
-  //   this.lcd.setCursorSync(6, 1);
-  //   this.lcd.printSync("t");
-
-  //   this.lcd.setCursorSync(11, 0);
-  //   this.lcd.printSync("T");
-  //   this.lcd.setCursorSync(11, 1);
-  //   this.lcd.printSync("t");
-
-  //   this.lcd.setCursorSync(15, 0);
-  //   this.lcd.printSync("C");
-  //   this.lcd.setCursorSync(15, 1);
-  //   this.lcd.printSync("s");
-
-  //   this.lcd.setCursorSync(4, 0);
-  //   this.lcd.printSync(menu.temp1);
-  //   this.lcd.setCursorSync(4, 1);
-  //   this.lcd.printSync(menu.time1);
-
-  //   this.lcd.setCursorSync(9, 0);
-  //   this.lcd.printSync(menu.temp2);
-  //   this.lcd.setCursorSync(9, 1);
-  //   this.lcd.printSync(menu.time2);
-
-  //   this.lcd.setCursorSync(14, 0);
-  //   this.lcd.printSync(menu.temp3);
-  //   this.lcd.setCursorSync(14, 1);
-  //   this.lcd.printSync(menu.time3);
-  // };
 
   displayThermTitles = (menu) => {
     this.lcd.clearSync();
@@ -211,25 +176,48 @@ class DisplayLCD {
     //  ↑↑↑   ↑↑↑
   };
 
-  displayProfileTitles = (menu) => {
+  displayEditTitles = (menu, arrow) => {
+    this.editProfileMoveArrow(arrow);
     this.lcd.clearSync();
-    this.lcd.setCursorSync(0, 1);
+    this.lcd.setCursorSync(1, 0);
     this.lcd.printSync(menu.text1);
-    this.lcd.setCursorSync(0, 6);
+    this.lcd.setCursorSync(6, 0);
     this.lcd.printSync(menu.text2);
-    this.lcd.setCursorSync(0, 11);
+    this.lcd.setCursorSync(11, 0);
     this.lcd.printSync(menu.text3);
 
     this.lcd.setCursorSync(1, 1);
     this.lcd.printSync(menu.text4);
-    this.lcd.setCursorSync(1, 6);
+    this.lcd.setCursorSync(6, 1);
     this.lcd.printSync(menu.text5);
-    this.lcd.setCursorSync(1, 11);
+    this.lcd.setCursorSync(11, 1);
     this.lcd.printSync(menu.text6);
+
+    this.lcd.setCursorSync(15, 0);
+    this.lcd.printSync(menu.text7);
+    this.lcd.setCursorSync(15, 1);
+    this.lcd.printSync(menu.text8);
   };
 
-  setBlinkFlag(prase) {
-    this.blinkFlag = prase;
+  displayEditData = (menu, arrow) => {
+    this.editProfileMoveArrow(arrow);
+    this.lcd.setCursorSync(2, 0);
+    this.lcd.printSync(menu.data1);
+    this.lcd.setCursorSync(7, 0);
+    this.lcd.printSync(menu.data3);
+    this.lcd.setCursorSync(12, 0);
+    this.lcd.printSync(menu.data5);
+
+    this.lcd.setCursorSync(2, 1);
+    this.lcd.printSync(menu.data2);
+    this.lcd.setCursorSync(7, 1);
+    this.lcd.printSync(menu.data4);
+    this.lcd.setCursorSync(12, 1);
+    this.lcd.printSync(menu.data6);
+  };
+
+  setBlinkFlag(phrase) {
+    this.blinkFlag = phrase;
   }
 
   show3digit(col, row, digit) {
@@ -364,7 +352,7 @@ class DisplayLCD {
         break;
       case 3:
         this.lcd.setCursorSync(0, 0);
-        this.lcd.printSync(">");
+        this.lcd.printSync(" ");
         this.lcd.setCursorSync(0, 1);
         this.lcd.printSync(" ");
         this.lcd.setCursorSync(5, 0);
@@ -408,6 +396,7 @@ class DisplayLCD {
   }
 
   display(menu, arrow) {
+    console.log("menu.name "+menu.name);
     switch (menu.type) {
       case 1:
         this.#display1items(menu);
@@ -427,9 +416,6 @@ class DisplayLCD {
       case 6:
         this.#display6items(menu);
         break;
-      // case 66:
-      //   this.#display66items(menu);
-      //   break;
       default:
         break;
     }
