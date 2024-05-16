@@ -397,6 +397,19 @@ class Profil extends BaseComponent {
     this.#writeData();
   }
 
+  #pushData() {
+    this.selectProfile.temp1=this.menuList.editProfileMenu.data1;
+    this.selectProfile.time1=this.menuList.editProfileMenu.data2;
+    this.selectProfile.temp2=this.menuList.editProfileMenu.data3;
+    this.selectProfile.time2=this.menuList.editProfileMenu.data4;
+    this.selectProfile.temp3=this.menuList.editProfileMenu.data5;
+    this.selectProfile.time3=this.menuList.editProfileMenu.data6;
+    let index = this.profilesList.findIndex(
+      (item) => item.name === this.selectProfile.name
+    );
+    this.profilesList[index] = this.selectProfile;
+  }
+
   #removeListeners() {
     this.encoder.removeAllListeners("pressed");
     this.encoder.removeAllListeners("rotate");
@@ -430,6 +443,7 @@ class Profil extends BaseComponent {
     this.currMenu = "setProfileData";
     this.displayLCD.setBlinkFlag(true);
     await this.displayLCD.blink3digit(col, row, data);
+    this.#pushData();
     this.#writeData();
     this.currMenu = "editProfileMenu";
     this.displayLCD.displayEditData(this.menuList.editProfileMenu, this.arrow);

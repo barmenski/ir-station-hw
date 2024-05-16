@@ -77,10 +77,7 @@ class ConstTemp extends BaseComponent {
           }
 
           this.displayLCD.moveArrow(this.arrow);
-          console.log(
-            "this.currmenu (constTemp.js): " + this.currMenu + " " + this.arrow
-          );
-      }
+        }
     });
 
     this.encoder.on("pressed", async () => {
