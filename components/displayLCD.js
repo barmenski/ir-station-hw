@@ -16,6 +16,9 @@ class DisplayLCD {
   async sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
+  clear = () => {
+    this.lcd.clearSync();
+  };
 
   #display1items = (menu) => {
     this.lcd.clearSync();
@@ -55,11 +58,11 @@ class DisplayLCD {
     this.lcd.setCursorSync(1, 1);
     this.lcd.printSync(menu.text2);
 
-    if(typeof menu.data1 !== "undefined"){
+    if (typeof menu.data1 !== "undefined") {
       this.lcd.setCursorSync(4, 1);
       this.lcd.printSync(menu.data1);
     }
-    if(typeof menu.data2 !== "undefined"){
+    if (typeof menu.data2 !== "undefined") {
       this.lcd.setCursorSync(12, 1);
       this.lcd.printSync(menu.data2);
     }
@@ -396,7 +399,7 @@ class DisplayLCD {
   }
 
   display(menu, arrow) {
-    console.log("menu.name "+menu.name);
+    console.log("menu.name " + menu.name);
     switch (menu.type) {
       case 1:
         this.#display1items(menu);

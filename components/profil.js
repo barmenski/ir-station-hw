@@ -66,7 +66,7 @@ class Profil extends BaseComponent {
     this.displayLCD.display(this.menuList.profileMenu, this.arrow);
     await this.sleep(100);
     this.encoder.init();
-    await this.#pullData();
+    this.#pullData();
     this.currMenu = "profileMenu";
     this.currMenuLength = this.menuList.profileMenu.type;
 
@@ -316,7 +316,6 @@ class Profil extends BaseComponent {
         case "editProfileMenu":
           switch (this.arrow) {
             case 0:
-              console.log("edit profile menu0");
               await this.#setProfileData(
                 2,
                 0,
@@ -324,7 +323,6 @@ class Profil extends BaseComponent {
               );
               break;
             case 1:
-              console.log("edit profile menu1");
               await this.#setProfileData(
                 2,
                 1,
@@ -332,7 +330,6 @@ class Profil extends BaseComponent {
               );
               break;
             case 2:
-              console.log("edit profile menu2");
               await this.#setProfileData(
                 7,
                 0,
@@ -340,7 +337,6 @@ class Profil extends BaseComponent {
               );
               break;
             case 3:
-              console.log("edit profile menu3");
               await this.#setProfileData(
                 7,
                 1,
@@ -348,7 +344,6 @@ class Profil extends BaseComponent {
               );
               break;
             case 4:
-              console.log("edit profile menu4");
               await this.#setProfileData(
                 12,
                 0,
@@ -356,14 +351,12 @@ class Profil extends BaseComponent {
               );
               break;
             case 5:
-              console.log("edit profile menu5");
               await this.#setProfileData(
                 12,
                 1,
                 this.menuList.editProfileMenu.data6
               );
               break;
-
             default:
           }
           break;
