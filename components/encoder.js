@@ -22,13 +22,15 @@ class  Encoder extends EventEmitter {
 	}
 
 	 #pollS1S2=() => {
-		rpio.msleep(20);
+		//rpio.msleep(10);
 		if (rpio.read(this.pinS1) == 1 && rpio.read(this.pinS2) == 1) {
 			this.emit("rotate", -1);
 			this.i--;
+			rpio.msleep(10);
 		  } else if (rpio.read(this.pinS1)==1 && rpio.read(this.pinS2)==0) {
-			this.i++;
 			this.emit("rotate", 1);
+			this.i++;
+			rpio.msleep(10);
 		  }
 	}
 	

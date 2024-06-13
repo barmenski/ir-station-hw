@@ -4,7 +4,7 @@ class PWM {
   pinTop = 33;// pwm1
   pinBottom = 32; // pwm0
   range = 100; /* Max PWM */
-  clockdiv = 64; /* Clock divider (PWM refresh rate), 8 == 2.4MHz 64=3khz 128=1.5khz 256=750hz*/
+  clockdiv = 2048; /* Clock divider (PWM refresh rate), 8 == 2.4MHz 64=3khz 128=1.5khz 256=750hz*/
 
   constructor() {
 

@@ -56,7 +56,7 @@ function pollcb3() {
   rpio.msleep(20);
   if (rpio.read(button3) == 0) {
     displayLCD.clear();
-    displayLCD.display({ name: "shutdown", type: 1, text1: "shutdown -r now" });
+    displayLCD.display({ name: "shutdown", type: 1, text1: "Shutdown" });
     execute("shutdown -r now", function (callback) {
       console.log(callback);
     });
