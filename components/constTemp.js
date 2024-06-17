@@ -4,12 +4,14 @@ const PID = require("./pid.js");
 const PWM = require("./pwm.js");
 const BaseComponent = require("./baseComponent");
 const Encoder = require("./encoder");
+const Led = require("./led");
 
 class ConstTemp extends BaseComponent {
   displayLCD = new DisplayLCD();
   thermometer = new Thermometer();
   pwm = new PWM();
   encoder = new Encoder();
+  led = new Led();
 
   constructor(parent) {
     super();
@@ -36,6 +38,8 @@ class ConstTemp extends BaseComponent {
     this.ITop = 0.05;
     this.DTop = 80;
     this.parent = parent;
+
+    this.period = 1000; //ms
   }
 
   async init() {
@@ -56,7 +60,17 @@ class ConstTemp extends BaseComponent {
           this.currMenuLength = this.menuList.pauseConstMenu.type;
           break;
         case "setTargetTemp": //calculate targetTemp
-          this.menuList.constMenu.data1 = this.menuList.constMenu.data1 + delta;
+          let rawNumberBottom = Math.round(
+            Number(this.menuList.constMenu.data1 + delta)
+          );
+          if (rawNumberBottom >= 300) {
+            this.menuList.constMenu.data1 = 300;
+          } else if (rawNumberBottom < 0) {
+            this.menuList.constMenu.data1 = 0;
+          } else this.menuList.constMenu.data1 = rawNumberBottom;
+          // this.menuList.constMenu.data1 = Math.round(
+          //   Number(this.menuList.constMenu.data1 + delta)
+          // );
           this.displayLCD.show3digit(4, 1, this.menuList.constMenu.data1);
           break;
         case "setTargetSpeed": //calculate targetSpeed
@@ -77,7 +91,7 @@ class ConstTemp extends BaseComponent {
           }
 
           this.displayLCD.moveArrow(this.arrow);
-        }
+      }
     });
 
     this.encoder.on("pressed", async () => {
@@ -193,32 +207,38 @@ class ConstTemp extends BaseComponent {
     this.tempBoard = allTemp[1];
 
     if (this.tempBoard < this.menuList.constMenu.data1) {
-      this.targetTemp = Number(this.tempChip + this.targetSpeed - 0).toFixed(2);
+      this.led.greenLed(true);
+      this.targetTemp = Number(
+        this.tempBoard + this.targetSpeed * (this.period / 1000)
+      ).toFixed(2);
 
       this.pidBottom.setTarget(
         this.targetTemp,
         this.PBottom,
         this.IBottom,
         this.DBottom
-      );
+      ); //set target for PID
       this.powerBottom = Math.round(
         Number(this.pidBottom.update(this.tempBoard))
-      );
-      this.pwm.update(this.powerTop, this.powerBottom);
+      ); //calculate power from PID
+      this.pwm.update(this.powerTop, this.powerBottom); //send calculated power to output
     } else {
+      this.led.redLed(true);
       this.pidBottom.setTarget(
         this.menuList.constMenu.data1,
         this.PBottom,
         this.IBottom,
         this.DBottom
-      );
+      ); //set target for PID
       this.powerBottom = Math.round(
         Number(this.pidBottom.update(this.tempBoard))
-      );
+      ); //calculate power from PID
 
-      this.pwm.update(this.powerTop, this.powerBottom);
+      this.pwm.update(this.powerTop, this.powerBottom); //send calculated power to output
     }
   }
+
+  //0.7 c/s period = 2 => 0.7*2; period = 0.5 => 0.7*0.5
 
   async start(menuList) {
     this.pwm.init();
@@ -245,11 +265,12 @@ class ConstTemp extends BaseComponent {
         );
       }
 
-      await this.sleep(1000);
+      await this.sleep(this.period);
     }
   }
 
   reset() {
+    this.led.greenLed(false);
     this.tempChip = 25;
     this.targetTemp = 25;
 
@@ -260,6 +281,8 @@ class ConstTemp extends BaseComponent {
   }
 
   stop() {
+    this.led.greenLed(false);
+    this.led.stop();
     this.timerStopped = true;
     this.currTime = 0;
     this.pwm.stop();

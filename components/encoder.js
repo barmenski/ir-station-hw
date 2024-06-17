@@ -26,11 +26,11 @@ class  Encoder extends EventEmitter {
 		if (rpio.read(this.pinS1) == 1 && rpio.read(this.pinS2) == 1) {
 			this.emit("rotate", -1);
 			this.i--;
-			rpio.msleep(10);
+			rpio.msleep(1);
 		  } else if (rpio.read(this.pinS1)==1 && rpio.read(this.pinS2)==0) {
 			this.emit("rotate", 1);
 			this.i++;
-			rpio.msleep(10);
+			rpio.msleep(1);
 		  }
 	}
 	
