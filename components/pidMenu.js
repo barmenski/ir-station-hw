@@ -6,7 +6,7 @@ const BaseComponent = require("./baseComponent");
 const Encoder = require("./encoder");
 const Led = require("./led");
 
-class ConstTemp extends BaseComponent {
+class PidMenu extends BaseComponent {
   displayLCD = new DisplayLCD();
   thermometer = new Thermometer();
   pwm = new PWM();
@@ -15,15 +15,9 @@ class ConstTemp extends BaseComponent {
 
   constructor(parent) {
     super();
-    this.powerTop = 0;
-    this.powerBottom = 0;
-    this.tempChip = 25;
-    this.targetTemp = this.menuList.constMenu.data2;
-    this.targetSpeed = this.menuList.constMenu.data4;
-    this.tempBoard = 25;
+
     this.pidBottom = null;
     this.pidTop = null;
-    this.rise = 0;
     this.timerStopped = true;
     this.hiddenData = false;
 
@@ -31,16 +25,10 @@ class ConstTemp extends BaseComponent {
     this.IBottom = 0.05;
     this.DBottom = 80;
 
-    // this.PBottom = 1;
-    // this.IBottom = 1;
-    // this.DBottom = 1;
-
     this.PTop = 40;
     this.ITop = 0.05;
     this.DTop = 80;
     this.parent = parent;
-
-    this.period = 1000; //ms
   }
 
   async init() {
@@ -62,23 +50,25 @@ class ConstTemp extends BaseComponent {
           break;
         case "setTargetTemp": //calculate targetTemp
           let rawNumberBottom = Math.round(
-            Number(this.menuList.constMenu.data2 + delta)
+            Number(this.menuList.constMenu.data1 + delta)
           );
           if (rawNumberBottom >= 300) {
-            this.menuList.constMenu.data2 = 300;
+            this.menuList.constMenu.data1 = 300;
           } else if (rawNumberBottom < 0) {
-            this.menuList.constMenu.data2 = 0;
-          } else this.menuList.constMenu.data2 = rawNumberBottom;
-
-          this.displayLCD.show3digit(4, 1, this.menuList.constMenu.data2);
+            this.menuList.constMenu.data1 = 0;
+          } else this.menuList.constMenu.data1 = rawNumberBottom;
+          // this.menuList.constMenu.data1 = Math.round(
+          //   Number(this.menuList.constMenu.data1 + delta)
+          // );
+          this.displayLCD.show3digit(4, 1, this.menuList.constMenu.data1);
           break;
         case "setTargetSpeed": //calculate targetSpeed
-          this.menuList.constMenu.data4 =
-            parseFloat(this.menuList.constMenu.data4) + delta * 0.1;
-          this.menuList.constMenu.data4 = Number(
-            this.menuList.constMenu.data4.toFixed(1)
+          this.menuList.constMenu.data2 =
+            parseFloat(this.menuList.constMenu.data2) + delta * 0.1;
+          this.menuList.constMenu.data2 = Number(
+            this.menuList.constMenu.data2.toFixed(1)
           );
-          this.displayLCD.show3digit(12, 1, this.menuList.constMenu.data4);
+          this.displayLCD.show3digit(12, 1, this.menuList.constMenu.data2);
           break;
         default:
           this.arrow = this.arrow + delta;
@@ -181,10 +171,9 @@ class ConstTemp extends BaseComponent {
     this.arrow = 1;
     this.currMenu = "setTargetTemp";
     this.displayLCD.setBlinkFlag(true);
-    await this.displayLCD.blink3digit(4, 1, this.menuList.constMenu.data2);
-    this.targetTemp = this.menuList.constMenu.data2;
-    this.menuList.workConstMenu.text5 = this.menuList.constMenu.data2;
-    this.menuList.pauseConstMenu.data2 = this.menuList.constMenu.data2;
+    await this.displayLCD.blink3digit(4, 1, this.menuList.constMenu.data1);
+    this.menuList.workConstMenu.text5 = this.menuList.constMenu.data1;
+    this.menuList.pauseConstMenu.data1 = this.menuList.constMenu.data1;
     this.#writeData();
   }
 
@@ -192,10 +181,10 @@ class ConstTemp extends BaseComponent {
     this.arrow = 3;
     this.currMenu = "setTargetSpeed";
     this.displayLCD.setBlinkFlag(true);
-    await this.displayLCD.blink3digit(12, 1, this.menuList.constMenu.data4);
-    this.targetSpeed = this.menuList.constMenu.data4;
-    this.menuList.workConstMenu.text6 = this.menuList.constMenu.data4;
-    this.menuList.pauseConstMenu.data4 = this.menuList.constMenu.data4;
+    await this.displayLCD.blink3digit(12, 1, this.menuList.constMenu.data2);
+    this.targetSpeed = this.menuList.constMenu.data2;
+    this.menuList.workConstMenu.text6 = this.menuList.constMenu.data2;
+    this.menuList.pauseConstMenu.data2 = this.menuList.constMenu.data2;
     this.#writeData();
   }
 
@@ -205,7 +194,7 @@ class ConstTemp extends BaseComponent {
     this.tempChip = allTemp[0];
     this.tempBoard = allTemp[1];
 
-    if (this.tempBoard < this.menuList.constMenu.data2) {
+    if (this.tempBoard < this.menuList.constMenu.data1) {
       this.led.greenLed(true);
       this.targetTemp = Number(
         this.tempBoard + this.targetSpeed * (this.period / 1000)
@@ -250,7 +239,7 @@ class ConstTemp extends BaseComponent {
 
     this.timerStopped = false;
     this.hiddenData = false;
-    this.targetTemp = menuList.constMenu.data2;
+    this.targetTemp = menuList.constMenu.data1;
     this.displayLCD.display(menuList.workConstMenu);
 
     while (!this.timerStopped) {
@@ -300,4 +289,4 @@ class ConstTemp extends BaseComponent {
     this.reset();
   }
 }
-module.exports = ConstTemp;
+module.exports = PidMenu;
