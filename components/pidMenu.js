@@ -18,8 +18,6 @@ class PidMenu extends BaseComponent {
 
     this.pidBottom = null;
     this.pidTop = null;
-    this.timerStopped = true;
-    this.hiddenData = false;
 
     this.PBottom = 40;
     this.IBottom = 0.05;
@@ -33,42 +31,48 @@ class PidMenu extends BaseComponent {
 
   async init() {
     this.arrow = 0;
-    this.displayLCD.display(this.menuList.constMenu, this.arrow);
+    this.displayLCD.display(this.menuList.pidMenu, this.arrow);
     await this.sleep(100);
     this.encoder.init();
-    this.currMenu = "constMenu";
-    this.currMenuLength = this.menuList.constMenu.type;
+    this.currMenu = "pidMenu";
+    this.currMenuLength = this.menuList.pidMenu.type;
 
     this.encoder.on("rotate", async (delta) => {
       switch (this.currMenu) {
-        case "workConstMenu": //display pause menu
-          this.hiddenData = true;
-          this.arrow = 0;
-          this.displayLCD.display(this.menuList.pauseConstMenu, this.arrow);
-          this.currMenu = "pauseConstMenu";
-          this.currMenuLength = this.menuList.pauseConstMenu.type;
-          break;
-        case "setTargetTemp": //calculate targetTemp
-          let rawNumberBottom = Math.round(
-            Number(this.menuList.constMenu.data1 + delta)
+        case "setPTop": //calculate P for top heater
+          let rawNumberPTop = Math.round(
+            Number(this.menuList.pidTopMenu.data1 + delta)
           );
-          if (rawNumberBottom >= 300) {
-            this.menuList.constMenu.data1 = 300;
-          } else if (rawNumberBottom < 0) {
-            this.menuList.constMenu.data1 = 0;
-          } else this.menuList.constMenu.data1 = rawNumberBottom;
-          // this.menuList.constMenu.data1 = Math.round(
-          //   Number(this.menuList.constMenu.data1 + delta)
-          // );
-          this.displayLCD.show3digit(4, 1, this.menuList.constMenu.data1);
+          if (rawNumberPTop >= 999) {
+            this.menuList.pidTopMenu.data1 = 999;
+          } else if (rawNumberPTop < 0) {
+            this.menuList.pidTopMenu.data1 = 0;
+          } else this.menuList.pidTopMenu.data1 = rawNumberPTop;
+          this.displayLCD.show3digit(4, 0, this.menuList.pidTopMenu.data1);
           break;
-        case "setTargetSpeed": //calculate targetSpeed
-          this.menuList.constMenu.data2 =
-            parseFloat(this.menuList.constMenu.data2) + delta * 0.1;
-          this.menuList.constMenu.data2 = Number(
-            this.menuList.constMenu.data2.toFixed(1)
+        case "setITop": //calculate I for top heater
+          let rawNumberITop = Number(
+            parseFloat(this.menuList.pidTopMenu.data2) + delta * 0.01
           );
-          this.displayLCD.show3digit(12, 1, this.menuList.constMenu.data2);
+          rawNumberITop = rawNumberITop.toFixed(2);
+          if (rawNumberITop >= 100) {
+            this.menuList.pidTopMenu.data1 = 100;
+          } else if (rawNumberITop < 0) {
+            this.menuList.pidTopMenu.data1 = 0;
+          } else this.menuList.pidTopMenu.data2 = rawNumberITop;
+          this.displayLCD.show3digit(4, 1, this.menuList.pidTopMenu.data2);
+          break;
+
+        case "setDTop": //calculate P for top heater
+          let rawNumberDTop = Math.round(
+            Number(this.menuList.pidTopMenu.data3 + delta)
+          );
+          if (rawNumberDTop >= 999) {
+            this.menuList.pidTopMenu.data1 = 999;
+          } else if (rawNumberDTop < 0) {
+            this.menuList.pidTopMenu.data1 = 0;
+          } else this.menuList.pidTopMenu.data3 = rawNumberDTop;
+          this.displayLCD.show3digit(4, 0, this.menuList.pidTopMenu.data3);
           break;
         default:
           this.arrow = this.arrow + delta;
@@ -85,61 +89,59 @@ class PidMenu extends BaseComponent {
 
     this.encoder.on("pressed", async () => {
       switch (this.currMenu) {
-        case "constMenu":
+        case "pidMenu":
           switch (this.arrow) {
-            case 0: //>Start pressed
+            case 0: //>PIDtop pressed
               this.arrow = 0;
-              this.currMenu = "workConstMenu";
-              await this.start(this.menuList, this.arrow);
-              this.arrow = 2;
-              this.displayLCD.display(this.menuList.constMenu, this.arrow); //display constMenu after this.constTemp.stop();
-              this.currMenu = "constMenu";
-              this.currMenuLength = this.menuList.constMenu.type;
+              this.currMenu = "pidTopMenu";
+              this.displayLCD.display(this.menuList.pidTopMenu, this.arrow); //display pidTopMenu
+              this.currMenuLength = this.menuList.pidTopMenu.type;
               break;
-            case 1: //>t=200 pressed
-              await this.#setTargetTemp();
-              this.currMenu = "constMenu";
-              this.displayLCD.display(this.menuList.constMenu, this.arrow);
-              this.currMenuLength = this.menuList.constMenu.type;
+            case 1: //>PIDbot pressed
+              this.arrow = 0;
+              this.currMenu = "pidBottomMenu";
+              this.displayLCD.display(this.menuList.pidBottomMenu, this.arrow); //display pidBottomMenu
+              this.currMenuLength = this.menuList.pidBottomMenu.type;
               break;
             case 2: //>Back pressed
               this.arrow = 0;
               this.#removeListeners();
               this.parent.init();
               break;
-            case 3: //>Spd=1C/s pressed
-              await this.#setTargetSpeed();
-              this.currMenu = "constMenu";
-              this.displayLCD.display(this.menuList.constMenu, this.arrow);
-              this.currMenuLength = this.menuList.constMenu.type;
-              break;
           }
-        case "setTargetTemp":
-        case "setTargetSpeed":
+        case "setPTop":
+        case "setITop":
+        case "setDTop":
           this.displayLCD.setBlinkFlag(false);
           break;
-        case "pauseConstMenu":
+        case "pidTopMenu":
           switch (this.arrow) {
-            case 0: //>Stop pressed
-              this.stop();
+            case 0: //>P= pressed
+              await this.#setPTop();
+              this.currMenu = "pidTopMenu";
+              this.arrow = 0;
+              this.displayLCD.display(this.menuList.pidTopMenu, this.arrow); //display pidTopMenu
+              this.currMenuLength = this.menuList.pidTopMenu.type;
               break;
-            case 1: //>t=200 pressed
-              await this.#setTargetTemp();
-              this.currMenu = "pauseConstMenu";
-              this.displayLCD.display(this.menuList.pauseConstMenu, this.arrow);
-              this.currMenuLength = this.menuList.pauseConstMenu.type;
+            case 1: //>I= pressed
+              await this.#setITop();
+              this.currMenu = "pidTopMenu";
+              this.arrow = 0;
+              this.displayLCD.display(this.menuList.pidTopMenu, this.arrow); //display pidTopMenu
+              this.currMenuLength = this.menuList.pidTopMenu.type;
               break;
-            case 2: //>Back pressed
-              this.displayLCD.display(this.menuList.workConstMenu, this.arrow);
-              this.hiddenData = false;
-              this.currMenu = "workConstMenu";
-              this.currMenuLength = this.menuList.workConstMenu.type;
+            case 2: //>D= pressed
+              await this.#setDTop();
+              this.currMenu = "pidTopMenu";
+              this.arrow = 0;
+              this.displayLCD.display(this.menuList.pidTopMenu, this.arrow); //display pidTopMenu
+              this.currMenuLength = this.menuList.pidTopMenu.type;
               break;
-            case 3:
-              await this.#setTargetSpeed();
-              this.currMenu = "pauseConstMenu";
-              this.displayLCD.display(this.menuList.pauseConstMenu, this.arrow);
-              this.currMenuLength = this.menuList.pauseConstMenu.type;
+            case 3: //>Save pressed
+              //write
+
+              this.arrow = 0;
+              this.displayLCD.display(this.menuList.pidMenu, this.arrow);
               break;
           }
           break;
@@ -165,128 +167,42 @@ class PidMenu extends BaseComponent {
         }
       }
     );
+    this.fs.writeFile(
+      this.path.join(__dirname, "/pidSet.json"),
+      JSON.stringify(this.pidSet),
+      (err) => {
+        if (err) console.log(err);
+        else {
+          console.log("pidSet.json written successfully");
+        }
+      }
+    );
   }
 
-  async #setTargetTemp() {
+  async #setPTop() {
     this.arrow = 1;
-    this.currMenu = "setTargetTemp";
+    this.currMenu = "setPTop";
     this.displayLCD.setBlinkFlag(true);
-    await this.displayLCD.blink3digit(4, 1, this.menuList.constMenu.data1);
-    this.menuList.workConstMenu.text5 = this.menuList.constMenu.data1;
-    this.menuList.pauseConstMenu.data1 = this.menuList.constMenu.data1;
+    await this.displayLCD.blink3digit(4, 0, this.menuList.pidTopMenu.data1);
+    // this.menuList.workConstMenu.text5 = this.menuList.constMenu.data1;
+    // this.menuList.pauseConstMenu.data1 = this.menuList.constMenu.data1;
     this.#writeData();
   }
 
-  async #setTargetSpeed() {
-    this.arrow = 3;
-    this.currMenu = "setTargetSpeed";
+  async #setITop() {
+    this.arrow = 1;
+    this.currMenu = "setITop";
     this.displayLCD.setBlinkFlag(true);
-    await this.displayLCD.blink3digit(12, 1, this.menuList.constMenu.data2);
-    this.targetSpeed = this.menuList.constMenu.data2;
-    this.menuList.workConstMenu.text6 = this.menuList.constMenu.data2;
-    this.menuList.pauseConstMenu.data2 = this.menuList.constMenu.data2;
+    await this.displayLCD.blink3digit(4, 1, this.menuList.pidTopMenu.data2);
     this.#writeData();
   }
 
-  #heat() {
-
-    let allTemp = this.thermometer.measure();
-    this.tempChip = allTemp[0];
-    this.tempBoard = allTemp[1];
-
-    if (this.tempBoard < this.menuList.constMenu.data1) {
-      this.led.greenLed(true);
-      this.targetTemp = Number(
-        this.tempBoard + this.targetSpeed * (this.period / 1000)
-      ).toFixed(2);
-
-      this.pidBottom.setTarget(
-        this.targetTemp,
-        this.PBottom,
-        this.IBottom,
-        this.DBottom
-      ); //set target for PID
-      this.powerBottom = Math.round(
-        Number(this.pidBottom.update(this.tempBoard))
-      ); //calculate power from PID
-      this.pwm.update(this.powerTop, this.powerBottom); //send calculated power to output
-    } else {
-      this.led.redLed(true);
-      // this.pidBottom.setTarget(
-      //   this.menuList.constMenu.data1,
-      //   this.PBottom,
-      //   this.IBottom,
-      //   this.DBottom
-      // ); //set target for PID
-      this.powerBottom = Math.round(
-        Number(this.pidBottom.update(this.tempBoard))
-      ); //calculate power from PID
-
-      this.pwm.update(this.powerTop, this.powerBottom); //send calculated power to output
-    }
-  }
-
-  //0.7 c/s period = 2 => 0.7*2; period = 0.5 => 0.7*0.5
-
-  async start(menuList) {
-    this.pwm.init();
-    this.pidBottom = new PID({
-      k_p: this.PBottom,
-      k_i: this.IBottom,
-      k_d: this.DBottom,
-      dt: 1,
-    });
-
-    this.timerStopped = false;
-    this.hiddenData = false;
-    this.targetTemp = menuList.constMenu.data1;
-    this.displayLCD.display(menuList.workConstMenu);
-
-    while (!this.timerStopped) {
-      this.#heat();
-      if (!this.hiddenData) {
-        this.displayLCD.displayProfilData(
-          this.tempChip,
-          this.tempBoard,
-          this.powerTop,
-          this.powerBottom
-        );
-      }
-      await this.sleep(this.period);
-    }
-
-        while (!this.timerStopped) {
-      this.#heat();
-      if (!this.hiddenData) {
-        this.displayLCD.displayProfilData(
-          this.tempChip,
-          this.tempBoard,
-          this.powerTop,
-          this.powerBottom
-        );
-      }
-      await this.sleep(this.period);
-    }
-  }
-
-  reset() {
-    this.led.greenLed(false);
-    this.tempChip = 25;
-    this.targetTemp = 25;
-
-    this.tempBoard = 25;
-    this.pidBottom = null;
-    this.pidTop = null;
-    this.rise = 0;
-  }
-
-  stop() {
-    this.led.greenLed(false);
-    this.led.stop();
-    this.timerStopped = true;
-    this.currTime = 0;
-    this.pwm.stop();
-    this.reset();
+  async #setDTop() {
+    this.arrow = 1;
+    this.currMenu = "setDTop";
+    this.displayLCD.setBlinkFlag(true);
+    await this.displayLCD.blink3digit(12, 0, this.menuList.pidTopMenu.data2);
+    this.#writeData();
   }
 }
 module.exports = PidMenu;

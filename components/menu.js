@@ -68,10 +68,9 @@ class Menu extends BaseComponent {
               await this.profil.init();
               break;
             case 1: //>PIDset pressed
-              // this.arrow = 0;
-              // this.displayLCD.display(this.menuList.pbPlusMenu, this.arrow);
-              // this.currMenu = "pbPlusMenu";
-              // this.currMenuLength = this.menuList.pbPlusMenu.type;
+            this.currMenu = "pidMenu";
+            this.removeListeners();
+            await this.pidMenu.init();
               break;
             case 2: //>Const pressed
               this.currMenu = "constMenu";

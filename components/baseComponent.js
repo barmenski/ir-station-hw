@@ -9,6 +9,9 @@ class BaseComponent {
       profilesList = JSON.parse(
         fs.readFileSync(path.join(__dirname, "/profilesList.json"), (err, data) => data)
       );
+      pidSet = JSON.parse(
+        fs.readFileSync(path.join(__dirname, "/pidSet.json"), (err, data) => data)
+      );
     async sleep(ms) {
       return new Promise((resolve) => setTimeout(resolve, ms));
     }
