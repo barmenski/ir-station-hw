@@ -14,7 +14,7 @@ class Menu extends BaseComponent {
   dimmer = new Dimmer(this);
   displayLCD = new DisplayLCD();
   encoder = new Encoder();
-  pidMenu = new PidMenu();
+  pidMenu = new PidMenu(this);
 
   constructor() {
     super();

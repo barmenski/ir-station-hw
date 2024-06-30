@@ -1,15 +1,10 @@
-const Thermometer = require("./thermometer");
 const DisplayLCD = require("./displayLCD");
-const PID = require("./pid.js");
-const PWM = require("./pwm.js");
 const BaseComponent = require("./baseComponent");
 const Encoder = require("./encoder");
 const Led = require("./led");
 
 class PidMenu extends BaseComponent {
   displayLCD = new DisplayLCD();
-  thermometer = new Thermometer();
-  pwm = new PWM();
   encoder = new Encoder();
   led = new Led();
 
@@ -48,7 +43,7 @@ class PidMenu extends BaseComponent {
           } else if (rawNumberPTop < 0) {
             this.menuList.pidTopMenu.data1 = 0;
           } else this.menuList.pidTopMenu.data1 = rawNumberPTop;
-          this.displayLCD.show3digit(4, 0, this.menuList.pidTopMenu.data1);
+          this.displayLCD.show3digit(3, 0, this.menuList.pidTopMenu.data1);
           break;
         case "setITop": //calculate I for top heater
           let rawNumberITop = Number(
@@ -60,7 +55,7 @@ class PidMenu extends BaseComponent {
           } else if (rawNumberITop < 0) {
             this.menuList.pidTopMenu.data1 = 0;
           } else this.menuList.pidTopMenu.data2 = rawNumberITop;
-          this.displayLCD.show3digit(4, 1, this.menuList.pidTopMenu.data2);
+          this.displayLCD.show3digit(3, 1, this.menuList.pidTopMenu.data2);
           break;
 
         case "setDTop": //calculate P for top heater
@@ -72,7 +67,43 @@ class PidMenu extends BaseComponent {
           } else if (rawNumberDTop < 0) {
             this.menuList.pidTopMenu.data1 = 0;
           } else this.menuList.pidTopMenu.data3 = rawNumberDTop;
-          this.displayLCD.show3digit(4, 0, this.menuList.pidTopMenu.data3);
+          this.displayLCD.show3digit(11, 0, this.menuList.pidTopMenu.data3);
+          break;
+//-----------------
+        case "setPBottom": //calculate P for top heater
+          let rawNumberPBottom = Math.round(
+            Number(this.menuList.pidBottomMenu.data1 + delta)
+          );
+          if (rawNumberPBottom >= 999) {
+            this.menuList.pidBottomMenu.data1 = 999;
+          } else if (rawNumberPBottom < 0) {
+            this.menuList.pidBottomMenu.data1 = 0;
+          } else this.menuList.pidBottomMenu.data1 = rawNumberPBottom;
+          this.displayLCD.show3digit(3, 0, this.menuList.pidBottomMenu.data1);
+          break;
+        case "setIBottom": //calculate I for top heater
+          let rawNumberIBottom = Number(
+            parseFloat(this.menuList.pidBottomMenu.data2) + delta * 0.01
+          );
+          rawNumberIBottom = rawNumberIBottom.toFixed(2);
+          if (rawNumberIBottom >= 100) {
+            this.menuList.pidBottomMenu.data1 = 100;
+          } else if (rawNumberIBottom < 0) {
+            this.menuList.pidBottomMenu.data1 = 0;
+          } else this.menuList.pidBottomMenu.data2 = rawNumberIBottom;
+          this.displayLCD.show3digit(3, 1, this.menuList.pidBottomMenu.data2);
+          break;
+
+        case "setDBottom": //calculate P for top heater
+          let rawNumberDBottom = Math.round(
+            Number(this.menuList.pidBottomMenu.data3 + delta)
+          );
+          if (rawNumberDBottom >= 999) {
+            this.menuList.pidBottomMenu.data1 = 999;
+          } else if (rawNumberDBottom < 0) {
+            this.menuList.pidBottomMenu.data1 = 0;
+          } else this.menuList.pidBottomMenu.data3 = rawNumberDBottom;
+          this.displayLCD.show3digit(11, 0, this.menuList.pidBottomMenu.data3);
           break;
         default:
           this.arrow = this.arrow + delta;
@@ -112,6 +143,9 @@ class PidMenu extends BaseComponent {
         case "setPTop":
         case "setITop":
         case "setDTop":
+        case "setPBottom":
+        case "setIBottom":
+        case "setDBottom":
           this.displayLCD.setBlinkFlag(false);
           break;
         case "pidTopMenu":
@@ -137,14 +171,45 @@ class PidMenu extends BaseComponent {
               this.displayLCD.display(this.menuList.pidTopMenu, this.arrow); //display pidTopMenu
               this.currMenuLength = this.menuList.pidTopMenu.type;
               break;
-            case 3: //>Save pressed
-              //write
-
+            case 3: //>Back pressed
+              this.currMenu = "pidMenu";
               this.arrow = 0;
               this.displayLCD.display(this.menuList.pidMenu, this.arrow);
               break;
           }
           break;
+
+          //---------------
+          case "pidBottomMenu":
+            switch (this.arrow) {
+              case 0: //>P= pressed
+                await this.#setPBottom();
+                this.currMenu = "pidBottomMenu";
+                this.arrow = 0;
+                this.displayLCD.display(this.menuList.pidBottomMenu, this.arrow); //display pidBottomMenu
+                this.currMenuLength = this.menuList.pidBottomMenu.type;
+                break;
+              case 1: //>I= pressed
+                await this.#setIBottom();
+                this.currMenu = "pidBottomMenu";
+                this.arrow = 0;
+                this.displayLCD.display(this.menuList.pidBottomMenu, this.arrow); //display pidBottomMenu
+                this.currMenuLength = this.menuList.pidBottomMenu.type;
+                break;
+              case 2: //>D= pressed
+                await this.#setDBottom();
+                this.currMenu = "pidTopMenu";
+                this.arrow = 0;
+                this.displayLCD.display(this.menuList.pidBottomMenu, this.arrow); //display pidBottomMenu
+                this.currMenuLength = this.menuList.pidBottomMenu.type;
+                break;
+              case 3: //>Back pressed
+                this.currMenu = "pidMenu";
+                this.arrow = 0;
+                this.displayLCD.display(this.menuList.pidMenu, this.arrow);
+                break;
+            }
+            break;
         default:
       }
     });
@@ -183,7 +248,7 @@ class PidMenu extends BaseComponent {
     this.arrow = 1;
     this.currMenu = "setPTop";
     this.displayLCD.setBlinkFlag(true);
-    await this.displayLCD.blink3digit(4, 0, this.menuList.pidTopMenu.data1);
+    await this.displayLCD.blink3digit(3, 0, this.menuList.pidTopMenu.data1);
     // this.menuList.workConstMenu.text5 = this.menuList.constMenu.data1;
     // this.menuList.pauseConstMenu.data1 = this.menuList.constMenu.data1;
     this.#writeData();
@@ -193,7 +258,7 @@ class PidMenu extends BaseComponent {
     this.arrow = 1;
     this.currMenu = "setITop";
     this.displayLCD.setBlinkFlag(true);
-    await this.displayLCD.blink3digit(4, 1, this.menuList.pidTopMenu.data2);
+    await this.displayLCD.blink3digit(3, 1, this.menuList.pidTopMenu.data2);
     this.#writeData();
   }
 
@@ -201,7 +266,33 @@ class PidMenu extends BaseComponent {
     this.arrow = 1;
     this.currMenu = "setDTop";
     this.displayLCD.setBlinkFlag(true);
-    await this.displayLCD.blink3digit(12, 0, this.menuList.pidTopMenu.data2);
+    await this.displayLCD.blink3digit(11, 0, this.menuList.pidTopMenu.data3);
+    this.#writeData();
+  }
+//----------------------------------
+  async #setPBottom() {
+    this.arrow = 1;
+    this.currMenu = "setPBottom";
+    this.displayLCD.setBlinkFlag(true);
+    await this.displayLCD.blink3digit(3, 0, this.menuList.pidBottomMenu.data1);
+    // this.menuList.workConstMenu.text5 = this.menuList.constMenu.data1;
+    // this.menuList.pauseConstMenu.data1 = this.menuList.constMenu.data1;
+    this.#writeData();
+  }
+
+  async #setIBottom() {
+    this.arrow = 1;
+    this.currMenu = "setIBottom";
+    this.displayLCD.setBlinkFlag(true);
+    await this.displayLCD.blink3digit(3, 1, this.menuList.pidBottomMenu.data2);
+    this.#writeData();
+  }
+
+  async #setDBottom() {
+    this.arrow = 1;
+    this.currMenu = "setDBottom";
+    this.displayLCD.setBlinkFlag(true);
+    await this.displayLCD.blink3digit(11, 0, this.menuList.pidBottomMenu.data3);
     this.#writeData();
   }
 }
