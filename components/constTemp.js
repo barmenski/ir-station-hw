@@ -23,7 +23,6 @@ class ConstTemp extends BaseComponent {
     this.tempBoard = 25;
     this.pidBottom = null;
     this.pidTop = null;
-    this.rise = 0;
     this.timerStopped = true;
     this.hiddenData = false;
 
@@ -200,7 +199,6 @@ class ConstTemp extends BaseComponent {
   }
 
   #heat() {
-
     let allTemp = this.thermometer.measure();
     this.tempChip = allTemp[0];
     this.tempBoard = allTemp[1];
@@ -223,12 +221,6 @@ class ConstTemp extends BaseComponent {
       this.pwm.update(this.powerTop, this.powerBottom); //send calculated power to output
     } else {
       this.led.redLed(true);
-      // this.pidBottom.setTarget(
-      //   this.menuList.constMenu.data1,
-      //   this.PBottom,
-      //   this.IBottom,
-      //   this.DBottom
-      // ); //set target for PID
       this.powerBottom = Math.round(
         Number(this.pidBottom.update(this.tempBoard))
       ); //calculate power from PID
@@ -266,7 +258,7 @@ class ConstTemp extends BaseComponent {
       await this.sleep(this.period);
     }
 
-        while (!this.timerStopped) {
+    while (!this.timerStopped) {
       this.#heat();
       if (!this.hiddenData) {
         this.displayLCD.displayProfilData(
@@ -288,7 +280,6 @@ class ConstTemp extends BaseComponent {
     this.tempBoard = 25;
     this.pidBottom = null;
     this.pidTop = null;
-    this.rise = 0;
   }
 
   stop() {

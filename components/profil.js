@@ -4,12 +4,14 @@ const PID = require("./pid.js");
 const PWM = require("./pwm.js");
 const BaseComponent = require("./baseComponent");
 const Encoder = require("./encoder");
+const Led = require("./led");
 
 class Profil extends BaseComponent {
   displayLCD = new DisplayLCD();
   thermometer = new Thermometer();
   pwm = new PWM();
   encoder = new Encoder();
+  led = new Led();
 
   constructor(parent) {
     super();
@@ -17,14 +19,18 @@ class Profil extends BaseComponent {
     this.powerBottom = 0;
     this.powerTopMax = 350;
     this.powerBottomMax = 3420;
+    this.prevTempChip = 0;
     this.tempChip = 25;
     this.targetTemp = 25;
-    this.targetTemp = null;
+    this.targetSpeed1 = 1;
+    this.targetSpeed2 = 1;
+    this.targetSpeed3 = 1;
+    this.measuredSpeed = 0;
     this.tempBoard = 25;
     this.pidBottom = null;
     this.pidTop = null;
     this.currTime = 0;
-    this.rise = 0;
+    this.targetSpeed = 0;
     this.timerStopped = true;
     this.hiddenData = false;
 
@@ -42,8 +48,9 @@ class Profil extends BaseComponent {
     this.PTop = 40;
     this.ITop = 0.05;
     this.DTop = 80;
-
     this.parent = parent;
+
+    this.period = 1000; //ms
 
     this.currProfile = {
       name: "pr-001",
@@ -391,12 +398,12 @@ class Profil extends BaseComponent {
   }
 
   #pushData() {
-    this.selectProfile.temp1=this.menuList.editProfileMenu.data1;
-    this.selectProfile.time1=this.menuList.editProfileMenu.data2;
-    this.selectProfile.temp2=this.menuList.editProfileMenu.data3;
-    this.selectProfile.time2=this.menuList.editProfileMenu.data4;
-    this.selectProfile.temp3=this.menuList.editProfileMenu.data5;
-    this.selectProfile.time3=this.menuList.editProfileMenu.data6;
+    this.selectProfile.temp1 = this.menuList.editProfileMenu.data1;
+    this.selectProfile.time1 = this.menuList.editProfileMenu.data2;
+    this.selectProfile.temp2 = this.menuList.editProfileMenu.data3;
+    this.selectProfile.time2 = this.menuList.editProfileMenu.data4;
+    this.selectProfile.temp3 = this.menuList.editProfileMenu.data5;
+    this.selectProfile.time3 = this.menuList.editProfileMenu.data6;
     let index = this.profilesList.findIndex(
       (item) => item.name === this.selectProfile.name
     );
@@ -442,55 +449,82 @@ class Profil extends BaseComponent {
     this.displayLCD.displayEditData(this.menuList.editProfileMenu, this.arrow);
   }
 
+  #measureSpeed() {
+    this.measuredSpeed = Number(
+      ((this.prevTempChip - this.tempChip) / (this.period / 1000)).toFixed(2)
+    );
+    if (this.measuredSpeed <= 0) {
+      this.measuredSpeed = 0.1;
+    }
+    console.log("this.measuredSpeed: " + this.measuredSpeed);
+  }
+
   #heat() {
     this.currTime++;
 
     let allTemp = this.thermometer.measure();
     this.tempChip = allTemp[0];
     this.tempBoard = allTemp[1];
+    try {
 
-    if (this.tempChip < this.preHeatTemp) {
-      //1 stage - prepare Heat (bottom heater ON; top heater OFF)
-      this.rise = Number(
+   
+    if (this.currTime === 0) {
+      this.prevTempChip = this.tempChip;
+      this.targetSpeed1 = Number(
         ((this.preHeatTemp - this.tempChip) / (this.preHeatTime - 0)).toFixed(2)
       );
-
-      if (this.targetTemp === null) {
-        this.targetTemp = this.tempChip;
-      } else {
-        this.targetTemp = Number((this.targetTemp + this.rise).toFixed(2));
-      }
-      this.pidBottom.setTarget(
-        this.targetTemp,
-        this.PBottom,
-        this.IBottom,
-        this.DBottom
-      );
-      this.powerBottom = Math.round(
-        Number(this.pidBottom.update(this.targetTemp))
-      );
-
-      this.pwm.update(0, this.powerBottom);
-    } else if (
-      this.tempChip >= this.preHeatTemp &&
-      this.tempChip <= this.liquidTemp
-    ) {
-      //2  stage - waitting (bottom heater ON; top heater OFF)
-      this.rise = Number(
+      this.targetSpeed2 = Number(
         (
           (this.liquidTemp - this.preHeatTemp) /
           (this.liquidTime - this.preHeatTime)
         ).toFixed(2)
       );
-      this.targetTemp = this.targetTemp + this.rise;
+      this.targetSpeed3 = Number(
+        (
+          (this.peakTemp - this.liquidTemp) /
+          (this.peakTime - this.liquidTime)
+        ).toFixed(2)
+      );
+      this.pwm.update(0, 5);
+      this.led.redLed(true);
+      this.sleep(500);
+      this.pwm.update(0, 0);
+      this.led.redLed(false);
+    }
+
+    if (this.tempChip < this.preHeatTemp) {
+      //1 stage - prepare Heat (bottom heater ON; top heater OFF)
+      this.led.greenLed(true);
+      this.#measureSpeed();
+      this.prevTempChip = this.tempChip;
+
       this.pidBottom.setTarget(
-        this.targetTemp,
+        this.targetSpeed1,
+        this.PBottom,
+        this.IBottom,
+        this.DBottom
+      ); //set target for PID
+      this.powerBottom = Math.round(
+        Number(this.pidBottom.update(this.measuredSpeed))
+      ); //calculate power from PID
+      this.pwm.update((this.powerTop = 0), this.powerBottom); //send calculated power to output
+    } else if (
+      this.tempChip >= this.preHeatTemp &&
+      this.tempChip <= this.liquidTemp
+    ) {
+      //2  stage - waitting (bottom heater ON; top heater OFF)
+
+      this.#measureSpeed();
+      this.prevTempChip = this.tempChip;
+
+      this.pidBottom.setTarget(
+        this.targetSpeed2,
         this.PBottom,
         this.IBottom,
         this.DBottom
       );
       this.powerBottom = Math.round(
-        Number(this.pidBottom.update(this.tempChip))
+        Number(this.pidBottom.update(this.measuredSpeed))
       );
       this.pwm.update(0, this.powerBottom);
     } else if (
@@ -499,21 +533,36 @@ class Profil extends BaseComponent {
     ) {
       //3  stage - constant power for bottom heater and rise for maximum
       //                              (bottom heater ON; top heater ON)
-      this.rise = Number(
-        (
-          (this.peakTemp - this.liquidTemp) /
-          (this.peakTime - this.liquidTime)
-        ).toFixed(2)
+
+      this.#measureSpeed();
+      this.prevTempChip = this.tempChip;
+      this.pidTop.setTarget(this.targetSpeed3, this.PTop, this.ITop, this.DTop);
+
+      this.powerTop = Math.round(
+        Number(this.pidTop.update(this.measuredSpeed))
       );
-      this.pidTop.setTarget(this.targetTemp, this.PTop, this.ITop, this.DTop);
-      this.targetTemp = this.targetTemp + this.rise;
-      this.powerTop = Math.round(Number(this.pidTop.update(this.tempChip)));
       this.pwm.update(this.powerTop, this.powerBottom);
     } else if (this.tempChip >= this.peakTemp) {
-      this.pidTop.setTarget(this.peakTemp, this.PTop, this.ITop, this.DTop);
-      this.powerTop = Math.round(Number(this.pidTop.update(this.tempChip)));
+
+      this.#measureSpeed();
+      this.led.greenLed(false);
+      this.led.redLed(true);
+      this.pidBottom.setTarget(0, this.PBottom, this.IBottom, this.DBottom);
+      this.powerBottom = Math.round(
+        Number(this.pidBottom.update(this.measuredSpeed))
+      ); //calculate power from PID
+
+      this.pidTop.setTarget(0, this.PTop, this.ITop, this.DTop);
+      this.powerTop = Math.round(
+        Number(this.pidTop.update(this.measuredSpeed))
+      );
+
       this.pwm.update(this.powerTop, this.powerBottom);
     }
+  } catch (err) {
+    this.stop();
+    console.log(err);
+  }
   }
 
   async start(menuList) {
@@ -549,10 +598,12 @@ class Profil extends BaseComponent {
           this.tempChip,
           this.tempBoard,
           this.powerTop,
-          this.powerBottom
+          this.powerBottom,
+          this.targetSpeed1,
+          this.measuredSpeed
         );
       }
-      await this.sleep(1000);
+      await this.sleep(this.period);
     }
   }
 
@@ -565,7 +616,7 @@ class Profil extends BaseComponent {
     this.tempBoard = 25;
     this.pidBottom = null;
     this.pidTop = null;
-    this.rise = 0;
+    this.targetSpeed = 0;
   }
 
   pause() {
@@ -574,8 +625,11 @@ class Profil extends BaseComponent {
 
   stop() {
     this.timerStopped = true;
-    this.currTime = 0;
     this.reset();
+    this.led.greenLed(false);
+    this.led.redLed(false);
+    this.currTime = 0;
+    this.pwm.stop();
   }
 }
 module.exports = Profil;

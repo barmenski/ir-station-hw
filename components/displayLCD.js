@@ -161,7 +161,7 @@ class DisplayLCD {
     }
   };
 
-  displayProfilData = (tempChip, tempBoard, powerTop, powerBottom) => {
+  displayProfilData = (tempChip, tempBoard, powerTop, powerBottom, targetSpeed, measuredSpeed) => {
     this.lcd.setCursorSync(2, 0);
     this.lcd.printSync("    ");
     this.lcd.setCursorSync(3, 0);
@@ -181,6 +181,16 @@ class DisplayLCD {
     this.lcd.printSync("   ");
     this.lcd.setCursorSync(8, 1);
     this.lcd.printSync(powerBottom);
+
+    this.lcd.setCursorSync(13, 0);
+    this.lcd.printSync("   ");
+    this.lcd.setCursorSync(13, 0);
+    this.lcd.printSync(targetSpeed);
+
+    this.lcd.setCursorSync(13, 1);
+    this.lcd.printSync("   ");
+    this.lcd.setCursorSync(13, 1);
+    this.lcd.printSync(measuredSpeed);
 
     //t=000 P=000% pt1
     //  ↑↑↑   ↑↑↑

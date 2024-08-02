@@ -1,5 +1,6 @@
 const EventEmitter = require("events");
 const rpio = require("rpio");
+const process = require("process");
 
 class Encoder extends EventEmitter {
   options = {
@@ -41,5 +42,12 @@ class Encoder extends EventEmitter {
     rpio.close(this.led1, rpio.PIN_RESET);
     rpio.close(this.led2, rpio.PIN_RESET);
   }
+
 }
 module.exports = Encoder;
+process.on('exit', function() {
+  /* Insert any custom cleanup code here. */
+  rpio.close(this.led1, rpio.PIN_RESET);
+  rpio.close(this.led2, rpio.PIN_RESET);
+  rpio.exit();
+})
