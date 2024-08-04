@@ -20,12 +20,14 @@ class Profil extends BaseComponent {
     this.powerTopMax = 350;
     this.powerBottomMax = 3420;
     this.prevTempChip = 0;
+    this.prevTempBoard = 0;
     this.tempChip = 25;
     this.targetTemp = 25;
     this.targetSpeed1 = 1;
     this.targetSpeed2 = 1;
     this.targetSpeed3 = 1;
-    this.measuredSpeed = 0;
+    this.stage = 0;
+    this.measuredSpeedTop = 0;
     this.tempBoard = 25;
     this.pidBottom = null;
     this.pidTop = null;
@@ -202,20 +204,10 @@ class Profil extends BaseComponent {
           break;
         case "pauseProfileMenu":
           switch (this.arrow) {
-            case 0: //>Pause pressed
-              this.arrow = 0;
-              this.currMenu = "stayProfileMenu";
-              this.currMenuLength = this.menuList.stayProfileMenu.type;
-              this.displayLCD.display(
-                this.menuList.stayProfileMenu,
-                this.arrow
-              );
-              this.pause();
-              break;
-            case 1: //>Stop pressed
+            case 0: //>Stop pressed
               this.stop();
               break;
-            case 2: //>Back pressed
+            case 1: //>Back pressed
               this.displayLCD.display(
                 this.menuList.workProfileMenu,
                 this.arrow
@@ -450,13 +442,21 @@ class Profil extends BaseComponent {
   }
 
   #measureSpeed() {
-    this.measuredSpeed = Number(
+    this.measuredSpeedTop = Number(
       ((this.prevTempChip - this.tempChip) / (this.period / 1000)).toFixed(2)
     );
-    if (this.measuredSpeed <= 0) {
-      this.measuredSpeed = 0.1;
+    if (this.measuredSpeedTop <= 0) {
+      this.measuredSpeedTop = 0.001;
     }
-    console.log("this.measuredSpeed: " + this.measuredSpeed);
+    console.log("this.measuredSpeedTop: " + this.measuredSpeedTop);
+
+    this.measuredSpeedBottom = Number(
+      ((this.prevTempBoard - this.tempBoard) / (this.period / 1000)).toFixed(2)
+    );
+    if (this.measuredSpeedBottom <= 0) {
+      this.measuredSpeedBottom = 0.001;
+    }
+    console.log("this.measuredSpeedBottom: " + this.measuredSpeedBottom);
   }
 
   #heat() {
@@ -465,13 +465,14 @@ class Profil extends BaseComponent {
     let allTemp = this.thermometer.measure();
     this.tempChip = allTemp[0];
     this.tempBoard = allTemp[1];
+
     try {
 
-   
     if (this.currTime === 0) {
-      this.prevTempChip = this.tempChip;
+      this.stage = 0;
+      this.prevTempBoard = this.tempBoard;
       this.targetSpeed1 = Number(
-        ((this.preHeatTemp - this.tempChip) / (this.preHeatTime - 0)).toFixed(2)
+        ((this.preHeatTemp - this.tempBoard) / (this.preHeatTime - 0)).toFixed(2)
       );
       this.targetSpeed2 = Number(
         (
@@ -487,16 +488,18 @@ class Profil extends BaseComponent {
       );
       this.pwm.update(0, 5);
       this.led.redLed(true);
-      this.sleep(500);
+      this.sleep(700);
       this.pwm.update(0, 0);
       this.led.redLed(false);
     }
-
-    if (this.tempChip < this.preHeatTemp) {
+//BOTTOM HEATER
+    if (this.tempBoard < this.preHeatTemp &&
+      this.currTime < this.peakTime) {
       //1 stage - prepare Heat (bottom heater ON; top heater OFF)
+      this.stage = 1;
       this.led.greenLed(true);
       this.#measureSpeed();
-      this.prevTempChip = this.tempChip;
+      this.prevTempBoard = this.tempBoard;
 
       this.pidBottom.setTarget(
         this.targetSpeed1,
@@ -505,17 +508,18 @@ class Profil extends BaseComponent {
         this.DBottom
       ); //set target for PID
       this.powerBottom = Math.round(
-        Number(this.pidBottom.update(this.measuredSpeed))
+        Number(this.pidBottom.update(this.measuredSpeedBottom))
       ); //calculate power from PID
-      this.pwm.update((this.powerTop = 0), this.powerBottom); //send calculated power to output
+      
     } else if (
-      this.tempChip >= this.preHeatTemp &&
-      this.tempChip <= this.liquidTemp
+      this.tempBoard >= this.preHeatTemp &&
+      this.tempBoard <= this.liquidTemp &&
+      this.currTime < this.peakTime
     ) {
-      //2  stage - waitting (bottom heater ON; top heater OFF)
-
+      //2  stage - waitting (bottom heater ON; top heater ON)
+      this.stage = 2;
       this.#measureSpeed();
-      this.prevTempChip = this.tempChip;
+      this.prevTempBoard = this.tempBoard;
 
       this.pidBottom.setTarget(
         this.targetSpeed2,
@@ -524,41 +528,83 @@ class Profil extends BaseComponent {
         this.DBottom
       );
       this.powerBottom = Math.round(
-        Number(this.pidBottom.update(this.measuredSpeed))
+        Number(this.pidBottom.update(this.measuredSpeedBottom))
       );
-      this.pwm.update(0, this.powerBottom);
+
+    } else if (
+      this.tempBoard >= this.liquidTemp &&
+      this.currTime < this.peakTime+30
+    ) {
+      //3  stage - constant power for bottom heater and rise for maximum
+      //                              (bottom heater ON; top heater ON)
+      this.stage = 3;
+      this.#measureSpeed();
+      this.prevTempBoard = this.tempBoard;
+      this.pidBottom.setTarget(this.liquidTemp, this.PBottom, this.IBottom, this.DBottom);
+
+      this.powerBottom = Math.round(
+        Number(this.pidBottom.update(this.tempBoard))
+      );
+
+    } else {
+      this.stage = 4;
+      this.#measureSpeed();
+      this.led.greenLed(false);
+      this.led.redLed(true);
+      this.powerBottom = 0;
+    }
+//TOP HEATER
+    if (this.tempChip < this.preHeatTemp &&
+      this.currTime < this.peakTime) {
+      //1 stage - prepare Heat (bottom heater ON; top heater OFF)
+
+      this.powerTop = 0;
+      
+    } else if (
+      this.tempChip >= this.preHeatTemp &&
+      this.tempChip <= this.liquidTemp &&
+      this.currTime < this.peakTime
+    ) {
+      //2  stage - waitting (bottom heater ON; top heater ON)
+      this.#measureSpeed();
+      this.prevTempChip = this.tempChip;
+
+      this.pidTop.setTarget(
+        this.targetSpeed2,
+        this.PTop,
+        this.ITop,
+        this.DTop
+      );
+      this.powerTop = Math.round(
+        Number(this.pidTop.update(this.measuredSpeedTop))
+      );
+
     } else if (
       this.tempChip >= this.liquidTemp &&
-      this.tempChip < this.peakTemp
+      this.tempChip < this.peakTemp &&
+      this.currTime < this.peakTime
     ) {
       //3  stage - constant power for bottom heater and rise for maximum
       //                              (bottom heater ON; top heater ON)
 
       this.#measureSpeed();
       this.prevTempChip = this.tempChip;
-      this.pidTop.setTarget(this.targetSpeed3, this.PTop, this.ITop, this.DTop);
-
-      this.powerTop = Math.round(
-        Number(this.pidTop.update(this.measuredSpeed))
+      this.pidTop.setTarget(
+        this.targetSpeed3,
+        this.PTop,
+        this.ITop,
+        this.DTop
       );
-      this.pwm.update(this.powerTop, this.powerBottom);
-    } else if (this.tempChip >= this.peakTemp) {
-
-      this.#measureSpeed();
-      this.led.greenLed(false);
-      this.led.redLed(true);
-      this.pidBottom.setTarget(0, this.PBottom, this.IBottom, this.DBottom);
-      this.powerBottom = Math.round(
-        Number(this.pidBottom.update(this.measuredSpeed))
-      ); //calculate power from PID
-
-      this.pidTop.setTarget(0, this.PTop, this.ITop, this.DTop);
       this.powerTop = Math.round(
-        Number(this.pidTop.update(this.measuredSpeed))
+        Number(this.pidTop.update(this.measuredSpeedTop))
       );
 
-      this.pwm.update(this.powerTop, this.powerBottom);
+    } else {
+      this.powerTop =0;
     }
+ 
+    this.pwm.update(this.powerTop, this.powerBottom); //send calculated power to output
+
   } catch (err) {
     this.stop();
     console.log(err);
@@ -599,8 +645,8 @@ class Profil extends BaseComponent {
           this.tempBoard,
           this.powerTop,
           this.powerBottom,
-          this.targetSpeed1,
-          this.measuredSpeed
+          this.stage,
+          this.currTime
         );
       }
       await this.sleep(this.period);
@@ -617,6 +663,7 @@ class Profil extends BaseComponent {
     this.pidBottom = null;
     this.pidTop = null;
     this.targetSpeed = 0;
+    this.stage = 0;
   }
 
   pause() {
@@ -630,6 +677,7 @@ class Profil extends BaseComponent {
     this.led.redLed(false);
     this.currTime = 0;
     this.pwm.stop();
+    console.log("Heating stopped.");
   }
 }
 module.exports = Profil;
