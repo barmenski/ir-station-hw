@@ -24,11 +24,7 @@ class Menu extends BaseComponent {
   }
 
   async start() {
-    // this.displayLCD.display(this.menuList.startMenu, this.arrow);
-    // this.currMenu = "startMenu";
-    // await this.sleep(2000);
     this.init();
-    
   }
 
   async init() {

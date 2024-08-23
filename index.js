@@ -1,9 +1,9 @@
 const process = require("process");
 const Menu = require("./components/menu");
-const Server = require("./components/server");
+const ServerHttp = require("./components/server");
 
 const menu = new Menu();
-const server = new Server();
+const server = new ServerHttp();
 
 menu.start();
 server.start();
