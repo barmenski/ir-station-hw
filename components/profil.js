@@ -5,13 +5,17 @@ const PWM = require("./pwm.js");
 const BaseComponent = require("./baseComponent");
 const Encoder = require("./encoder");
 const Led = require("./led");
+//const ServerHttp = require("./server");
+const SocketMaker = require("./src/components/socketMaker");
 
 class Profil extends BaseComponent {
   displayLCD = new DisplayLCD();
   thermometer = new Thermometer();
+  socketMaker = new SocketMaker();
   pwm = new PWM();
   encoder = new Encoder();
   led = new Led();
+  //serverHttp = new ServerHttp();
 
   constructor(parent) {
     super();
@@ -73,11 +77,12 @@ class Profil extends BaseComponent {
     this.namesProfile = [];
   }
 
-  async init() {
+  async init(httpServer) {
     this.arrow = 0;
     this.displayLCD.display(this.menuList.profileMenu, this.arrow);
     await this.sleep(100);
     this.encoder.init();
+
     this.#pullData();
     this.currMenu = "profileMenu";
     this.currMenuLength = this.menuList.profileMenu.type;
@@ -185,7 +190,7 @@ class Profil extends BaseComponent {
             case 0: //>Start pressed
               this.arrow = 0;
               this.currMenu = "workProfileMenu";
-              await this.start(this.menuList, this.arrow);
+              await this.start(this.menuList, httpServer);
               this.arrow = 2;
               this.displayLCD.display(this.menuList.profileMenu, this.arrow); //display profileMenu after this.constTemp.stop();
               this.currMenu = "profileMenu";
@@ -480,12 +485,6 @@ class Profil extends BaseComponent {
         ((this.currTime - this.startTime) / 1000).toFixed(2)
       ); //s
 
-      // this.pwm.update(0, 5);
-      // this.led.redLed(true);
-      // this.sleep(700);
-      // this.pwm.update(0, 0);
-      // this.led.redLed(false);
-
       //BOTTOM HEATER
 
       if (this.tempBoard < this.preHeatTemp && this.duration < this.peakTime) {
@@ -616,8 +615,10 @@ class Profil extends BaseComponent {
     }
   }
 
-  async start(menuList) {
+  async start(menuList, httpServer) {
     this.pwm.init();
+    console.log("httpServer: "+ httpServer);
+    this.socketMaker.start(httpServer, this.tempBoard);
 
     this.preHeatTime = this.currProfile.time1;
     this.preHeatTemp = this.currProfile.temp1;
@@ -653,6 +654,10 @@ class Profil extends BaseComponent {
           this.stage,
           this.duration
         );
+        this.socketMaker.send(this.tempBoard);
+        //const serverHttpCreated = this.serverHttp.start();
+        
+        //this.serverHttp.sendData(this.tempBoard);
       }
       await this.sleep(this.period);
     }

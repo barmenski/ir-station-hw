@@ -5,6 +5,7 @@ import { Station_image } from './components/station_img.js';
 const station_image = new Station_image();
 station_image.init();
 window.station = new Station();
+window.station.init();
 
 const START_BTN = document.querySelector('.form-control-start_btn');
 const CANCEL_BTN = document.querySelector('.form-control-cancel_btn');

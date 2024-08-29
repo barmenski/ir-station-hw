@@ -1,5 +1,6 @@
 import { Temperature } from "./temp.js";
 import { Input_panel } from "./input_panel.js";
+//import { io } from "socket.io-client";
 import "./socket.io.js";
 
 export class Station {
@@ -30,9 +31,21 @@ export class Station {
   init = () => {
     this.timer = document.querySelector(".timer");
 
-    this.socket.on("message", (message) =>
-      console.log("Message from server: ", message)
-    );
+    // this.socket.on('data', (data)=>{
+    //   var item = document.createElement('li');
+    //   item.textContent = data;
+    //   messages.appendChild(item);
+      
+    // })
+    this.socket.on('connect', () => {
+      console.log("ID: "+ this.socket.id);
+    })
+    this.socket.on("data1", (message) =>{
+      console.log("Data from server: "+ message);
+    });
+    this.socket.on("data", (message) =>{
+      console.log("Message from server: "+ message + " ID: "+ this.socket.id);
+    });
   };
 
   getTemperature = () => {

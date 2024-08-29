@@ -2,13 +2,17 @@ const http = require("http");
 const fs = require("fs");
 var path = require("path");
 const PORT = process.env.PORT || 8080;
-
 const { Server } = require("socket.io");
 
 class ServerHttp {
   http = http;
+  data = null;
+  socket1 = null;
 
-  constructor() {}
+
+  constructor() {
+
+  }
 
   start() {
     function handler(request, response) {
@@ -61,24 +65,77 @@ class ServerHttp {
         response.end("No Page Found");
       }
     }
+    this.socketId = JSON.parse(
+      fs.readFileSync(path.join(__dirname, "/socketId.json"), (err, data) => {
+        if (err) throw err;
+        return data;
+      })
+    );
 
-    const server = this.http.createServer(handler);
+    this.server = this.http.createServer(handler);
 
-    server.listen(PORT, () => {
+    this.server.listen(PORT, () => {
       console.log(`Webserver started on :${PORT}`);
-    });
-    const io = new Server(server);
-    io.on('connection', (socket) => {
-      console.log('a user connected');
-      socket.on('disconnect', () => {
-        console.log('user disconnected');
-      });
     });
 
     process.on("SIGINT", function () {
       console.log("\nWebserver closed");
       process.exit();
     });
+    console.log("this.server: "+ this.server);
+    //this.io = new Server(this.server);
+    return this.server;
+/*
+    
+
+    const onConnection = (socket) => {
+      //const sockets = await this.io.fetchSockets();
+      console.log("a user connected");
+      this.socket1 = socket;
+      console.log("this.socket1: "+this.socket1.id);
+      this.socketId.socket.id = socket.id;
+      fs.writeFile(
+        path.join(__dirname, "/socketId.json"),
+        JSON.stringify(this.socketId),
+        (err) => {
+          if (err) console.log(err);
+          else {
+            console.log("socketId.json written successfully");
+          }
+        }
+      );
+        console.log("Data Message: ", "hello");
+       // socket.emit("data1", socket);
+        socket.emit("data", "hello");
+      socket.on("disconnect", () => {
+        console.log("user disconnected");
+      });
+    };
+
+    this.io.on("connection", onConnection); 
+*/
+
   }
+
+  sendData(data) {
+
+    console.log("sendData data: " + data);
+    this.socketId = JSON.parse(
+      fs.readFileSync(path.join(__dirname, "/socketId.json"), (err, fsData) => fsData)
+    );
+    this.socket1 = this.socketId;
+    console.log("this.socket1: "+this.socket1.socket.id);
+    //this.socket1.emit("data", data);
+  }
+
+  // sendData(data) {
+  //   console.log("sendData data: "+data);
+  //   this.io = new Server(this.server);
+  //   this.io.on('connection', (socket) => {
+  //     socket.emit('data', data);
+  //     console.log("WS data: "+data);
+  //   });
+  // }
+
 }
 module.exports = ServerHttp;
