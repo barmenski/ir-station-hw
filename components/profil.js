@@ -5,17 +5,15 @@ const PWM = require("./pwm.js");
 const BaseComponent = require("./baseComponent");
 const Encoder = require("./encoder");
 const Led = require("./led");
-//const ServerHttp = require("./server");
-const SocketMaker = require("./src/components/socketMaker");
+const ServerHttp = require("./server");
 
 class Profil extends BaseComponent {
   displayLCD = new DisplayLCD();
   thermometer = new Thermometer();
-  socketMaker = new SocketMaker();
+  serverHttp = new ServerHttp();
   pwm = new PWM();
   encoder = new Encoder();
   led = new Led();
-  //serverHttp = new ServerHttp();
 
   constructor(parent) {
     super();
@@ -77,11 +75,13 @@ class Profil extends BaseComponent {
     this.namesProfile = [];
   }
 
-  async init(httpServer) {
+  async init(ioConnection) {
+    this.io = ioConnection;
     this.arrow = 0;
     this.displayLCD.display(this.menuList.profileMenu, this.arrow);
     await this.sleep(100);
     this.encoder.init();
+    //this.socketMaker.init(httpServer);
 
     this.#pullData();
     this.currMenu = "profileMenu";
@@ -190,7 +190,7 @@ class Profil extends BaseComponent {
             case 0: //>Start pressed
               this.arrow = 0;
               this.currMenu = "workProfileMenu";
-              await this.start(this.menuList, httpServer);
+              await this.start(this.menuList);
               this.arrow = 2;
               this.displayLCD.display(this.menuList.profileMenu, this.arrow); //display profileMenu after this.constTemp.stop();
               this.currMenu = "profileMenu";
@@ -615,10 +615,8 @@ class Profil extends BaseComponent {
     }
   }
 
-  async start(menuList, httpServer) {
+  async start(menuList) {
     this.pwm.init();
-    console.log("httpServer: "+ httpServer);
-    this.socketMaker.start(httpServer, this.tempBoard);
 
     this.preHeatTime = this.currProfile.time1;
     this.preHeatTemp = this.currProfile.temp1;
@@ -646,6 +644,14 @@ class Profil extends BaseComponent {
     while (!this.timerStopped) {
       this.#heat();
       if (!this.hiddenData) {
+        let data = {
+          tempChip: this.tempChip,
+          tempBoard: this.tempBoard,
+          powerTop: this.powerTop,
+          powerBottom: this.powerBottom,
+          stage: this.stage,
+          duration: this.duration
+        };
         this.displayLCD.displayProfilData(
           this.tempChip,
           this.tempBoard,
@@ -654,10 +660,7 @@ class Profil extends BaseComponent {
           this.stage,
           this.duration
         );
-        this.socketMaker.send(this.tempBoard);
-        //const serverHttpCreated = this.serverHttp.start();
-        
-        //this.serverHttp.sendData(this.tempBoard);
+        this.serverHttp.send(this.io, data);
       }
       await this.sleep(this.period);
     }

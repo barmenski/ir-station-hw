@@ -5,10 +5,9 @@ const ServerHttp = require("./components/server");
 const menu = new Menu();
 const server = new ServerHttp();
 
-const serv = server.start();
-console.log("serv: "+ serv);
-menu.start(serv);
-//server.start();
+const ioConnection = server.start();
+
+menu.start(ioConnection);
 
 process.on("SIGINT", function () {
   console.log("\nir-station-hw closed");

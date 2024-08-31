@@ -1,11 +1,8 @@
-import { Temperature } from "./temp.js";
 import { Input_panel } from "./input_panel.js";
-//import { io } from "socket.io-client";
 import "./socket.io.js";
 
 export class Station {
   constructor() {
-    this.temperature = new Temperature();
     this.input_panel = new Input_panel();
     this.socket = io();
     this.powerTop = 0;
@@ -31,37 +28,22 @@ export class Station {
   init = () => {
     this.timer = document.querySelector(".timer");
 
-    // this.socket.on('data', (data)=>{
-    //   var item = document.createElement('li');
-    //   item.textContent = data;
-    //   messages.appendChild(item);
-      
-    // })
-    this.socket.on('connect', () => {
-      console.log("ID: "+ this.socket.id);
-    })
-    this.socket.on("data1", (message) =>{
-      console.log("Data from server: "+ message);
+    this.socket.on("connect", () => {
+      console.log("Socket client: " + this.socket.id);
     });
-    this.socket.on("data", (message) =>{
-      console.log("Message from server: "+ message + " ID: "+ this.socket.id);
+    this.socket.on("data", (data) => {
+      let tempChip, tempBoard, powerTop, powerBottom, stage, duration;
+      ({ tempChip, tempBoard, powerTop, powerBottom, stage, duration } = data);
+      this.tempChip = tempChip;
+      this.tempBoard = tempBoard;
+      this.powerTop = powerTop;
+      this.powerBottom = powerBottom;
+      this.stage = stage;
+      this.duration = duration;
+      console.log("Data from server: " + this.duration);
     });
   };
 
-  getTemperature = () => {
-    this.tempBoard = this.temperature.getTempBoard(
-      this.powerTop,
-      this.powerBottom,
-      this.input_panel.boardWidth,
-      this.input_panel.boardLength
-    );
-    this.tempChip = this.temperature.getTempChip(
-      this.powerTop,
-      this.powerBottom,
-      this.input_panel.boardWidth,
-      this.input_panel.boardLength
-    );
-  };
 
   heat = () => {
     window.refresh();
@@ -99,7 +81,6 @@ export class Station {
   };
 
   start = () => {
-    this.init();
     this.input_panel.init();
   };
 

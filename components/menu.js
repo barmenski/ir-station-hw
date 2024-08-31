@@ -23,8 +23,8 @@ class Menu extends BaseComponent {
     this.arrow = 0;
   }
 
-  async start(httpServer) {
-    this.httpServer=httpServer;
+  async start(ioConnection) {
+    this.ioConnection=ioConnection;
     this.init();
   }
 
@@ -62,7 +62,7 @@ class Menu extends BaseComponent {
             case 0: //>Profil pressed
               this.currMenu = "profilMenu";
               this.removeListeners();
-              await this.profil.init(this.httpServer);
+              await this.profil.init(this.ioConnection);
               break;
             case 1: //>PIDset pressed
             this.currMenu = "pidMenu";
