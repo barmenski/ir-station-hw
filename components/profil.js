@@ -81,7 +81,6 @@ class Profil extends BaseComponent {
     this.displayLCD.display(this.menuList.profileMenu, this.arrow);
     await this.sleep(100);
     this.encoder.init();
-    //this.socketMaker.init(httpServer);
 
     this.#pullData();
     this.currMenu = "profileMenu";

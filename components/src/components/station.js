@@ -40,15 +40,14 @@ export class Station {
       this.powerBottom = powerBottom;
       this.stage = stage;
       this.duration = duration;
-      console.log("Data from server: " + this.duration);
+      this.heat();
     });
   };
 
 
   heat = () => {
     window.refresh();
-    this.timer.innerHTML = `${this.currTime} s`;
-    this.currTime++;
+    this.timer.innerHTML = `${this.duration} s`;
 
     switch (this.input_panel.mode) {
       case "pb+":

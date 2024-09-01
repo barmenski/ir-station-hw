@@ -1,11 +1,22 @@
-import { Station } from './components/station.js';
+//import { Station } from './components/station.js';
 import { Graph } from './components/graph.js';
 import { Station_image } from './components/station_img.js';
+import { Input_panel } from "./components//input_panel.js";
+import "./components//socket.io.js";
 
 const station_image = new Station_image();
 station_image.init();
-window.station = new Station();
-window.station.init();
+// window.station = new Station();
+// window.station.init();
+
+const input_panel = new Input_panel();
+const socket = io();
+var powerTop = 0;
+var powerBottom = 0;
+var tempChip = 25;
+var tempBoard = 25;
+var stage = 0;
+var duration = 0;
 
 const START_BTN = document.querySelector('.form-control-start_btn');
 const CANCEL_BTN = document.querySelector('.form-control-cancel_btn');
@@ -24,38 +35,53 @@ const POWER_BOTTOM_CANVAS = document.querySelector('.power-bottom-canvas');
 window.temp_graph = new Graph(TEMP_CANVAS, 'Chip temp.');
 window.power_top_graph = new Graph(POWER_TOP_CANVAS, 'Power top');
 window.power_bottom_graph = new Graph(POWER_BOTTOM_CANVAS, 'Power bottom');
-window.station.input_panel.init();
+//window.station.input_panel.init();
+input_panel.init();
 
 START_BTN.addEventListener('click', (event) => {
   event.preventDefault();
-  window.station.start();
+  //window.station.start();
 });
 CANCEL_BTN.addEventListener('click', (event) => {
   event.preventDefault();
-  window.station.timerStopped = true;
+  //window.station.timerStopped = true;
 });
 
 OFF_BTN.addEventListener('click', (event) => {
   event.preventDefault();
-  window.station.input_panel.set_mode('heaters off');
+  //window.station.input_panel.set_mode('heaters off');
 });
 
+
+  const timer = document.querySelector(".timer");
+
+  socket.on("connect", () => {
+    console.log("Socket client: " + socket.id);
+  });
+  socket.on("data", (data) => {
+
+    ({ tempChip, tempBoard, powerTop, powerBottom, stage, duration } = data);
+
+    window.refresh();
+  });
+
 window.refresh = () => {
-  TOP_POWER.innerHTML = `${window.station.powerTop}`;
-  BOTTOM_POWER.innerHTML = `${window.station.powerBottom}`;
-  CHIP_TEMP.innerHTML = `${Math.round(window.station.tempChip)}`;
-  BOARD_TEMP.innerHTML = `${Math.round(window.station.tempBoard)}`;
-  MODE.innerHTML = `Mode: ${window.station.input_panel.mode}`;
+  timer.innerHTML = `${duration} s`;
+  TOP_POWER.innerHTML = `${powerTop}`;
+  BOTTOM_POWER.innerHTML = `${powerBottom}`;
+  CHIP_TEMP.innerHTML = `${Math.round(tempChip)}`;
+  BOARD_TEMP.innerHTML = `${Math.round(tempBoard)}`;
+  MODE.innerHTML = `Mode: ${input_panel.mode} Stage: ${stage}`;
   window.temp_graph.drawGraph(
-    window.station.currTime * 0.5,
-    -0.25 * window.station.tempChip
+    duration * 0.5,
+    -0.25 * tempChip
   );
   window.power_top_graph.drawGraph(
-    window.station.currTime * 0.5,
-    -0.1 * window.station.powerTop
+    duration * 0.5,
+    -0.1 *powerTop
   );
   window.power_bottom_graph.drawGraph(
-    window.station.currTime * 0.5,
-    -0.1 * window.station.powerBottom
+    duration * 0.5,
+    -0.1 * powerBottom
   );
 };
