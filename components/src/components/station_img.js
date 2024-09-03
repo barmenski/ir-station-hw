@@ -9,7 +9,7 @@ export class Station_image {
   
   <div class="top-heater">
     <p class="top-heater-text">
-      <span class="top-heater-power">-</span>&nbspW
+      <span class="top-heater-power">-</span>&nbsp%
     </p>
   </div>
   
@@ -23,7 +23,7 @@ export class Station_image {
   
   <div class="bottom-heater">
     <p class="bottom-heater-text">
-      <span class="bottom-heater-power">-</span>&nbspW
+      <span class="bottom-heater-power">-</span>&nbsp%
     </p>
   </div>
   

@@ -32,9 +32,9 @@ const TEMP_CANVAS = document.querySelector('.temp-canvas');
 const POWER_TOP_CANVAS = document.querySelector('.power-top-canvas');
 const POWER_BOTTOM_CANVAS = document.querySelector('.power-bottom-canvas');
 
-window.temp_graph = new Graph(TEMP_CANVAS, 'Chip temp.');
-window.power_top_graph = new Graph(POWER_TOP_CANVAS, 'Power top');
-window.power_bottom_graph = new Graph(POWER_BOTTOM_CANVAS, 'Power bottom');
+window.temp_graph = new Graph(TEMP_CANVAS, 'Chip temp.', 'Board temp.');
+window.power_top_graph = new Graph(POWER_TOP_CANVAS, 'Power top', 'Power bottom');
+//window.power_bottom_graph = new Graph(POWER_BOTTOM_CANVAS, 'Power bottom');
 //window.station.input_panel.init();
 input_panel.init();
 
@@ -74,14 +74,14 @@ window.refresh = () => {
   MODE.innerHTML = `Mode: ${input_panel.mode} Stage: ${stage}`;
   window.temp_graph.drawGraph(
     duration * 0.5,
-    -0.25 * tempChip
+    -0.25 * tempChip, -0.25 * tempBoard
   );
   window.power_top_graph.drawGraph(
     duration * 0.5,
-    -0.1 *powerTop
+    -0.1 *powerTop, -0.1 *powerBottom, 
   );
-  window.power_bottom_graph.drawGraph(
-    duration * 0.5,
-    -0.1 * powerBottom
-  );
+  // window.power_bottom_graph.drawGraph(
+  //   duration * 0.5,
+  //   -0.1 * powerBottom
+  // );
 };

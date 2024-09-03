@@ -299,7 +299,7 @@ output[name='manual-set-temp'] {
   position: absolute;
   transform: translate(0%, 0%);
   top: 40%;
-  background-color: black;
+  /*background-color: black;*/
   margin-top: 50px;
   margin-bottom: 5px;
   z-index: 3;

@@ -1,0 +1,16 @@
+Support soft AP
+
+Features:
+• Wireless Standard: IEEE 802.11b,g,n
+• Integrated Antenna 2 x 2dBi Antenna
+• Up to 150Mbps Data
+• USB 2.0
+• Hardware Specification: MT7601U Chip
+• Frequency: 2.412~2.4835GHz
+• Transmit Power 18dBm(Max)
+• WPA-PSK, WPA2-PSK, WPA/WPA2, WEP
+• Dimensions: 19 x 14 x 5mm
+• Supports Windows XP, 7, 8, 8,10 (32, 64bit)
+• Working Temperature 0°C~40°C
+• Storage Temperature -10°C~70°C
+• Working Humidity 10%-90% RH Non-condensing
