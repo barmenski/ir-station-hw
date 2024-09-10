@@ -150,8 +150,7 @@ output[name='manual-set-temp'] {
   grid-gap: 10px;
   grid-template-columns: 0.7fr 0.3fr;
   grid-template-areas:
-    'station control'
-    'graph graph';
+    'station graph';
 }
 
 .wrapper-station {
@@ -170,11 +169,6 @@ output[name='manual-set-temp'] {
   max-width: 500px;
   height: auto;
   z-index: 2;
-}
-
-.wrapper-control {
-  grid-area: control;
-  background-color: antiquewhite;
 }
 
 .mode,
@@ -263,7 +257,6 @@ output[name='manual-set-temp'] {
 }
 
 .wrapper-graph {
-  height: 250px;
   grid-area: graph;
   background-color: #b2bec9;
 }
@@ -299,7 +292,6 @@ output[name='manual-set-temp'] {
   position: absolute;
   transform: translate(0%, 0%);
   top: 40%;
-  /*background-color: black;*/
   margin-top: 50px;
   margin-bottom: 5px;
   z-index: 3;
@@ -411,16 +403,16 @@ output[name='manual-set-temp'] {
 }
 
 .temp-graph,
-.power-top-graph,
-.power-bottom-graph {
-  width: 220px;
+.power-graph {
+  width: 300px;
   height: 200px;
   border: 1px solid black;
-  margin: 5px;
+  margin: 10px;
 }
 
 .wrapper-canvas {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }

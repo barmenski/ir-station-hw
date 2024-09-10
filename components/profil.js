@@ -504,7 +504,7 @@ class Profil extends BaseComponent {
           this.PBottom,
           this.IBottom,
           this.DBottom
-        ); //set target for PID
+        ); //set target for PID (regulation by speed of rising of temperature)
         this.powerBottom = Math.round(
           Number(this.pidBottom.update(this.measuredSpeedBottom))
         ); //calculate power from PID
@@ -563,7 +563,7 @@ class Profil extends BaseComponent {
         this.powerTop = 0;
       } else if (
         this.tempChip >= this.preHeatTemp &&
-        this.tempChip <= this.liquidTemp &&
+        this.tempChip < this.liquidTemp &&
         this.duration < this.peakTime
       ) {
         //2  stage - waitting (bottom heater ON; top heater ON)

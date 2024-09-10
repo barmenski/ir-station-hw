@@ -16,119 +16,12 @@
         <div class="wrapper-station">
  
         </div>
-        <div class="wrapper-control">
-          <h3 class="heading-control">Control</h3>
-          <form
-            action="#"
-            class="form-control"
-            name="form-control"
-            method="post"
-          >
-          
-          <aside class="mode">
-            <h4 class="mode-heading"><span class="heading-back">Mode:</span></h4>
-            <div class="mode-type"><input type="radio" id="pb+" name="mode" value="pb+" checked/><label for="pb+">Pb+</label></div>
-            <div class="mode-type"><input type="radio" id="pb-" name="mode" value="pb-"/><label for="pb-">Pb-</label></div>
-            <div class="mode-type"><input type="radio" id="const-temp" name="mode" value="const-temp"/><label for="const-temp">Constant temperature</label>
-              <div class="manual-set">
-                <input name="manual-set-temp" data-sizing="px" type="range" min="0" max="300" value="0">
-                <output name="manual-set-temp" id="const-temp-set">0</output><span class="const-temp-dim">&nbsp&#176C</span>
-              </div>
-            </div>
-            <div class="mode-type"><input type="radio" id="const-pow" name="mode" value="const-pow"/><label for="const-pow">Constant power</label>
-              <div class="mode-type">
-                <div class="manual-set">
-                  <input name="manual-set-pow" data-sizing="px" type="range" min="0" max="3420" value="0">
-                  <output name="manual-set-pow" id="const-pow-set">0</output>
-                </div>
-              </div>
-            </div>            
-          </aside>
-
-          <aside class="size-board">
-            <h4 class="size-board-heading"><span class="heading-back">Size of board:</span></h4>
-            <div class="size-board-input">
-              <input
-                type="number"
-                class="width-board"
-                placeholder="Width"
-                max="290"
-              />
-              <input
-                type="number"
-                class="length-board"
-                placeholder="Length"
-                max="210"
-              />
-            </div>
-
-          </aside>
-          <aside class="pid-settings">
-            <h4 class="pid-options-heading"><span class="heading-back">PID options:</span></h4>
-            <div class="pid-options">
-              <input
-                type="number"
-                class="pid-p"
-                placeholder="P"
-                min="0"
-                max="100"
-                step="0.01"
-              />
-              <input
-                type="number"
-                class="pid-i"
-                placeholder="I"
-                min="0"
-                max="100"
-                step="0.01"
-              />
-              <input
-              type="number"
-              class="pid-d"
-              placeholder="D"
-              min="0"
-              max="100"
-              step="0.01"
-              />
-
-            </div>
-            <div class="pid-btn">
-              <button class="form-control-load_btn btn-small" type="submit">
-                Load
-              </button>
-              <button class="form-control-save_btn btn-small" type="submit">
-                Save
-              </button>
-            </div>
-          </aside>
-
-          <aside class="speed">
-            <span>Speed of simulation:</span>
-            <div class="speed-set">
-              <input name="manual-set-speed" data-sizing="px" type="range" min="0" max="30" value="1">
-              <output name="manual-set-speed" id="gen-speed-set">1</output>
-            </div>
-          </aside>
-
-          <div class="wrapper-btn">
-            <button class="form-control-cancel_btn btn" type="submit">
-              Stop
-            </button>
-            <button class="form-control-start_btn btn" type="submit">
-              Start
-            </button>
-            <button class="form-control-off_btn btn" type="submit">
-              Turn off
-            </button>
-          </div>
-          </form>
-        </div>
+        
         <div class="wrapper-graph">
           <h3 class="heading-graph">Graph</h3>
           <div class="wrapper-canvas">
             <div class="temp-graph"><canvas class="temp-canvas"></canvas></div>
-            <div class="power-top-graph"><canvas class="power-top-canvas"></canvas></div>
-            <div class="power-bottom-graph"><canvas class="power-bottom-canvas"></div>
+            <div class="power-graph"><canvas class="power-canvas"></canvas></div>
           </div>
         </div>
       </main>
