@@ -20,9 +20,7 @@ class PWM {
 
   update(dutyCycle1, dutyCycle2) {
     rpio.pwmSetData(this.pinTop, dutyCycle1);
-    console.log("powerTop =" + dutyCycle1);
     rpio.pwmSetData(this.pinBottom, dutyCycle2);
-    console.log("powerBottom =" + dutyCycle2);
   }
 
   stop(){

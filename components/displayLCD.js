@@ -138,27 +138,36 @@ class DisplayLCD {
   };
 
   displayThermData = (tempChip, tempBoard) => {
-    if (tempChip < 1000 && tempChip > 99) {
-      this.lcd.setCursorSync(2, 0);
-      this.lcd.printSync(tempChip);
-    } else if (tempChip < 10) {
-      this.lcd.setCursorSync(4, 0);
-      this.lcd.printSync(tempChip);
-    } else {
-      this.lcd.setCursorSync(3, 0);
-      this.lcd.printSync(tempChip);
-    }
+    // if (tempChip < 1000 && tempChip > 99) {
+    //   this.lcd.setCursorSync(2, 0);
+    //   this.lcd.printSync(tempChip);
+    // } else if (tempChip < 10) {
+    //   this.lcd.setCursorSync(4, 0);
+    //   this.lcd.printSync(tempChip);
+    // } else {
+    //   this.lcd.setCursorSync(3, 0);
+    //   this.lcd.printSync(tempChip);
+    // }
 
-    if (tempChip < 1000 && tempBoard > 99) {
-      this.lcd.setCursorSync(2, 1);
-      this.lcd.printSync(tempBoard);
-    } else if (tempChip < 10) {
-      this.lcd.setCursorSync(4, 1);
-      this.lcd.printSync(tempBoard);
-    } else {
-      this.lcd.setCursorSync(3, 1);
-      this.lcd.printSync(tempBoard);
-    }
+    // if (tempChip < 1000 && tempBoard > 99) {
+    //   this.lcd.setCursorSync(2, 1);
+    //   this.lcd.printSync(tempBoard);
+    // } else if (tempChip < 10) {
+    //   this.lcd.setCursorSync(4, 1);
+    //   this.lcd.printSync(tempBoard);
+    // } else {
+    //   this.lcd.setCursorSync(3, 1);
+    //   this.lcd.printSync(tempBoard);
+    // }
+    this.lcd.setCursorSync(2, 0);
+    this.lcd.printSync("    ");
+    this.lcd.setCursorSync(3, 0);
+    this.lcd.printSync(tempChip);
+
+    this.lcd.setCursorSync(2, 1);
+    this.lcd.printSync("    ");
+    this.lcd.setCursorSync(3, 1);
+    this.lcd.printSync(tempBoard);
   };
 
   displayProfilData = (tempChip, tempBoard, powerTop, powerBottom, targetSpeed, measuredSpeed) => {

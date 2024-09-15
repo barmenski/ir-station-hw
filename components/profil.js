@@ -34,12 +34,15 @@ class Profil extends BaseComponent {
     this.pidBottom = null;
     this.pidTop = null;
     this.startTime = 0;
+    this.startTimeHeat = 0;
     this.prevTime = 0;
     this.currTime = 0;
     this.duration = 0;
+    this.durationHeat = 0;
     this.targetSpeed = 0;
     this.timerStopped = true;
     this.hiddenData = false;
+    this.io = null;
 
     this.preHeatTime = 0;
     this.preHeatTemp = 0;
@@ -450,18 +453,20 @@ class Profil extends BaseComponent {
 
   #measureSpeed() {
     this.measuredSpeedTop = Number(
-      ((this.prevTempChip - this.tempChip) / this.measuredTime).toFixed(2)
+      ((this.tempChip - this.prevTempChip) / this.measuredTime).toFixed(2)
     );
+    console.log("this.tempChip: " + this.tempChip + " || " + "this.prevTempChip: " + this.prevTempChip);
     if (this.measuredSpeedTop <= 0) {
-      this.measuredSpeedTop = 0.001;
+      this.measuredSpeedTop = 0.00001;
     }
     console.log("this.measuredSpeedTop: " + this.measuredSpeedTop);
 
     this.measuredSpeedBottom = Number(
-      ((this.prevTempBoard - this.tempBoard) / this.measuredTime).toFixed(2)
+      ((this.tempBoard - this.prevTempBoard ) / this.measuredTime).toFixed(2)
     );
+    console.log("this.tempBoard: " + this.tempBoard + " || " + "this.prevTempBoard: " + this.prevTempBoard);
     if (this.measuredSpeedBottom <= 0) {
-      this.measuredSpeedBottom = 0.001;
+      this.measuredSpeedBottom = 0.00001;
     }
     console.log("this.measuredSpeedBottom: " + this.measuredSpeedBottom);
   }
@@ -483,6 +488,9 @@ class Profil extends BaseComponent {
       this.duration = Number(
         ((this.currTime - this.startTime) / 1000).toFixed(2)
       ); //s
+      this.durationHeat = Number(
+        ((this.currTime - this.startTimeHeat) / 1000).toFixed(2)
+      ); //s
 
       //BOTTOM HEATER
 
@@ -491,14 +499,15 @@ class Profil extends BaseComponent {
         this.stage = 1;
         this.led.greenLed(true);
         this.#measureSpeed();
-        let targetSpeedBottom1 = Math.abs(
-          Number(
-            (
-              (this.preHeatTemp - this.tempBoard) /
-              (this.preHeatTime - this.duration)
-            ).toFixed(2)
-          )
-        );
+        let targetSpeedBottom1 = 1;
+        // let targetSpeedBottom1 = Math.abs(
+        //   Number(
+        //     (
+        //       (this.preHeatTemp - this.tempBoard) /
+        //       (this.preHeatTime - this.duration)
+        //     ).toFixed(2)
+        //   )
+        // );
         this.pidBottom.setTarget(
           targetSpeedBottom1,
           this.PBottom,
@@ -510,13 +519,16 @@ class Profil extends BaseComponent {
         ); //calculate power from PID
       } else if (
         this.tempBoard >= this.preHeatTemp &&
-        this.tempBoard <= this.liquidTemp &&
-        this.duration < this.peakTime
+        this.tempBoard <= this.liquidTemp //&&
+        //this.duration < this.peakTime
       ) {
         //2  stage - waitting (bottom heater ON; top heater ON)
+        if (this.startTimeHeat === 0) {
+          this.startTimeHeat = Date.now();
+        } //ms
         this.stage = 2;
         this.#measureSpeed();
-        let targetSpeedBottom2 = Math.abs(
+        let targetSpeedBottom2 = Math.abs(//change to constant 1 C/s?
           Number(
             (
               (this.liquidTemp - this.tempBoard) /
@@ -534,8 +546,8 @@ class Profil extends BaseComponent {
           Number(this.pidBottom.update(this.measuredSpeedBottom))
         );
       } else if (
-        this.tempBoard >= this.liquidTemp &&
-        this.duration < this.peakTime + 30
+        this.tempBoard >= this.liquidTemp //&&
+        //this.duration < this.peakTime + 30
       ) {
         //3  stage - constant power for bottom heater and rise for maximum
         //                              (bottom heater ON; top heater ON)
@@ -563,8 +575,8 @@ class Profil extends BaseComponent {
         this.powerTop = 0;
       } else if (
         this.tempChip >= this.preHeatTemp &&
-        this.tempChip < this.liquidTemp &&
-        this.duration < this.peakTime
+        this.tempChip < this.liquidTemp //&&
+        //this.duration < this.peakTime
       ) {
         //2  stage - waitting (bottom heater ON; top heater ON)
         this.#measureSpeed();
@@ -582,8 +594,8 @@ class Profil extends BaseComponent {
         );
       } else if (
         this.tempChip >= this.liquidTemp &&
-        this.tempChip < this.peakTemp &&
-        this.duration < this.peakTime
+        this.tempChip < this.peakTemp //&&
+        //this.duration < this.peakTime+30
       ) {
         //3  stage - constant power for bottom heater and rise for maximum
         //                              (bottom heater ON; top heater ON)

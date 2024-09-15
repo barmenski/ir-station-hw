@@ -67,17 +67,17 @@ class Menu extends BaseComponent {
             case 1: //>PIDset pressed
             this.currMenu = "pidMenu";
             this.removeListeners();
-            await this.pidMenu.init();
+            await this.pidMenu.init(this.ioConnection);
               break;
             case 2: //>Const pressed
               this.currMenu = "constMenu";
               this.removeListeners();
-              await this.constTemp.init();
+              await this.constTemp.init(this.ioConnection);
               break;
             case 3: //>Dimmer pressed
               this.currMenu = "dimmer";
               this.removeListeners();
-              await this.dimmer.init();
+              await this.dimmer.init(this.ioConnection);
               break;
             case 4: //>T pressed
               this.arrow = 0;
