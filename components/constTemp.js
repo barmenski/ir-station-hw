@@ -283,8 +283,8 @@ class ConstTemp extends BaseComponent {
           this.tempBoard,
           this.powerTop,
           this.powerBottom,
-          this.stage,
-          this.duration
+          this.targetTemp,
+          this.targetSpeed
         );
         this.serverHttp.send(this.io, data);
       }
