@@ -516,7 +516,7 @@ class Profil extends BaseComponent {
         //1 stage - prepare Heat (bottom heater ON; top heater ON)
         this.stage = 1;
         this.led.greenLed(true);
-        let targetSpeedBottom1 = 1;
+        let targetSpeedBottom1 = 2;
 
         this.targetTempBoard = Number(
           this.tempBoard + targetSpeedBottom1 * this.measuredTime
@@ -542,7 +542,7 @@ class Profil extends BaseComponent {
         }; //ms
         this.stage = 2;
 
-        let targetSpeedBottom2 = 0.8;
+        let targetSpeedBottom2 = 2;
         this.targetTempBoard = Number(
           this.tempBoard + targetSpeedBottom2 * this.measuredTime
         ).toFixed(2);
@@ -563,17 +563,17 @@ class Profil extends BaseComponent {
         //3  stage - constant power for bottom heater and rise for maximum
         //                              (bottom heater ON; top heater ON)
         this.stage = 3;
-        // this.pidBottom.setTarget(
-        //   this.liquidTemp,
-        //   this.PBottom,
-        //   this.IBottom,
-        //   this.DBottom
-        // );
+        this.pidBottom.setTarget(
+          this.liquidTemp,
+          this.PBottom,
+          this.IBottom,
+          this.DBottom
+        );
         
-        // this.powerBottom = Math.round(
-        //   Number(this.pidBottom.update(this.tempBoard))
-        // );
-        this.powerBottom = 0;
+        this.powerBottom = Math.round(
+          Number(this.pidBottom.update(this.tempBoard))
+        );
+        //this.powerBottom = 0;
 
         console.log("3 stage: this.powerBottom " + this.powerBottom);
       } else {
