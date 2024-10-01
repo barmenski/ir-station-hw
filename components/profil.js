@@ -194,6 +194,7 @@ class Profil extends BaseComponent {
             case 0: //>Start pressed
               this.arrow = 0;
               this.currMenu = "workProfileMenu";
+              this.#pullData();
               await this.start(this.menuList);
               this.arrow = 2;
               this.displayLCD.display(this.menuList.profileMenu, this.arrow); //display profileMenu after this.constTemp.stop();
@@ -498,9 +499,15 @@ class Profil extends BaseComponent {
       this.tempBoard = allTemp[1];
 
       this.currTime = Date.now(); //ms
-      this.measuredTime = Number(
-        ((this.currTime - this.prevTime) / 1000).toFixed(2)
-      ); //s
+
+      if (this.prevTime===0){
+        this.measuredTime = 1;
+      } else {
+        this.measuredTime = Number(
+          ((this.currTime - this.prevTime) / 1000).toFixed(2)
+        ); //s
+      }
+
       this.duration = Number(
         ((this.currTime - this.startTime) / 1000).toFixed(2)
       ); //s
@@ -516,7 +523,7 @@ class Profil extends BaseComponent {
         //1 stage - prepare Heat (bottom heater ON; top heater ON)
         this.stage = 1;
         this.led.greenLed(true);
-        let targetSpeedBottom1 = 2;
+        let targetSpeedBottom1 = 1;
 
         this.targetTempBoard = Number(
           this.tempBoard + targetSpeedBottom1 * this.measuredTime
@@ -534,7 +541,8 @@ class Profil extends BaseComponent {
       } else if (
         this.tempBoard >= this.preHeatTemp &&
         this.tempBoard < this.liquidTemp &&
-        this.peakAchiv === false
+        this.peakAchiv === false &&
+        this.stage!=3
       ) {
         //2  stage - waitting (bottom heater ON; top heater ON)
         if (this.startTimeHeat === 0) {
@@ -542,7 +550,7 @@ class Profil extends BaseComponent {
         }; //ms
         this.stage = 2;
 
-        let targetSpeedBottom2 = 2;
+        let targetSpeedBottom2 = 0.8;
         this.targetTempBoard = Number(
           this.tempBoard + targetSpeedBottom2 * this.measuredTime
         ).toFixed(2);
@@ -557,8 +565,7 @@ class Profil extends BaseComponent {
           Number(this.pidBottom.update(this.tempBoard))
         );
       } else if (
-        this.tempBoard >= this.liquidTemp ||
-        (this.stage === 3 && this.peakAchiv === false)
+        this.tempBoard >= this.liquidTemp && this.peakAchiv === false
       ) {
         //3  stage - constant power for bottom heater and rise for maximum
         //                              (bottom heater ON; top heater ON)
@@ -575,7 +582,7 @@ class Profil extends BaseComponent {
         );
         //this.powerBottom = 0;
 
-        console.log("3 stage: this.powerBottom " + this.powerBottom);
+        console.log("3 stage: this.liquidTemp " + this.liquidTemp);
       } else {
         this.stage = 4;
         this.led.greenLed(false);
