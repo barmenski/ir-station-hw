@@ -1,5 +1,4 @@
-const Menu = require("./components/menu");
-const DisplayLCD = require("./components/displayLCD");
+const DisplayLCD = require("../components/displayLCD");
 const process = require("process");
 const exec = require("child_process").exec;
 const rpio = require("rpio");
@@ -15,7 +14,6 @@ let button2 = 38;
 let button3 = 40;
 
 rpio.init(options);
-const menu = new Menu();
 const displayLCD = new DisplayLCD();
 displayLCD.clear();
 rpio.msleep(200);
@@ -57,7 +55,7 @@ function pollcb3() {
   if (rpio.read(button3) == 0) {
     displayLCD.clear();
     displayLCD.display({ name: "shutdown", type: 1, text1: "Shutdown" });
-    execute("shutdown -r now", function (callback) {
+    execute("shutdown -h now", function (callback) {
       console.log(callback);
     });
   }
@@ -74,6 +72,5 @@ function stop() {
 
 process.on("exit", function () {
   stop();
-  /* Insert any custom cleanup code here. */
   rpio.exit();
 });

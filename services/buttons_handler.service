@@ -1,0 +1,10 @@
+[Unit]
+Description=IR station start-daemon
+After=network.target
+[Service]
+Type=simple
+User=pi
+ExecStart=sudo node '/home/pi/ir-station-hw/services/buttonsHandler.js'
+TimeoutStartSec=300
+[Install]
+WantedBy=multi-user.target
