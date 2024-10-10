@@ -82,7 +82,8 @@ class Menu extends BaseComponent {
             case 4: //>T pressed
               this.arrow = 0;
               this.currMenu = "thermMenu";
-              await this.thermShow.start(this.menuList.thermMenu, this.arrow); //waiting for measuring process
+              this.thermShow.init(this.ioConnection);
+              await this.thermShow.start(this.menuList.thermMenu); //waiting for measuring process
               this.arrow = 4;
               this.displayLCD.display(this.menuList.mainMenu, this.arrow); //display mainMenu after this.therm.stop();
               this.currMenu = "mainMenu";

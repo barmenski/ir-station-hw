@@ -32,10 +32,6 @@ class ConstTemp extends BaseComponent {
     this.IBottom = 0.05;
     this.DBottom = 80;
 
-    // this.PBottom = 1;
-    // this.IBottom = 1;
-    // this.DBottom = 1;
-
     this.PTop = 40;
     this.ITop = 0.05;
     this.DTop = 80;
