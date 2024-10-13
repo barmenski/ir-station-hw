@@ -113,7 +113,7 @@ class Dimmer extends BaseComponent {
             case 2: //>Back pressed
               this.arrow = 0;
               this.#removeListeners();
-              this.parent.init();
+              this.parent.init(3);
               break;
             case 3: //>Spd=1C/s pressed
               await this.#setPowerBottom();

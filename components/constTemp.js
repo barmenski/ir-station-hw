@@ -117,7 +117,7 @@ class ConstTemp extends BaseComponent {
             case 2: //>Back pressed
               this.arrow = 0;
               this.#removeListeners();
-              this.parent.init();
+              this.parent.init(2);
               break;
             case 3: //>Spd=1C/s pressed
               await this.#setTargetSpeed();

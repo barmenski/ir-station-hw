@@ -210,7 +210,7 @@ class Profil extends BaseComponent {
             case 2: //>Back pressed
               this.arrow = 0;
               this.#removeListeners();
-              this.parent.init();
+              this.parent.init(0);
               break;
             default:
           }
@@ -606,12 +606,7 @@ class Profil extends BaseComponent {
         this.peakAchiv === false
       ) {
         //2  stage - waitting (bottom heater ON; top heater ON)
-        // let targetSpeedTop2 = 0.8;
-        // this.targetTempChip = Number(
-        //   this.tempChip + targetSpeedTop2 * this.measuredTime
-        // ).toFixed(2);
         this.pidTop.setTarget(
-          //this.targetTempChip,
           this.targetTempBoard, //targetTempBoard !!!
           this.PTop,
           this.ITop,

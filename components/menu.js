@@ -24,12 +24,13 @@ class Menu extends BaseComponent {
   }
 
   async start(ioConnection) {
-    this.ioConnection=ioConnection;
+    this.ioConnection = ioConnection;
     this.init();
   }
 
-  async init() {
-    await this.sleep(100);
+  async init(arrow = 0) {
+    //await this.sleep(100);
+    this.arrow = arrow;
     this.encoder.init();
     this.displayLCD.display(this.menuList.mainMenu, this.arrow);
     this.currMenu = "mainMenu";
@@ -65,9 +66,9 @@ class Menu extends BaseComponent {
               await this.profil.init(this.ioConnection);
               break;
             case 1: //>PIDset pressed
-            this.currMenu = "pidMenu";
-            this.removeListeners();
-            await this.pidMenu.init(this.ioConnection);
+              this.currMenu = "pidMenu";
+              this.removeListeners();
+              await this.pidMenu.init(this.ioConnection);
               break;
             case 2: //>Const pressed
               this.currMenu = "constMenu";
@@ -103,7 +104,6 @@ class Menu extends BaseComponent {
     this.encoder.removeAllListeners("rotate");
     this.encoder.stop();
   }
-
 }
 
 module.exports = Menu;

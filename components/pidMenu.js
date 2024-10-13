@@ -137,7 +137,7 @@ class PidMenu extends BaseComponent {
             case 2: //>Back pressed
               this.arrow = 0;
               this.#removeListeners();
-              this.parent.init();
+              this.parent.init(1);
               break;
           }
         case "setPTop":
