@@ -3,41 +3,42 @@ const DisplayLCD = require("./displayLCD");
 const PWM = require("./pwm.js");
 const Encoder = require("./encoder");
 const BaseComponent = require("./baseComponent");
+const Led = require("./led");
+const ServerHttp = require("./server");
 
 class Dimmer extends BaseComponent {
   displayLCD = new DisplayLCD();
   thermometer = new Thermometer();
   pwm = new PWM();
   encoder = new Encoder();
+  led = new Led();
+  serverHttp = new ServerHttp();
 
   constructor(parent) {
     super();
-    this.powerTop = this.menuList.dimmerMenu.data1;
-    this.powerBottom = this.menuList.dimmerMenu.data2;
-    this.powerTopMax = 350;
-    this.powerBottomMax = 3420;
-    this.tempChip = 25;
+    this.powerTop = this.menuList.dimmerMenu.data2;
+    this.powerBottom = this.menuList.dimmerMenu.data4;
 
+    this.tempChip = 25;
     this.tempBoard = 25;
-    this.pidBottom = null;
-    this.pidTop = null;
+
     this.currTime = 0;
 
     this.timerStopped = true;
     this.hiddenData = false;
 
-    this.PBottom = 40;
-    this.IBottom = 0.05;
-    this.DBottom = 80;
-
-    this.PTop = 40;
-    this.ITop = 0.05;
-    this.DTop = 80;
     this.parent = parent;
+
+    this.startTime = 0;
+    this.duration = 0;
+    this.stage = "Dimmer";
   }
 
-  async init() {
+  async init(ioConnection) {
+    this.io = ioConnection;
     this.arrow = 0;
+    this.led.greenLed(false);
+    this.led.redLed(false);
     this.displayLCD.display(this.menuList.dimmerMenu, this.arrow);
     await this.sleep(100);
     this.encoder.init();
@@ -55,28 +56,26 @@ class Dimmer extends BaseComponent {
           break;
         case "setPowerTop": //calculate Power Top heater
           let rawNumberTop = Math.round(
-            Number(this.menuList.dimmerMenu.data1 + delta)
+            Number(this.menuList.dimmerMenu.data2 + delta)
           );
           if (rawNumberTop >= 100) {
-            this.menuList.dimmerMenu.data1 = 100;
+            this.menuList.dimmerMenu.data2 = 100;
           } else if (rawNumberTop < 0) {
-            this.menuList.dimmerMenu.data1 = 0;
-          } else this.menuList.dimmerMenu.data1 = rawNumberTop;
-          // this.menuList.dimmerMenu.data1 = Math.round(
-          //   Number(this.menuList.dimmerMenu.data1 + delta)
-          // ); 
-          this.displayLCD.show3digit(4, 1, this.menuList.dimmerMenu.data1);
+            this.menuList.dimmerMenu.data2 = 0;
+          } else this.menuList.dimmerMenu.data2 = rawNumberTop;
+
+          this.displayLCD.show3digit(4, 1, this.menuList.dimmerMenu.data2);
           break;
         case "setPowerBottom": //calculate Power Bottom heater
           let rawNumberBottom = Math.round(
-            Number(this.menuList.dimmerMenu.data2 + delta)
+            Number(this.menuList.dimmerMenu.data4 + delta)
           );
           if (rawNumberBottom >= 100) {
-            this.menuList.dimmerMenu.data2 = 100;
+            this.menuList.dimmerMenu.data4 = 100;
           } else if (rawNumberBottom < 0) {
-            this.menuList.dimmerMenu.data2 = 0;
-          } else this.menuList.dimmerMenu.data2 = rawNumberBottom;
-          this.displayLCD.show3digit(12, 1, this.menuList.dimmerMenu.data2);
+            this.menuList.dimmerMenu.data4 = 0;
+          } else this.menuList.dimmerMenu.data4 = rawNumberBottom;
+          this.displayLCD.show3digit(12, 1, this.menuList.dimmerMenu.data4);
           break;
         default:
           this.arrow = this.arrow + delta;
@@ -104,7 +103,7 @@ class Dimmer extends BaseComponent {
               this.currMenu = "dimmerMenu";
               this.currMenuLength = this.menuList.dimmerMenu.type;
               break;
-            case 1: //>t=200 pressed
+            case 1: //>Pt=100 pressed
               await this.#setPowerTop();
               this.currMenu = "dimmerMenu";
               this.displayLCD.display(this.menuList.dimmerMenu, this.arrow);
@@ -115,7 +114,7 @@ class Dimmer extends BaseComponent {
               this.#removeListeners();
               this.parent.init(3);
               break;
-            case 3: //>Spd=1C/s pressed
+            case 3: //>Pb=100 pressed
               await this.#setPowerBottom();
               this.currMenu = "dimmerMenu";
               this.displayLCD.display(this.menuList.dimmerMenu, this.arrow);
@@ -185,10 +184,10 @@ class Dimmer extends BaseComponent {
     this.arrow = 1;
     this.currMenu = "setPowerTop";
     this.displayLCD.setBlinkFlag(true);
-    await this.displayLCD.blink3digit(4, 1, this.menuList.dimmerMenu.data1);
-    this.powerTop = this.menuList.dimmerMenu.data1;
-    this.menuList.workDimmerMenu.text5 = this.menuList.dimmerMenu.data1;
-    this.menuList.pauseDimmerMenu.data1 = this.menuList.dimmerMenu.data1;
+    await this.displayLCD.blink3digit(4, 1, this.menuList.dimmerMenu.data2);
+    this.powerTop = this.menuList.dimmerMenu.data2;
+    this.menuList.workDimmerMenu.text5 = this.menuList.dimmerMenu.data2;
+    this.menuList.pauseDimmerMenu.data2 = this.menuList.dimmerMenu.data2;
     this.#writeData();
   }
 
@@ -196,23 +195,35 @@ class Dimmer extends BaseComponent {
     this.arrow = 3;
     this.currMenu = "setPowerBottom";
     this.displayLCD.setBlinkFlag(true);
-    await this.displayLCD.blink3digit(12, 1, this.menuList.dimmerMenu.data2);
-    this.powerBottom = this.menuList.dimmerMenu.data2;
-    this.menuList.workDimmerMenu.text6 = this.menuList.dimmerMenu.data2;
-    this.menuList.pauseDimmerMenu.data2 = this.menuList.dimmerMenu.data2;
+    await this.displayLCD.blink3digit(12, 1, this.menuList.dimmerMenu.data4);
+    this.powerBottom = this.menuList.dimmerMenu.data4;
+    this.menuList.workDimmerMenu.text6 = this.menuList.dimmerMenu.data4;
+    this.menuList.pauseDimmerMenu.data4 = this.menuList.dimmerMenu.data4;
     this.#writeData();
   }
 
   #heat() {
-    this.currTime++;
+    try {
+      this.currTime++;
 
-    let allTemp = this.thermometer.measure();
-    this.tempChip = allTemp[0];
-    this.tempBoard = allTemp[1];
-    this.powerTop = this.menuList.dimmerMenu.data1;
-    this.powerBottom = this.menuList.dimmerMenu.data2;
+      let allTemp = this.thermometer.measure();
+      this.tempChip = allTemp[0];
+      this.tempBoard = allTemp[1];
+      if (this.startTime === 0) {
+        this.startTime = Date.now();
+      } //ms
+      this.currTime = Date.now(); //ms
+      this.duration = Number(
+        ((this.currTime - this.startTime) / 1000).toFixed(2)
+      ); //s
+      this.powerTop = this.menuList.dimmerMenu.data2;
+      this.powerBottom = this.menuList.dimmerMenu.data4;
 
-    this.pwm.update(this.powerTop, this.powerBottom);
+      this.pwm.update(this.powerTop, this.powerBottom);
+    } catch (err) {
+      this.stop();
+      console.log(err);
+    }
   }
 
   async start(menuList) {
@@ -224,15 +235,28 @@ class Dimmer extends BaseComponent {
     while (!this.timerStopped) {
       this.#heat();
       if (!this.hiddenData) {
+        let data = {
+          tempChip: this.tempChip,
+          tempBoard: this.tempBoard,
+          powerTop: this.powerTop,
+          powerBottom: this.powerBottom,
+          stage: this.stage,
+          duration: this.duration,
+        };
         this.displayLCD.displayProfilData(
           this.tempChip,
           this.tempBoard,
           this.powerTop,
-          this.powerBottom
+          this.powerBottom,
+          "Dim",
+          "mer"
         );
-      }
+        this.serverHttp.send(this.io, data);
 
+      }
+      this.led.greenLed(true);
       await this.sleep(1000);
+      this.led.greenLed(false);
     }
   }
 
@@ -241,6 +265,7 @@ class Dimmer extends BaseComponent {
     this.tempBoard = 25;
     this.pidBottom = null;
     this.pidTop = null;
+    this.led.greenLed(false);
   }
 
   stop() {
