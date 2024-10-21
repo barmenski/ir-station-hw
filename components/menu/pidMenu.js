@@ -1,7 +1,7 @@
-const DisplayLCD = require("./displayLCD");
+const DisplayLCD = require("../displayLCD");
 const BaseComponent = require("./baseComponent");
-const Encoder = require("./encoder");
-const Led = require("./led");
+const Encoder = require("../encoder");
+const Led = require("../led");
 
 class PidMenu extends BaseComponent {
   displayLCD = new DisplayLCD();

@@ -1,5 +1,5 @@
 const process = require("process");
-const Menu = require("./components/menu");
+const Menu = require("./components/menu/mainMenu");
 const ServerHttp = require("./components/server");
 
 const menu = new Menu();

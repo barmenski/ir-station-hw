@@ -2,11 +2,11 @@ const fs = require("fs");
 var path = require("path");
 
 class Controller {
-  fs = fs;
-  path = path;
-  pidSet = JSON.parse(
-    fs.readFileSync(path.join(__dirname, "/pidSet.json"), (err, data) => data)
-  );
+  // fs = fs;
+  // path = path;
+  // pidSet = JSON.parse(
+  //   fs.readFileSync(path.join(__dirname, "/menu/pidSet.json"), (err, data) => data)
+  // );
   constructor(k_p, k_i, k_d, dt) {
     let i_max;
     if (typeof k_p === "object") {

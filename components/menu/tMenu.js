@@ -1,6 +1,6 @@
-const Thermometer = require("./thermometer");
-const DisplayLCD = require("./displayLCD");
-const ServerHttp = require("./server");
+const Thermometer = require("../thermometer");
+const DisplayLCD = require("../displayLCD");
+const ServerHttp = require("../server");
 
 class ThermShow {
   thermometer = new Thermometer();

@@ -1,14 +1,14 @@
-const ThermShow = require("./therm-show");
+const TMenu = require("./tMenu");
 const Profil = require("./profil");
 const ConstTemp = require("./constTemp");
 const Dimmer = require("./dimmer.js");
-const DisplayLCD = require("./displayLCD");
-const Encoder = require("./encoder");
+const DisplayLCD = require("../displayLCD");
+const Encoder = require("../encoder");
 const PidMenu = require("./pidMenu");
 const BaseComponent = require("./baseComponent");
 
 class Menu extends BaseComponent {
-  thermShow = new ThermShow();
+  tMenu = new TMenu();
   profil = new Profil(this);
   constTemp = new ConstTemp(this);
   dimmer = new Dimmer(this);
@@ -25,11 +25,10 @@ class Menu extends BaseComponent {
 
   async start(ioConnection) {
     this.ioConnection = ioConnection;
-    this.init();
+    this.init(0);
   }
 
   async init(arrow = 0) {
-    //await this.sleep(100);
     this.arrow = arrow;
     this.encoder.init();
     this.displayLCD.display(this.menuList.mainMenu, this.arrow);
@@ -48,8 +47,8 @@ class Menu extends BaseComponent {
           }
           this.displayLCD.moveArrow(this.arrow);
           break;
-        case "thermMenu":
-          this.thermShow.stop();
+        case "tMenu":
+          this.tMenu.stop();
           break;
         default:
           break;
@@ -82,9 +81,9 @@ class Menu extends BaseComponent {
               break;
             case 4: //>T pressed
               this.arrow = 0;
-              this.currMenu = "thermMenu";
-              this.thermShow.init(this.ioConnection);
-              await this.thermShow.start(this.menuList.thermMenu); //waiting for measuring process
+              this.currMenu = "tMenu";
+              this.tMenu.init(this.ioConnection);
+              await this.tMenu.start(this.menuList.tMenu); //waiting for measuring process
               this.arrow = 4;
               this.displayLCD.display(this.menuList.mainMenu, this.arrow); //display mainMenu after this.therm.stop();
               this.currMenu = "mainMenu";

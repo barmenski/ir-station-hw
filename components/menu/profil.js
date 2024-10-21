@@ -1,11 +1,11 @@
-const Thermometer = require("./thermometer");
-const DisplayLCD = require("./displayLCD");
-const PID = require("./pid.js");
-const PWM = require("./pwm.js");
+const Thermometer = require("../thermometer");
+const DisplayLCD = require("../displayLCD");
+const PID = require("../pid.js");
+const PWM = require("../pwm.js");
 const BaseComponent = require("./baseComponent");
-const Encoder = require("./encoder");
-const Led = require("./led");
-const ServerHttp = require("./server");
+const Encoder = require("../encoder");
+const Led = require("../led");
+const ServerHttp = require("../server");
 
 class Profil extends BaseComponent {
   displayLCD = new DisplayLCD();
@@ -51,13 +51,13 @@ class Profil extends BaseComponent {
     this.peakTime = 0;
     this.peakTemp = 0;
 
-    this.PBottom = 40;
-    this.IBottom = 0.05;
-    this.DBottom = 80;
+    this.PBottom = this.pidSet.pidBottom.k_p;
+    this.IBottom = this.pidSet.pidBottom.k_i;
+    this.DBottom = this.pidSet.pidBottom.k_d;
 
-    this.PTop = 40;
-    this.ITop = 0.05;
-    this.DTop = 80;
+    this.PTop = this.pidSet.pidTop.k_p;
+    this.ITop = this.pidSet.pidTop.k_i;
+    this.DTop = this.pidSet.pidTop.k_d;
     this.parent = parent;
 
     this.period = 1000; //ms

@@ -1,10 +1,10 @@
-const Thermometer = require("./thermometer");
-const DisplayLCD = require("./displayLCD");
-const PWM = require("./pwm.js");
-const Encoder = require("./encoder");
+const Thermometer = require("../thermometer");
+const DisplayLCD = require("../displayLCD");
+const PWM = require("../pwm.js");
+const Encoder = require("../encoder");
 const BaseComponent = require("./baseComponent");
-const Led = require("./led");
-const ServerHttp = require("./server");
+const Led = require("../led");
+const ServerHttp = require("../server");
 
 class Dimmer extends BaseComponent {
   displayLCD = new DisplayLCD();

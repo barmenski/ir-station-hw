@@ -137,6 +137,26 @@ class DisplayLCD {
     this.lcd.printSync(menu.text4);
   };
 
+  #display7items = (menu, arrow) => {
+    this.lcd.clearSync();
+    this.moveArrow(arrow);
+
+    this.lcd.setCursorSync(1, 0);
+    this.lcd.printSync(menu.text1);
+    this.lcd.setCursorSync(1, 1);
+    this.lcd.printSync(menu.text2);
+
+    this.lcd.setCursorSync(8, 0);
+    this.lcd.printSync(menu.text3);
+    this.lcd.setCursorSync(8, 1);
+    this.lcd.printSync(menu.text4);
+
+    this.lcd.setCursorSync(15, 0);
+    this.lcd.printSync(menu.text5);
+    this.lcd.setCursorSync(15, 1);
+    this.lcd.printSync(menu.text6);
+  };
+
   displayThermData = (tempChip, tempBoard) => {
     this.lcd.setCursorSync(2, 0);
     this.lcd.printSync("    ");
@@ -256,7 +276,6 @@ class DisplayLCD {
       case 0:
         this.lcd.setCursorSync(0, 0);
         this.lcd.printSync(LCD.getChar(1));
-        //this.lcd.printSync(">");
         this.lcd.setCursorSync(0, 1);
         this.lcd.printSync(" ");
         this.lcd.setCursorSync(7, 0);
@@ -264,6 +283,8 @@ class DisplayLCD {
         this.lcd.setCursorSync(7, 1);
         this.lcd.printSync(" ");
         this.lcd.setCursorSync(14, 0);
+        this.lcd.printSync(" ");
+        this.lcd.setCursorSync(14, 1);
         this.lcd.printSync(" ");
         break;
       case 1:
@@ -271,12 +292,13 @@ class DisplayLCD {
         this.lcd.printSync(" ");
         this.lcd.setCursorSync(0, 1);
         this.lcd.printSync(LCD.getChar(1));
-        //this.lcd.printSync(">");
         this.lcd.setCursorSync(7, 0);
         this.lcd.printSync(" ");
         this.lcd.setCursorSync(7, 1);
         this.lcd.printSync(" ");
         this.lcd.setCursorSync(14, 0);
+        this.lcd.printSync(" ");
+        this.lcd.setCursorSync(14, 1);
         this.lcd.printSync(" ");
         break;
       case 2:
@@ -286,10 +308,11 @@ class DisplayLCD {
         this.lcd.printSync(" ");
         this.lcd.setCursorSync(7, 0);
         this.lcd.printSync(LCD.getChar(1));
-        //this.lcd.printSync(">");
         this.lcd.setCursorSync(7, 1);
         this.lcd.printSync(" ");
         this.lcd.setCursorSync(14, 0);
+        this.lcd.printSync(" ");
+        this.lcd.setCursorSync(14, 1);
         this.lcd.printSync(" ");
         break;
       case 3:
@@ -301,8 +324,9 @@ class DisplayLCD {
         this.lcd.printSync(" ");
         this.lcd.setCursorSync(7, 1);
         this.lcd.printSync(LCD.getChar(1));
-        //this.lcd.printSync(">");
         this.lcd.setCursorSync(14, 0);
+        this.lcd.printSync(" ");
+        this.lcd.setCursorSync(14, 1);
         this.lcd.printSync(" ");
         break;
       case 4:
@@ -316,8 +340,23 @@ class DisplayLCD {
         this.lcd.printSync(" ");
         this.lcd.setCursorSync(14, 0);
         this.lcd.printSync(LCD.getChar(1));
-        //this.lcd.printSync(">");
+        this.lcd.setCursorSync(14, 1);
+        this.lcd.printSync(" "); 
         break;
+        case 5:
+          this.lcd.setCursorSync(0, 0);
+          this.lcd.printSync(" ");
+          this.lcd.setCursorSync(0, 1);
+          this.lcd.printSync(" ");
+          this.lcd.setCursorSync(7, 0);
+          this.lcd.printSync(" ");
+          this.lcd.setCursorSync(7, 1);
+          this.lcd.printSync(" ");
+          this.lcd.setCursorSync(14, 0);
+          this.lcd.printSync(" "); 
+          this.lcd.setCursorSync(14, 1);
+          this.lcd.printSync(LCD.getChar(1));
+          break;
     }
   }
 
@@ -437,6 +476,9 @@ class DisplayLCD {
       case 6:
         this.#display6items(menu);
         break;
+        case 7:
+          this.#display7items(menu);
+          break;
       default:
         break;
     }
