@@ -45,7 +45,7 @@ class Menu extends BaseComponent {
           if (this.arrow < 0) {
             this.arrow = this.currMenuLength - 1;
           }
-          this.displayLCD.moveArrow(this.arrow);
+          this.displayLCD.moveArrow(this.menuList.mainMenu, this.arrow);
           break;
         case "tMenu":
           this.tMenu.stop();

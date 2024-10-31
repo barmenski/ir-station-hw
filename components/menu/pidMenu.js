@@ -114,7 +114,7 @@ class PidMenu extends BaseComponent {
             this.arrow = this.currMenuLength - 1;
           }
 
-          this.displayLCD.moveArrow(this.arrow);
+          this.displayLCD.moveArrow(this.menuList.pidBottomMenu, this.arrow);
       }
     });
 

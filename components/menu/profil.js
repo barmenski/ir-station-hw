@@ -19,18 +19,16 @@ class Profil extends BaseComponent {
     super();
     this.powerTop = 0;
     this.powerBottom = 0;
-    this.powerTopMax = 350;
-    this.powerBottomMax = 3420;
     this.prevTempChip = 0;
     this.prevTempBoard = 0;
     this.tempChip = 25;
+    this.tempBoard = 25;
     this.targetTemp = 25;
-    this.targetSpeed1 = 1;
-    this.targetSpeed2 = 1;
-    this.targetSpeed3 = 1;
+    // this.targetSpeed1 = 1;
+    // this.targetSpeed2 = 1;
+    // this.targetSpeed3 = 1;
     this.stage = 0;
     this.measuredSpeedTop = 0;
-    this.tempBoard = 25;
     this.pidBottom = null;
     this.pidTop = null;
     this.startTime = 0;
@@ -87,7 +85,7 @@ class Profil extends BaseComponent {
     await this.sleep(100);
     this.encoder.init();
 
-    this.#pullData();
+    this.#updateCurrProfile();
     this.currMenu = "profileMenu";
     this.currMenuLength = this.menuList.profileMenu.type;
 
@@ -159,7 +157,6 @@ class Profil extends BaseComponent {
             default:
           }
           break;
-
         case "editProfileMenu": //for not standart menu
           this.arrow = this.arrow + delta;
           if (this.arrow > this.currMenuLength - 1) {
@@ -183,7 +180,7 @@ class Profil extends BaseComponent {
             this.arrow = this.currMenuLength - 1;
           }
 
-          this.displayLCD.moveArrow(this.arrow);
+          this.displayLCD.moveArrow(this.menuList.profilesMenu, this.arrow);
       }
     });
 
@@ -194,7 +191,7 @@ class Profil extends BaseComponent {
             case 0: //>Start pressed
               this.arrow = 0;
               this.currMenu = "workProfileMenu";
-              this.#pullData();
+              this.#updateCurrProfile();
               await this.start(this.menuList);
               this.arrow = 2;
               this.displayLCD.display(this.menuList.profileMenu, this.arrow); //display profileMenu after this.constTemp.stop();
@@ -300,14 +297,14 @@ class Profil extends BaseComponent {
                   item.status = "rezerv";
                 }
               });
-              this.#pullData();
+              this.#updateCurrProfile();
               this.currMenu = "profileMenu";
               this.currMenuLength = this.menuList.profileMenu.type;
               this.displayLCD.display(this.menuList.profileMenu, this.arrow);
               break;
             case 1: //Edit pressed
               this.arrow = 0;
-              this.#pullData();
+              this.#updateCurrProfile();
               this.currMenu = "editProfileMenu";
               this.currMenuLength = this.menuList.editProfileMenu.type;
               this.displayLCD.displayEditTitles(
@@ -380,7 +377,7 @@ class Profil extends BaseComponent {
     });
   }
 
-  #pullData() {
+  #updateCurrProfile() {
     this.currProfile = this.profilesList.find(
       (item) => item.status === "current"
     );
@@ -402,7 +399,7 @@ class Profil extends BaseComponent {
     this.#writeData();
   }
 
-  #pushData() {
+  #updateSelectProfile() {
     this.selectProfile.temp1 = this.menuList.editProfileMenu.data1;
     this.selectProfile.time1 = this.menuList.editProfileMenu.data2;
     this.selectProfile.temp2 = this.menuList.editProfileMenu.data3;
@@ -448,7 +445,7 @@ class Profil extends BaseComponent {
     this.currMenu = "setProfileData";
     this.displayLCD.setBlinkFlag(true);
     await this.displayLCD.blink3digit(col, row, data);
-    this.#pushData();
+    this.#updateSelectProfile();
     this.#writeData();
     this.currMenu = "editProfileMenu";
     this.displayLCD.displayEditData(this.menuList.editProfileMenu, this.arrow);

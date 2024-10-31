@@ -29,6 +29,8 @@ class Dimmer extends BaseComponent {
 
     this.parent = parent;
 
+    this.period = 1000; //ms
+
     this.startTime = 0;
     this.duration = 0;
     this.stage = "Dimmer";
@@ -37,8 +39,6 @@ class Dimmer extends BaseComponent {
   async init(ioConnection) {
     this.io = ioConnection;
     this.arrow = 0;
-    this.led.greenLed(false);
-    this.led.redLed(false);
     this.displayLCD.display(this.menuList.dimmerMenu, this.arrow);
     await this.sleep(100);
     this.encoder.init();
@@ -86,7 +86,8 @@ class Dimmer extends BaseComponent {
             this.arrow = this.currMenuLength - 1;
           }
 
-          this.displayLCD.moveArrow(this.arrow);
+          this.displayLCD.moveArrow(this.menuList.dimmerMenu, this.arrow);
+          break;
       }
     });
 
@@ -220,6 +221,7 @@ class Dimmer extends BaseComponent {
       this.powerBottom = this.menuList.dimmerMenu.data4;
 
       this.pwm.update(this.powerTop, this.powerBottom);
+      this.led.greenLed(true);
     } catch (err) {
       this.stop();
       console.log(err);
@@ -252,11 +254,8 @@ class Dimmer extends BaseComponent {
           "mer"
         );
         this.serverHttp.send(this.io, data);
-
       }
-      this.led.greenLed(true);
-      await this.sleep(1000);
-      this.led.greenLed(false);
+      await this.sleep(this.period);
     }
   }
 
@@ -265,10 +264,11 @@ class Dimmer extends BaseComponent {
     this.tempBoard = 25;
     this.pidBottom = null;
     this.pidTop = null;
-    this.led.greenLed(false);
   }
 
   stop() {
+    this.led.greenLed(false);
+    this.led.redLed(false);
     this.timerStopped = true;
     this.currTime = 0;
     this.pwm.stop();
