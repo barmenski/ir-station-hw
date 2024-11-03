@@ -1,7 +1,4 @@
-const Thermometer = require("../thermometer");
 const DisplayLCD = require("../displayLCD");
-const PID = require("../pid.js");
-const PWM = require("../pwm.js");
 const BaseComponent = require("./baseComponent");
 const Encoder = require("../encoder");
 const Led = require("../led");
@@ -9,39 +6,15 @@ const ServerHttp = require("../server");
 
 class ConstTemp extends BaseComponent {
   displayLCD = new DisplayLCD();
-  thermometer = new Thermometer();
-  pwm = new PWM();
   encoder = new Encoder();
   led = new Led();
   serverHttp = new ServerHttp();
 
   constructor(parent) {
     super();
-    this.powerTop = 0;
-    this.powerBottom = 0;
-    this.tempChip = 25;
-    this.targetTemp = this.menuList.constMenu.data2;
-    this.targetSpeed = this.menuList.constMenu.data4;
-    this.tempBoard = 25;
-    this.pidBottom = null;
-    this.pidTop = null;
-    this.timerStopped = true;
-    this.hiddenData = false;
+    this.timerStopped.parent = parent;
 
-    this.PBottom = 40;
-    this.IBottom = 0.05;
-    this.DBottom = 80;
-
-    this.PTop = 40;
-    this.ITop = 0.05;
-    this.DTop = 80;
-    this.parent = parent;
-
-    this.period = 1000; //ms
-
-    this.startTime = 0;
-    this.duration = 0;
-    this.stage = "constTemp";
+    this.stage = "setIP";
   }
 
   async init(ioConnection) {
@@ -50,7 +23,7 @@ class ConstTemp extends BaseComponent {
     this.displayLCD.display(this.menuList.constMenu, this.arrow);
     await this.sleep(100);
     this.encoder.init();
-    this.currMenu = "constMenu";
+    this.currMenu = "setIP";
     this.currMenuLength = this.menuList.constMenu.type;
 
     this.encoder.on("rotate", async (delta) => {
@@ -94,12 +67,15 @@ class ConstTemp extends BaseComponent {
           this.displayLCD.moveArrow(this.arrow);
       }
     });
+    // execute("sudo systemctl start ir_station", function (callback) {
+    //   console.log(callback);
+    // });
 
     this.encoder.on("pressed", async () => {
       switch (this.currMenu) {
-        case "constMenu":
+        case "setIP":
           switch (this.arrow) {
-            case 0: //>Start pressed
+            case 0: //>Set pressed
               this.arrow = 0;
               this.currMenu = "workConstMenu";
               await this.start(this.menuList, this.arrow);

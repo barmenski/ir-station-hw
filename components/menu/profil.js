@@ -24,9 +24,6 @@ class Profil extends BaseComponent {
     this.tempChip = 25;
     this.tempBoard = 25;
     this.targetTemp = 25;
-    // this.targetSpeed1 = 1;
-    // this.targetSpeed2 = 1;
-    // this.targetSpeed3 = 1;
     this.stage = 0;
     this.measuredSpeedTop = 0;
     this.pidBottom = null;
@@ -66,11 +63,11 @@ class Profil extends BaseComponent {
       name: "pr-001",
       status: "current",
       temp1: 160,
-      time1: 120,
+      speed1: 1,
       temp2: 219,
-      time2: 210,
+      speed2: 0.8,
       temp3: 250,
-      time3: 240,
+      speed3: 1.5,
     };
 
     this.selectProfile = {};
@@ -111,7 +108,7 @@ class Profil extends BaseComponent {
               break;
             case 1:
               this.menuList.editProfileMenu.data2 =
-                this.menuList.editProfileMenu.data2 + delta;
+                this.menuList.editProfileMenu.data2 + delta*0.1;
               this.displayLCD.show3digit(
                 2,
                 1,
@@ -129,7 +126,7 @@ class Profil extends BaseComponent {
               break;
             case 3:
               this.menuList.editProfileMenu.data4 =
-                this.menuList.editProfileMenu.data4 + delta;
+                this.menuList.editProfileMenu.data4 + delta*0.1;
               this.displayLCD.show3digit(
                 7,
                 1,
@@ -147,7 +144,7 @@ class Profil extends BaseComponent {
               break;
             case 5:
               this.menuList.editProfileMenu.data6 =
-                this.menuList.editProfileMenu.data6 + delta;
+                this.menuList.editProfileMenu.data6 + delta*0.1;
               this.displayLCD.show3digit(
                 12,
                 1,
@@ -384,11 +381,11 @@ class Profil extends BaseComponent {
     this.menuList.profileMenu.text2 = this.currProfile.name;
 
     this.menuList.editProfileMenu.data1 = this.selectProfile.temp1;
-    this.menuList.editProfileMenu.data2 = this.selectProfile.time1;
+    this.menuList.editProfileMenu.data2 = this.selectProfile.speed1;
     this.menuList.editProfileMenu.data3 = this.selectProfile.temp2;
-    this.menuList.editProfileMenu.data4 = this.selectProfile.time2;
+    this.menuList.editProfileMenu.data4 = this.selectProfile.speed2;
     this.menuList.editProfileMenu.data5 = this.selectProfile.temp3;
-    this.menuList.editProfileMenu.data6 = this.selectProfile.time3;
+    this.menuList.editProfileMenu.data6 = this.selectProfile.speed3;
 
     this.namesProfile = this.profilesList.map((item) => item.name);
 
@@ -401,11 +398,11 @@ class Profil extends BaseComponent {
 
   #updateSelectProfile() {
     this.selectProfile.temp1 = this.menuList.editProfileMenu.data1;
-    this.selectProfile.time1 = this.menuList.editProfileMenu.data2;
+    this.selectProfile.speed1 = this.menuList.editProfileMenu.data2;
     this.selectProfile.temp2 = this.menuList.editProfileMenu.data3;
-    this.selectProfile.time2 = this.menuList.editProfileMenu.data4;
+    this.selectProfile.speed2 = this.menuList.editProfileMenu.data4;
     this.selectProfile.temp3 = this.menuList.editProfileMenu.data5;
-    this.selectProfile.time3 = this.menuList.editProfileMenu.data6;
+    this.selectProfile.speed3 = this.menuList.editProfileMenu.data6;
     let index = this.profilesList.findIndex(
       (item) => item.name === this.selectProfile.name
     );
@@ -508,10 +505,7 @@ class Profil extends BaseComponent {
       this.duration = Number(
         ((this.currTime - this.startTime) / 1000).toFixed(2)
       ); //s
-      this.durationHeat = Number(
-        ((this.currTime - this.startTimeHeat) / 1000).toFixed(2)
-      ); //s
-
+ 
       this.#measureSpeed();
 
       //BOTTOM HEATER
@@ -520,10 +514,9 @@ class Profil extends BaseComponent {
         //1 stage - prepare Heat (bottom heater ON; top heater ON)
         this.stage = 1;
         this.led.greenLed(true);
-        let targetSpeedBottom1 = 1;
 
         this.targetTempBoard = Number(
-          this.tempBoard + targetSpeedBottom1 * this.measuredTime
+          this.tempBoard + this.currProfile.speed1* this.measuredTime
         ).toFixed(2);
         console.log("1 stage: targetTempBoard " + this.targetTempBoard);
         this.pidBottom.setTarget(
@@ -542,14 +535,10 @@ class Profil extends BaseComponent {
         this.stage!=3
       ) {
         //2  stage - waitting (bottom heater ON; top heater ON)
-        if (this.startTimeHeat === 0) {
-          this.startTimeHeat = Date.now();
-        }; //ms
-        this.stage = 2;
+         this.stage = 2;
 
-        let targetSpeedBottom2 = 0.8;
         this.targetTempBoard = Number(
-          this.tempBoard + targetSpeedBottom2 * this.measuredTime
+          this.tempBoard + this.currProfile.speed2 * this.measuredTime
         ).toFixed(2);
         console.log("2 stage: targetTempBoard " + this.targetTempBoard);
         this.pidBottom.setTarget(
@@ -617,9 +606,9 @@ class Profil extends BaseComponent {
       ) {
         //3  stage - constant power for bottom heater and rise for maximum
         //                              (bottom heater ON; top heater ON)
-        let targetSpeedTop3 = 1.43;
+
         this.targetTempChip = Number(
-          this.tempChip + targetSpeedTop3 * this.measuredTime
+          this.tempChip + this.currProfile.speed3 * this.measuredTime
         ).toFixed(2);
         this.pidTop.setTarget(
           this.targetTempChip,
@@ -648,11 +637,11 @@ class Profil extends BaseComponent {
   async start(menuList) {
     this.pwm.init();
 
-    this.preHeatTime = this.currProfile.time1;
+    this.preHeatTime = this.currProfile.speed1;
     this.preHeatTemp = this.currProfile.temp1;
-    this.liquidTime = this.currProfile.time2;
+    this.liquidTime = this.currProfile.speed2;
     this.liquidTemp = this.currProfile.temp2;
-    this.peakTime = this.currProfile.time3;
+    this.peakTime = this.currProfile.speed3;
     this.peakTemp = this.currProfile.temp3;
 
     this.pidBottom = new PID({
