@@ -1,4 +1,5 @@
 const TMenu = require("./tMenu");
+const SMenu = require("./sMenu");
 const Profil = require("./profil");
 const ConstTemp = require("./constTemp");
 const Dimmer = require("./dimmer.js");
@@ -9,6 +10,7 @@ const BaseComponent = require("./baseComponent");
 
 class Menu extends BaseComponent {
   tMenu = new TMenu();
+  sMenu = new SMenu();
   profil = new Profil(this);
   constTemp = new ConstTemp(this);
   dimmer = new Dimmer(this);
@@ -88,6 +90,11 @@ class Menu extends BaseComponent {
               this.displayLCD.display(this.menuList.mainMenu, this.arrow); //display mainMenu after this.therm.stop();
               this.currMenu = "mainMenu";
               this.currMenuLength = this.menuList.mainMenu.type;
+              break;
+            case 5: //>S pressed
+              this.arrow = 0;
+              this.currMenu = "sMenu";
+              await this.sMenu.init();
               break;
           }
           break;

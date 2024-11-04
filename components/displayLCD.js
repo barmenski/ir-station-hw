@@ -45,6 +45,20 @@ class DisplayLCD {
     this.lcd.setCursorSync(1, 1);
     this.lcd.printSync(menu.text2);
 
+    if (typeof menu.data1 !== "undefined") {
+      this.lcd.setCursorSync(3, 0);
+      this.lcd.printSync(menu.data1);
+    }
+
+    if (typeof menu.data2 !== "undefined") {
+      this.lcd.setCursorSync(4, 1);
+      this.lcd.printSync(menu.data2);
+    }
+    if (typeof menu.data3 !== "undefined") {
+      this.lcd.setCursorSync(11, 0);
+      this.lcd.printSync(menu.data3);
+    }
+
     this.lcd.setCursorSync(8, 0);
     this.lcd.printSync(menu.text3);
   };
