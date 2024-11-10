@@ -1,6 +1,7 @@
 const rpio = require('rpio');
 const EventEmitter = require('events');
 const { POLL_LOW, POLL_HIGH } = require('rpio');
+EventEmitter.defaultMaxListeners = 15;
 
 class  Encoder extends EventEmitter {
 	options = {

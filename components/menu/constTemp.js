@@ -148,7 +148,7 @@ class ConstTemp extends BaseComponent {
               this.currMenu = "workConstMenu";
               this.currMenuLength = this.menuList.workConstMenu.type;
               break;
-            case 3:
+            case 3: //>Spd=1C/s pressed
               await this.#setTargetSpeed();
               this.currMenu = "pauseConstMenu";
               this.displayLCD.display(this.menuList.pauseConstMenu, this.arrow);

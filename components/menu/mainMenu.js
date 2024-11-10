@@ -10,7 +10,7 @@ const BaseComponent = require("./baseComponent");
 
 class Menu extends BaseComponent {
   tMenu = new TMenu();
-  sMenu = new SMenu();
+  sMenu = new SMenu(this);
   profil = new Profil(this);
   constTemp = new ConstTemp(this);
   dimmer = new Dimmer(this);
@@ -94,6 +94,7 @@ class Menu extends BaseComponent {
             case 5: //>S pressed
               this.arrow = 0;
               this.currMenu = "sMenu";
+              this.removeListeners();
               await this.sMenu.init();
               break;
           }
