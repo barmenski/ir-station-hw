@@ -1,5 +1,7 @@
 const fs = require("fs");
 var path = require("path");
+const DisplayLCD = require("../displayLCD");
+const Led = require("../led");
 
 class BaseComponent {
   menuList = JSON.parse(
@@ -19,6 +21,9 @@ class BaseComponent {
   }
   fs = fs;
   path = path;
+
+  displayLCD = new DisplayLCD();
+  led = new Led();
 
   constructor() {}
 }

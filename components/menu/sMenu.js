@@ -1,13 +1,9 @@
-const DisplayLCD = require("../displayLCD");
 const BaseComponent = require("./baseComponent");
 const Encoder = require("../encoder");
-const Led = require("../led");
 const exec = require("child_process").exec;
 
 class SMenu extends BaseComponent {
-  displayLCD = new DisplayLCD();
   encoder = new Encoder();
-  led = new Led();
 
   constructor(parent) {
     super();
@@ -63,7 +59,7 @@ class SMenu extends BaseComponent {
             this.IPinArray[2] = 0;
           } else this.IPinArray[2] = rawIP2;
 
-          this.displayLCD.show3digit(13, 1, this.IPinArray[2]);
+          this.displayLCD.show3digit(9, 1, this.IPinArray[2]);
           break;
         case "setTargetIP3": //calculate the third tree digits of IP
           let rawIP3 = Math.round(Number(this.IPinArray[3] + delta));
@@ -94,11 +90,30 @@ class SMenu extends BaseComponent {
         case "sMenu":
           switch (this.arrow) {
             case 0: //>Apply pressed
-            let stringComand = "sudo ifconfig wlan0 "+ this.menuList.sMenu.text2 + " netmask 255.255.255.0"
+              let stringComand1 =
+                "sudo ifconfig wlan0 " +
+                this.menuList.sMenu.text2 +
+                " netmask 255.255.255.0";
 
-            this.#execute(stringComand, function (callback) {
+              this.#execute(stringComand1, function (callback) {
                 console.log(callback);
               });
+
+              let stringComand2 =
+                "sudo route add default gw 192.168.67.240 wlan0";
+
+              this.#execute(stringComand2, function (callback) {
+                console.log(callback);
+              });
+              this.displayLCD.display(
+                { name: "applied", type: 1, text1: "Applied." },
+                this.arrow
+              );
+              await this.sleep(700);
+              this.currMenu = "sMenu";
+              this.displayLCD.display(this.menuList.sMenu, this.arrow);
+              this.currMenuLength = this.menuList.sMenu.type;
+
               break;
             case 1: //>192.168.000.100 pressed
               if (this.partOfIP < 4) {
@@ -117,14 +132,8 @@ class SMenu extends BaseComponent {
           }
           break;
         case "setTargetIP0":
-          this.displayLCD.setBlinkFlag(false);
-          break;
         case "setTargetIP1":
-          this.displayLCD.setBlinkFlag(false);
-          break;
         case "setTargetIP2":
-          this.displayLCD.setBlinkFlag(false);
-          break;
         case "setTargetIP3":
           this.displayLCD.setBlinkFlag(false);
           break;
@@ -133,7 +142,7 @@ class SMenu extends BaseComponent {
     });
   }
 
-#execute(command, callback) {
+  #execute(command, callback) {
     exec(command, function (error, stdout, stderr) {
       callback(stdout);
     });

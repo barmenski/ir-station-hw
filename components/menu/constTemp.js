@@ -1,18 +1,14 @@
 const Thermometer = require("../thermometer");
-const DisplayLCD = require("../displayLCD");
 const PID = require("../pid.js");
 const PWM = require("../pwm.js");
 const BaseComponent = require("./baseComponent");
 const Encoder = require("../encoder");
-const Led = require("../led");
 const ServerHttp = require("../server");
 
 class ConstTemp extends BaseComponent {
-  displayLCD = new DisplayLCD();
   thermometer = new Thermometer();
   pwm = new PWM();
   encoder = new Encoder();
-  led = new Led();
   serverHttp = new ServerHttp();
 
   constructor(parent) {

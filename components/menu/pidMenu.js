@@ -1,12 +1,8 @@
-const DisplayLCD = require("../displayLCD");
 const BaseComponent = require("./baseComponent");
 const Encoder = require("../encoder");
-const Led = require("../led");
 
 class PidMenu extends BaseComponent {
-  displayLCD = new DisplayLCD();
   encoder = new Encoder();
-  led = new Led();
 
   constructor(parent) {
     super();
@@ -249,8 +245,6 @@ class PidMenu extends BaseComponent {
     this.currMenu = "setPTop";
     this.displayLCD.setBlinkFlag(true);
     await this.displayLCD.blink3digit(3, 0, this.menuList.pidTopMenu.data1);
-    // this.menuList.workConstMenu.text5 = this.menuList.constMenu.data1;
-    // this.menuList.pauseConstMenu.data1 = this.menuList.constMenu.data1;
     this.#writeData();
   }
 
@@ -275,8 +269,6 @@ class PidMenu extends BaseComponent {
     this.currMenu = "setPBottom";
     this.displayLCD.setBlinkFlag(true);
     await this.displayLCD.blink3digit(3, 0, this.menuList.pidBottomMenu.data1);
-    // this.menuList.workConstMenu.text5 = this.menuList.constMenu.data1;
-    // this.menuList.pauseConstMenu.data1 = this.menuList.constMenu.data1;
     this.#writeData();
   }
 

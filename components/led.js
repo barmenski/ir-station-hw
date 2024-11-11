@@ -46,7 +46,6 @@ class Encoder extends EventEmitter {
 }
 module.exports = Encoder;
 process.on('exit', function() {
-  /* Insert any custom cleanup code here. */
   rpio.close(this.led1, rpio.PIN_RESET);
   rpio.close(this.led2, rpio.PIN_RESET);
   rpio.exit();

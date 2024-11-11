@@ -3,7 +3,6 @@ const SMenu = require("./sMenu");
 const Profil = require("./profil");
 const ConstTemp = require("./constTemp");
 const Dimmer = require("./dimmer.js");
-const DisplayLCD = require("../displayLCD");
 const Encoder = require("../encoder");
 const PidMenu = require("./pidMenu");
 const BaseComponent = require("./baseComponent");
@@ -14,7 +13,6 @@ class Menu extends BaseComponent {
   profil = new Profil(this);
   constTemp = new ConstTemp(this);
   dimmer = new Dimmer(this);
-  displayLCD = new DisplayLCD();
   encoder = new Encoder();
   pidMenu = new PidMenu(this);
 
