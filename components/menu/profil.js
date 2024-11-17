@@ -104,7 +104,7 @@ class Profil extends BaseComponent {
               break;
             case 1:
               this.menuList.editProfileMenu.data2 =
-                this.menuList.editProfileMenu.data2 + delta*0.1;
+                this.menuList.editProfileMenu.data2 + delta * 0.1;
               this.displayLCD.show3digit(
                 2,
                 1,
@@ -122,7 +122,7 @@ class Profil extends BaseComponent {
               break;
             case 3:
               this.menuList.editProfileMenu.data4 =
-                this.menuList.editProfileMenu.data4 + delta*0.1;
+                this.menuList.editProfileMenu.data4 + delta * 0.1;
               this.displayLCD.show3digit(
                 7,
                 1,
@@ -140,7 +140,7 @@ class Profil extends BaseComponent {
               break;
             case 5:
               this.menuList.editProfileMenu.data6 =
-                this.menuList.editProfileMenu.data6 + delta*0.1;
+                this.menuList.editProfileMenu.data6 + delta * 0.1;
               this.displayLCD.show3digit(
                 12,
                 1,
@@ -196,6 +196,7 @@ class Profil extends BaseComponent {
               this.currMenu = "profilesMenu";
               this.currMenuLength = this.menuList.profilesMenu.type;
               this.displayLCD.display(this.menuList.profilesMenu, this.arrow);
+              await this.sleep(200);
               break;
             case 2: //>Back pressed
               this.arrow = 0;
@@ -235,7 +236,7 @@ class Profil extends BaseComponent {
                 this.menuList.applyProfileMenu,
                 this.arrow
               );
-
+              await this.sleep(200);
               break;
             case 1: //2th profile
               this.arrow = 0;
@@ -248,6 +249,7 @@ class Profil extends BaseComponent {
                 this.menuList.applyProfileMenu,
                 this.arrow
               );
+              await this.sleep(200);
               break;
             case 2: //3th profile
               this.arrow = 0;
@@ -260,6 +262,7 @@ class Profil extends BaseComponent {
                 this.menuList.applyProfileMenu,
                 this.arrow
               );
+              await this.sleep(200);
               break;
             case 3: //4th profile
               this.arrow = 0;
@@ -272,6 +275,7 @@ class Profil extends BaseComponent {
                 this.menuList.applyProfileMenu,
                 this.arrow
               );
+              await this.sleep(200);
               break;
             default:
           }
@@ -448,34 +452,18 @@ class Profil extends BaseComponent {
     this.measuredSpeedTop = Number(
       ((this.tempChip - this.prevTempChip) / this.measuredTime).toFixed(2)
     );
-    console.log(
-      "\n CHIP \n"+
-      "this.tempChip: " +
-        this.tempChip +
-        " || " +
-        "this.prevTempChip: " +
-        this.prevTempChip 
-    );
+
     if (this.measuredSpeedTop <= 0) {
       this.measuredSpeedTop = 0.00001;
     }
-    console.log("this.measuredSpeedTop: " + this.measuredSpeedTop + "\n--------------");
 
     this.measuredSpeedBottom = Number(
       ((this.tempBoard - this.prevTempBoard) / this.measuredTime).toFixed(2)
     );
-    console.log(
-      "\n BOARD \n"+
-      "this.tempBoard: " +
-        this.tempBoard +
-        " || " +
-        "this.prevTempBoard: " +
-        this.prevTempBoard
-    );
+
     if (this.measuredSpeedBottom <= 0) {
       this.measuredSpeedBottom = 0.00001;
     }
-    console.log("this.measuredSpeedBottom: " + this.measuredSpeedBottom + "\n--------------");
   }
 
   #heat() {
@@ -490,7 +478,7 @@ class Profil extends BaseComponent {
 
       this.currTime = Date.now(); //ms
 
-      if (this.prevTime===0){
+      if (this.prevTime === 0) {
         this.measuredTime = 1;
       } else {
         this.measuredTime = Number(
@@ -501,7 +489,7 @@ class Profil extends BaseComponent {
       this.duration = Number(
         ((this.currTime - this.startTime) / 1000).toFixed(2)
       ); //s
- 
+
       this.#measureSpeed();
 
       //BOTTOM HEATER
@@ -512,9 +500,9 @@ class Profil extends BaseComponent {
         this.led.greenLed(true);
 
         this.targetTempBoard = Number(
-          this.tempBoard + this.currProfile.speed1* this.measuredTime
+          this.tempBoard + this.currProfile.speed1 * this.measuredTime
         ).toFixed(2);
-        console.log("1 stage: targetTempBoard " + this.targetTempBoard);
+
         this.pidBottom.setTarget(
           this.targetTempBoard,
           this.PBottom,
@@ -528,15 +516,15 @@ class Profil extends BaseComponent {
         this.tempBoard >= this.preHeatTemp &&
         this.tempBoard < this.liquidTemp &&
         this.peakAchiv === false &&
-        this.stage!=3
+        this.stage != 3
       ) {
         //2  stage - waitting (bottom heater ON; top heater ON)
-         this.stage = 2;
-
+        this.stage = 2;
+        this.led.greenLed(true);
         this.targetTempBoard = Number(
           this.tempBoard + this.currProfile.speed2 * this.measuredTime
         ).toFixed(2);
-        console.log("2 stage: targetTempBoard " + this.targetTempBoard);
+
         this.pidBottom.setTarget(
           this.targetTempBoard,
           this.PBottom,
@@ -547,28 +535,27 @@ class Profil extends BaseComponent {
           Number(this.pidBottom.update(this.tempBoard))
         );
       } else if (
-        this.tempBoard >= this.liquidTemp && this.peakAchiv === false
+        this.tempBoard >= this.liquidTemp &&
+        this.peakAchiv === false
       ) {
         //3  stage - constant power for bottom heater and rise for maximum
         //                              (bottom heater ON; top heater ON)
         this.stage = 3;
+        this.led.greenLed(true);
         this.pidBottom.setTarget(
           this.liquidTemp,
           this.PBottom,
           this.IBottom,
           this.DBottom
         );
-        
+
         this.powerBottom = Math.round(
           Number(this.pidBottom.update(this.tempBoard))
         );
-        //this.powerBottom = 0;
-
-        console.log("3 stage: this.liquidTemp " + this.liquidTemp);
       } else {
         this.stage = 4;
-        this.led.greenLed(false);
         this.led.redLed(true);
+        this.peakAchiv = true;
         this.powerBottom = 0;
       }
       //TOP HEATER
@@ -614,6 +601,7 @@ class Profil extends BaseComponent {
         );
         this.powerTop = Math.round(Number(this.pidTop.update(this.tempChip)));
       } else if (this.tempChip >= this.peakTemp) {
+        this.led.redLed(true);
         this.peakAchiv = true;
         this.powerTop = 0;
       } else {

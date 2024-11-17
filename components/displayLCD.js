@@ -189,8 +189,8 @@ class DisplayLCD {
     tempBoard,
     powerTop,
     powerBottom,
-    targetSpeed,
-    measuredSpeed
+    stage,
+    duration
   ) => {
     this.lcd.setCursorSync(2, 0);
     this.lcd.printSync("    ");
@@ -215,17 +215,13 @@ class DisplayLCD {
     this.lcd.setCursorSync(13, 0);
     this.lcd.printSync("   ");
     this.lcd.setCursorSync(13, 0);
-    this.lcd.printSync(targetSpeed);
+    this.lcd.printSync(stage);
 
     this.lcd.setCursorSync(13, 1);
     this.lcd.printSync("   ");
     this.lcd.setCursorSync(13, 1);
-    this.lcd.printSync(measuredSpeed);
+    this.lcd.printSync(duration);
 
-    //t=000 P=000% pt1
-    //  ↑↑↑   ↑↑↑
-    //t=000 P=000% run
-    //  ↑↑↑   ↑↑↑
   };
 
   displayEditTitles = (menu, arrow) => {

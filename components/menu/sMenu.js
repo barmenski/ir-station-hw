@@ -100,9 +100,16 @@ class SMenu extends BaseComponent {
               });
 
               let stringComand2 =
-                "sudo route add default gw 192.168.67.240 wlan0";
+                "sudo route delete default gw 192.168.0.1 wlan0";
 
               this.#execute(stringComand2, function (callback) {
+                console.log(callback);
+              });
+              
+              let stringComand3 =
+                "sudo route add default gw 192.168.108.59 wlan0";
+
+              this.#execute(stringComand3, function (callback) {
                 console.log(callback);
               });
               this.displayLCD.display(
