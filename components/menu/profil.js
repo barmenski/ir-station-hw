@@ -35,12 +35,12 @@ class Profil extends BaseComponent {
     this.hiddenData = false;
     this.io = null;
 
-    this.preHeatTime = 0;
-    this.preHeatTemp = 0;
-    this.liquidTime = 0;
-    this.liquidTemp = 0;
-    this.peakTime = 0;
-    this.peakTemp = 0;
+    this.speed1 = 0;
+    this.temp1 = 0;
+    this.speed2 = 0;
+    this.temp2 = 0;
+    this.speed3 = 0;
+    this.temp3 = 0;
 
     this.PBottom = this.pidSet.pidBottom.k_p;
     this.IBottom = this.pidSet.pidBottom.k_i;
@@ -494,13 +494,13 @@ class Profil extends BaseComponent {
 
       //BOTTOM HEATER
 
-      if (this.tempBoard < this.preHeatTemp && this.peakAchiv === false) {
+      if (this.tempBoard < this.temp1 && this.peakAchiv === false) {
         //1 stage - prepare Heat (bottom heater ON; top heater ON)
         this.stage = 1;
         this.led.greenLed(true);
 
         this.targetTempBoard = Number(
-          this.tempBoard + this.currProfile.speed1 * this.measuredTime
+          this.tempBoard + this.speed1 * this.measuredTime
         ).toFixed(2);
 
         this.pidBottom.setTarget(
@@ -513,8 +513,8 @@ class Profil extends BaseComponent {
           Number(this.pidBottom.update(this.tempBoard))
         ); //calculate power from PID
       } else if (
-        this.tempBoard >= this.preHeatTemp &&
-        this.tempBoard < this.liquidTemp &&
+        this.tempBoard >= this.temp1 &&
+        this.tempBoard < this.temp2 &&
         this.peakAchiv === false &&
         this.stage != 3
       ) {
@@ -522,7 +522,7 @@ class Profil extends BaseComponent {
         this.stage = 2;
         this.led.greenLed(true);
         this.targetTempBoard = Number(
-          this.tempBoard + this.currProfile.speed2 * this.measuredTime
+          this.tempBoard + this.speed2 * this.measuredTime
         ).toFixed(2);
 
         this.pidBottom.setTarget(
@@ -535,7 +535,8 @@ class Profil extends BaseComponent {
           Number(this.pidBottom.update(this.tempBoard))
         );
       } else if (
-        this.tempBoard >= this.liquidTemp &&
+        this.tempBoard >= this.temp2 &&
+        this.tempBoard < this.temp3 &&
         this.peakAchiv === false
       ) {
         //3  stage - constant power for bottom heater and rise for maximum
@@ -543,7 +544,7 @@ class Profil extends BaseComponent {
         this.stage = 3;
         this.led.greenLed(true);
         this.pidBottom.setTarget(
-          this.liquidTemp,
+          this.temp2,
           this.PBottom,
           this.IBottom,
           this.DBottom
@@ -552,14 +553,12 @@ class Profil extends BaseComponent {
         this.powerBottom = Math.round(
           Number(this.pidBottom.update(this.tempBoard))
         );
-      } else {
-        this.stage = 4;
+      } else if (this.peakAchiv === true) {
         this.led.redLed(true);
-        this.peakAchiv = true;
         this.powerBottom = 0;
       }
       //TOP HEATER
-      if (this.tempChip < this.preHeatTemp && this.peakAchiv === false) {
+      if (this.tempChip < this.temp1 && this.peakAchiv === false) {
         //1 stage - prepare Heat (bottom heater ON; top heater OFF)
 
         this.pidTop.setTarget(
@@ -570,28 +569,31 @@ class Profil extends BaseComponent {
         );
         this.powerTop = Math.round(Number(this.pidTop.update(this.tempChip)));
       } else if (
-        this.tempChip >= this.preHeatTemp &&
-        this.tempChip < this.liquidTemp &&
+        this.tempChip >= this.temp1 &&
+        this.tempChip < this.temp2 &&
         this.peakAchiv === false
       ) {
         //2  stage - waitting (bottom heater ON; top heater ON)
+        this.targetTempChip = Number(
+          this.tempChip + this.speed2 * this.measuredTime
+        ).toFixed(2)
         this.pidTop.setTarget(
-          this.targetTempBoard, //targetTempBoard !!!
+          this.targetTempChip, 
           this.PTop,
           this.ITop,
           this.DTop
         );
         this.powerTop = Math.round(Number(this.pidTop.update(this.tempChip)));
       } else if (
-        this.tempChip >= this.liquidTemp &&
-        this.tempChip < this.peakTemp &&
+        this.tempChip >= this.temp2 &&
+        this.tempChip < this.temp3 &&
         this.peakAchiv === false
       ) {
         //3  stage - constant power for bottom heater and rise for maximum
         //                              (bottom heater ON; top heater ON)
 
         this.targetTempChip = Number(
-          this.tempChip + this.currProfile.speed3 * this.measuredTime
+          this.tempChip + this.speed3 * this.measuredTime
         ).toFixed(2);
         this.pidTop.setTarget(
           this.targetTempChip,
@@ -600,13 +602,12 @@ class Profil extends BaseComponent {
           this.DTop
         );
         this.powerTop = Math.round(Number(this.pidTop.update(this.tempChip)));
-      } else if (this.tempChip >= this.peakTemp) {
+      } else if (this.tempChip >= this.temp3) {
+        this.stage = 4;
         this.led.redLed(true);
         this.peakAchiv = true;
         this.powerTop = 0;
-      } else {
-        this.powerTop = 0;
-      }
+      } 
 
       this.prevTempChip = this.tempChip;
       this.prevTempBoard = this.tempBoard;
@@ -621,12 +622,12 @@ class Profil extends BaseComponent {
   async start(menuList) {
     this.pwm.init();
 
-    this.preHeatTime = this.currProfile.speed1;
-    this.preHeatTemp = this.currProfile.temp1;
-    this.liquidTime = this.currProfile.speed2;
-    this.liquidTemp = this.currProfile.temp2;
-    this.peakTime = this.currProfile.speed3;
-    this.peakTemp = this.currProfile.temp3;
+    this.speed1 = this.currProfile.speed1;
+    this.temp1 = this.currProfile.temp1;
+    this.speed2 = this.currProfile.speed2;
+    this.temp2 = this.currProfile.temp2;
+    this.speed3 = this.currProfile.speed3;
+    this.temp3 = this.currProfile.temp3;
 
     this.pidBottom = new PID({
       k_p: this.PBottom,
