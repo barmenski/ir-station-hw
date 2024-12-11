@@ -6,5 +6,5 @@ IR rework station is made up of halogen lamp 250 mm for bottom heater, ceramic h
 
 ![wiring](https://github.com/barmenski/ir-station-hw/raw/main/assets/ir-station_Sketch.png)
 
-## Мideo of the device in operation
-https://youtu.be/XWZlBCWv8PI
+## Video of the device in operation
+[![video](https://img.youtube.com/vi/XWZlBCWv8PI/0.jpg)](https://www.youtube.com/watch?v=XWZlBCWv8PI)
