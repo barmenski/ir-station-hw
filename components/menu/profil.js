@@ -515,8 +515,8 @@ class Profil extends BaseComponent {
       } else if (
         this.tempBoard >= this.temp1 &&
         this.tempBoard < this.temp2 &&
-        this.peakAchiv === false &&
-        this.stage != 3
+        this.peakAchiv === false //&&
+        // this.stage != 3
       ) {
         //2  stage - waitting (bottom heater ON; top heater ON)
         this.stage = 2;
@@ -556,6 +556,20 @@ class Profil extends BaseComponent {
       } else if (this.peakAchiv === true) {
         this.led.redLed(true);
         this.powerBottom = 0;
+      } else {
+        //3  like stage 
+        this.stage = 3;
+        this.led.greenLed(true);
+        this.pidBottom.setTarget(
+          this.temp2,
+          this.PBottom,
+          this.IBottom,
+          this.DBottom
+        );
+
+        this.powerBottom = Math.round(
+          Number(this.pidBottom.update(this.tempBoard))
+        );
       }
       //TOP HEATER
       if (this.tempChip < this.temp1 && this.peakAchiv === false) {

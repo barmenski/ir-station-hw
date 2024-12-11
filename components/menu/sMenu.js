@@ -10,6 +10,7 @@ class SMenu extends BaseComponent {
     this.parent = parent;
 
     this.stage = "sMenu";
+    this.allAddresses = [];
   }
 
   async init() {
@@ -18,10 +19,27 @@ class SMenu extends BaseComponent {
     this.currMenu = "sMenu";
     this.currMenuLength = this.menuList.sMenu.type;
     this.#getIp();
-    this.displayLCD.display(
-      { name: "IP", type: 2, text1: this.localIP, text2: " " },
-      this.arrow
-    );
+    if (this.allAddresses.length>1) {
+      this.displayLCD.display(
+        {
+          name: "IP",
+          type: 2,
+          text1: this.allAddresses[0].address,
+          text2: this.allAddresses[1].address,
+        },
+        this.arrow
+      );
+    } else {
+      this.displayLCD.display(
+        {
+          name: "IP",
+          type: 2,
+          text1: this.allAddresses[0].address,
+          text2: " ",
+        },
+        this.arrow
+      );
+    }
 
     this.encoder.on("rotate", async (delta) => {
       this.arrow = 0;
@@ -37,11 +55,26 @@ class SMenu extends BaseComponent {
   }
 
   #getIp() {
-    this.localIP = Object.values(os.networkInterfaces())
-      .flat()
-      .find((iface) => iface.family === "IPv4" && !iface.internal)?.address;
+    // this.localIP = Object.values(os.networkInterfaces())
+    //   .flat()
+    //   .find((iface) => iface.family === "IPv4" && !iface.internal)?.address;
 
-    console.log("Локальный IP-адрес:", this.localIP);
+    // console.log("Локальный IP-адрес:", this.localIP);
+
+    this.interfaces = os.networkInterfaces();
+
+    for (const intrfce of Object.keys(this.interfaces)) {
+      for (const iface of this.interfaces[intrfce]) {
+        if (iface.family === "IPv4" && !iface.internal) {
+          this.allAddresses.push({
+            interface: intrfce,
+            address: iface.address,
+          });
+        }
+      }
+    }
+
+    console.log("Все IPv4 адреса:", this.allAddresses);
   }
 
   #removeListeners() {
