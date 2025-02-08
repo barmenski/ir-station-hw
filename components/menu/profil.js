@@ -514,7 +514,7 @@ class Profil extends BaseComponent {
         ); //calculate power from PID
       } else if (
         this.tempBoard >= this.temp1 &&
-        this.tempBoard < this.temp2 &&
+        this.tempBoard < this.temp2-5 &&
         this.peakAchiv === false //&&
         // this.stage != 3
       ) {
@@ -535,7 +535,7 @@ class Profil extends BaseComponent {
           Number(this.pidBottom.update(this.tempBoard))
         );
       } else if (
-        this.tempBoard >= this.temp2 &&
+        this.tempBoard >= this.temp2-5 &&
         this.tempBoard < this.temp3 &&
         this.peakAchiv === false
       ) {
