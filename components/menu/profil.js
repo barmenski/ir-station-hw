@@ -514,7 +514,7 @@ class Profil extends BaseComponent {
         ); //calculate power from PID
       } else if (
         this.tempBoard >= this.temp1 &&
-        this.tempBoard < this.temp2-5 &&
+        this.tempBoard < this.temp2 - 5 &&
         this.peakAchiv === false //&&
         // this.stage != 3
       ) {
@@ -535,7 +535,7 @@ class Profil extends BaseComponent {
           Number(this.pidBottom.update(this.tempBoard))
         );
       } else if (
-        this.tempBoard >= this.temp2-5 &&
+        this.tempBoard >= this.temp2 - 5 &&
         this.tempBoard < this.temp3 &&
         this.peakAchiv === false
       ) {
@@ -557,7 +557,7 @@ class Profil extends BaseComponent {
         this.led.redLed(true);
         this.powerBottom = 0;
       } else {
-        //3  like stage 
+        //3  like stage
         this.stage = 3;
         this.led.greenLed(true);
         this.pidBottom.setTarget(
@@ -575,8 +575,11 @@ class Profil extends BaseComponent {
       if (this.tempChip < this.temp1 && this.peakAchiv === false) {
         //1 stage - prepare Heat (bottom heater ON; top heater OFF)
 
+        this.targetTempChip = Number(
+          this.tempChip + this.speed1 * this.measuredTime
+        ).toFixed(2);
         this.pidTop.setTarget(
-          this.targetTempBoard, //targetTempBoard !!!
+          this.targetTempChip, 
           this.PTop,
           this.ITop,
           this.DTop
@@ -590,9 +593,9 @@ class Profil extends BaseComponent {
         //2  stage - waitting (bottom heater ON; top heater ON)
         this.targetTempChip = Number(
           this.tempChip + this.speed2 * this.measuredTime
-        ).toFixed(2)
+        ).toFixed(2);
         this.pidTop.setTarget(
-          this.targetTempChip, 
+          this.targetTempChip,
           this.PTop,
           this.ITop,
           this.DTop
@@ -621,7 +624,7 @@ class Profil extends BaseComponent {
         this.led.redLed(true);
         this.peakAchiv = true;
         this.powerTop = 0;
-      } 
+      }
 
       this.prevTempChip = this.tempChip;
       this.prevTempBoard = this.tempBoard;

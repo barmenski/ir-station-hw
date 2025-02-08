@@ -3,9 +3,9 @@
     "name": "pr-001",
     "status": "current",
     "temp1": 160,
-    "speed1": 0.8,
+    "speed1": 1.2,
     "temp2": 180,
-    "speed2": 0.8,
+    "speed2": 1.0,
     "temp3": 210,
     "speed3": 1.2
   },
