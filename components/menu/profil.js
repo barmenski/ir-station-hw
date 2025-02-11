@@ -555,7 +555,19 @@ class Profil extends BaseComponent {
         );
       } else if (this.peakAchiv === true) {
         this.led.redLed(true);
-        this.powerBottom = 0;
+        // this.powerBottom = 0;
+        this.stage = 3; //temporary try constant temperature after max temperature achived
+        this.led.greenLed(true);
+        this.pidBottom.setTarget(
+          this.temp2,
+          this.PBottom,
+          this.IBottom,
+          this.DBottom
+        );
+
+        this.powerBottom = Math.round(
+          Number(this.pidBottom.update(this.tempBoard))
+        );
       } else {
         //3  like stage
         this.stage = 3;
@@ -579,7 +591,7 @@ class Profil extends BaseComponent {
           this.tempChip + this.speed1 * this.measuredTime
         ).toFixed(2);
         this.pidTop.setTarget(
-          this.targetTempChip, 
+          this.targetTempChip,
           this.PTop,
           this.ITop,
           this.DTop
@@ -623,7 +635,10 @@ class Profil extends BaseComponent {
         this.stage = 4;
         this.led.redLed(true);
         this.peakAchiv = true;
-        this.powerTop = 0;
+        // this.powerTop = 0;
+        //temporary try constant temperature after max temperature achived
+        this.pidTop.setTarget(this.temp3, this.PTop, this.ITop, this.DTop);
+        this.powerTop = Math.round(Number(this.pidTop.update(this.tempChip)));
       }
 
       this.prevTempChip = this.tempChip;
