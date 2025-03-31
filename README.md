@@ -27,15 +27,16 @@ IR rework station is made up of halogen lamp 250 mm for bottom heater, ceramic h
 
 ## Video of the device in operation
 
-[![video](https://img.youtube.com/vi/XWZlBCWv8PI/0.jpg)](https://www.youtube.com/watch?v=XWZlBCWv8PI)
+[![video1](https://img.youtube.com/vi/XWZlBCWv8PI/0.jpg)](https://www.youtube.com/watch?v=XWZlBCWv8PI)
 
-[![video](https://img.youtube.com/vi/XlxXhoq2SfA?list=PL6vxfcC_QPnMol9xhfhP5AWL9lPwSGcwa/0.jpg)](https://www.youtube.com/watch?v=XlxXhoq2SfA?list=PL6vxfcC_QPnMol9xhfhP5AWL9lPwSGcwa)
+[![video2](https://img.youtube.com/vi/XlxXhoq2SfA/0.jpg)](https://www.youtube.com/watch?v=XlxXhoq2SfA)
+
 
 ## How it works
 
 - Raspberry Pi measures temperature using a module based on the MAX6675 chip and a K-type thermocouple.
 
-<img src="https://github.com/barmenski/ir-station-hw/raw/main/assets/2023-04-17-sensor.jpg" alt="measure" width="500" height="300">
+<img src="https://github.com/barmenski/ir-station-hw/raw/main/assets/2023-04-17-sensor.jpg" alt="measure" width="500">
 
 ![measure](https://github.com/barmenski/ir-station-hw/raw/main/assets/2023-04-17-sensor.jpg)
 
