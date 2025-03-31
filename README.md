@@ -1,6 +1,6 @@
-# Application for IR rework station.
+# Overview
 
-IR rework station is made up of halogen lamp 250 mm for bottom heater, ceramic heater 450 W for top. Raspberry Pi B+ v1.2 controls the process.
+IR rework station is made up of halogen lamp 250 mm for bottom heater, ceramic heater 450 Watts for top. Raspberry Pi B+ v1.2 controls the process.
 
 ## How to use
 
@@ -40,7 +40,7 @@ IR rework station is made up of halogen lamp 250 mm for bottom heater, ceramic h
 
 - Based on the measured temperature and the setpoint, the PID module calculates the percentage of power that must be supplied to the heaters.
 
-<img src="https://github.com/barmenski/ir-station-hw/raw/main/assets/PID-diagramme.jpg" alt="pid" height="350">
+<img src="https://github.com/barmenski/ir-station-hw/raw/main/assets/PID-diagramme.jpg" alt="pid" height="300">
 
 - This percentage of power is transmitted to the PWM module, which controls the heaters.
 
@@ -48,8 +48,10 @@ IR rework station is made up of halogen lamp 250 mm for bottom heater, ceramic h
 
 - It is necessary to heat the chip at the required speed and for the required duration in order not to damage the chip with high temperature. These parameters are reflected in the thermal profile graphs. Thermal profiles differ for lead-containing solders (products before 2006) and lead-free solders:
 
-![pb+](https://github.com/barmenski/ir-station-hw/raw/main/assets/profile_pb+.jpg)
-![pb-](https://github.com/barmenski/ir-station-hw/raw/main/assets/profile_pb-.jpg)
+
+<img src="https://github.com/barmenski/ir-station-hw/raw/main/assets/profile_pb+.jpg" alt="pb+" height="300">
+
+<img src="https://github.com/barmenski/ir-station-hw/raw/main/assets/profile_pb-.jpg" alt="pb-" height="300">
 
 - To heat according to the thermal profile, you need to select the item "Profil":
 
