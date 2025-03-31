@@ -4,7 +4,7 @@ IR rework station is made up of halogen lamp 250 mm for bottom heater, ceramic h
 
 ## How to use
 
-1. Install Raspbian on ypur RaspberryPi https://www.raspberrypi.com/documentation/computers/getting-started.html#installing-the-operating-system
+1. Install Raspbian on ypur Raspberry Pi https://www.raspberrypi.com/documentation/computers/getting-started.html#installing-the-operating-system
 2. Install Node.js:
    1. Install NVM with the install script:
       `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash`
@@ -36,15 +36,14 @@ IR rework station is made up of halogen lamp 250 mm for bottom heater, ceramic h
 
 - Raspberry Pi measures temperature using a module based on the MAX6675 chip and a K-type thermocouple.
 
-<img src="https://github.com/barmenski/ir-station-hw/raw/main/assets/2023-04-17-sensor.jpg" alt="measure" width="500">
-
-![measure](https://github.com/barmenski/ir-station-hw/raw/main/assets/2023-04-17-sensor.jpg)
+<img src="https://github.com/barmenski/ir-station-hw/raw/main/assets/2023-04-17-sensor.jpg" alt="measure" height="480">
 
 - Based on the measured temperature and the setpoint, the PID module calculates the percentage of power that must be supplied to the heaters.
 
-![pid](https://github.com/barmenski/ir-station-hw/raw/main/assets/PID-diagramme.jpg)
+<img src="https://github.com/barmenski/ir-station-hw/raw/main/assets/PID-diagramme.jpg" alt="pid" height="350">
 
 - This percentage of power is transmitted to the PWM module, which controls the heaters.
+
 ![pwm](https://github.com/barmenski/ir-station-hw/raw/main/assets/pwm_simple.gif)
 
 - It is necessary to heat the chip at the required speed and for the required duration in order not to damage the chip with high temperature. These parameters are reflected in the thermal profile graphs. Thermal profiles differ for lead-containing solders (products before 2006) and lead-free solders:
@@ -53,13 +52,18 @@ IR rework station is made up of halogen lamp 250 mm for bottom heater, ceramic h
 ![pb-](https://github.com/barmenski/ir-station-hw/raw/main/assets/profile_pb-.jpg)
 
 - To heat according to the thermal profile, you need to select the item "Profil":
+
 ![menu-profile](https://github.com/barmenski/ir-station-hw/raw/main/assets/menu_profile.png)
 
 ![profile-work](https://github.com/barmenski/ir-station-hw/raw/main/assets/profile_work.gif)
 
 - To heat and maintain the desired temperature, you must select the item "Const":
+
 ![menu-const](https://github.com/barmenski/ir-station-hw/raw/main/assets/menu_const.png)
+![const-work](https://github.com/barmenski/ir-station-hw/raw/main/assets/const_work.gif)
 ![const-video](https://github.com/barmenski/ir-station-hw/raw/main/assets/const_video.gif)
+
+- The application starts a simple server that receives data via `web-sockets` and draws graphs in `<canvas>`. The application connects to the network with its static IP 192.168.0.100:8080.
 
 ## TODO
 - [ ] The ability to connect to a hotspot on phone
