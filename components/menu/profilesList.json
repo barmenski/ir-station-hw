@@ -3,11 +3,11 @@
     "name": "pr-001",
     "status": "current",
     "temp1": 160,
-    "speed1": 1.2,
+    "speed1": 0.7,
     "temp2": 180,
-    "speed2": 1,
+    "speed2": 0.8,
     "temp3": 220,
-    "speed3": 1.2
+    "speed3": 0.8
   },
   {
     "name": "pr-002",
